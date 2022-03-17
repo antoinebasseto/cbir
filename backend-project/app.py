@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -11,6 +11,13 @@ from pydantic_models.example_data_points import ExampleDataResponse
 from typing import Callable
 from sklearn.cluster import KMeans
 import base64
+#db dependencies
+from sqlalchemy.orm import Session
+import crud, models
+from pydantic_models import schemas
+from database import SessionLocal, engine
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Test Python Backend",
@@ -18,6 +25,15 @@ app = FastAPI(
                    It provides acess via REST API.""",
     version="0.1.0",
 )
+
+
+#Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 imagepath = "./test.png"
 
@@ -52,6 +68,14 @@ app.add_middleware(
 #     return data.to_dict(orient="records")
 # return pd.read_csv(file.file).to_dict()
 
+@app.post("/upload-picture", response_model=schemas.Picture)
+def upload_picture(file:str, db: Session = Depends(get_db)):
+    picture = crud.get_picture_by_file_name(db, file)
+    if picture:
+        raise HTTPException(status_code=400, detail="file already exists")
+    picture   = {'title': "test", 
+                'file_path': "data/test.png"}
+    return crud.create_picture(db =db, item=picture)
 
 @app.post("/upload-data", response_model=ExampleDataResponse)
 def upload_data(name: str):
@@ -66,12 +90,21 @@ def upload_data(name: str):
 #@app.post("/get-data", response_class=FileResponse)
 #def get_data(name: str):
 #    return FileResponse(imagepath)
-    
+
+
 @app.post("/get-data")
-def get_data(name: str):
+def get_data(name: str, db: Session = Depends(get_db)):
+    image = crud.get_picture_by_file_name(db, file_name="test")
+    imagepath = image.file_path
     with open(imagepath, 'rb') as f:
     	base64image = base64.b64encode(f.read())
     	return base64image
+
+# @app.post("/get-data")
+# def get_data(name: str):
+#     with open(imagepath, 'rb') as f:
+#     	base64image = base64.b64encode(f.read())
+#     	return base64image
 
 
 @app.post("/files/")
