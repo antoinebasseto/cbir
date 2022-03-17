@@ -10,6 +10,7 @@ from io import StringIO
 from pydantic_models.example_data_points import ExampleDataResponse
 from typing import Callable
 from sklearn.cluster import KMeans
+import base64
 
 app = FastAPI(
     title="Test Python Backend",
@@ -62,9 +63,15 @@ def upload_data(name: str):
     print(data.to_dict(orient="records"))
     return data.to_dict(orient="records")
     
-@app.post("/get-data", response_class=FileResponse)
+#@app.post("/get-data", response_class=FileResponse)
+#def get_data(name: str):
+#    return FileResponse(imagepath)
+    
+@app.post("/get-data")
 def get_data(name: str):
-    return FileResponse(imagepath)
+    with open(imagepath, 'rb') as f:
+    	base64image = base64.b64encode(f.read())
+    	return base64image
 
 
 @app.post("/files/")
