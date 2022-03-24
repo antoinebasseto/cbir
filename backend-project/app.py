@@ -16,8 +16,12 @@ from sqlalchemy.orm import Session
 import crud, models
 from pydantic_models import schemas
 from database import SessionLocal, engine
+from DL_model.model import get_model, get_embedding
+
 
 models.Base.metadata.create_all(bind=engine)
+
+dlmodel = get_model()
 
 app = FastAPI(
     title="Test Python Backend",
@@ -91,6 +95,17 @@ def upload_data(name: str):
 #def get_data(name: str):
 #    return FileResponse(imagepath)
 
+@app.post("/embedding")
+def get_embedding(file: bytes = File(...)):
+    """
+    model callback function
+    @param file:
+    @return:
+    """
+    image_embedding = get_embedding(file, dlmodel)
+    #add possible annotations?
+    
+    return image_embedding
 
 @app.post("/get-data")
 def get_data(name: str, db: Session = Depends(get_db)):
