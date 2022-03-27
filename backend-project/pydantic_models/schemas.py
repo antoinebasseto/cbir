@@ -5,12 +5,6 @@ from typing import List, Optional, TypedDict
 
 from pydantic import BaseModel
 
-
-# class DataPoint(TypedDict):
-#     X1: float
-#     X2: float
-#     cluster: int
-
 class PictureBase(BaseModel):
     title: str
 
