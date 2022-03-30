@@ -72,12 +72,39 @@ Our dashboard aims to allow users to:
 ```
 
 ## Requirements & How to Run
-To build the environment and run the code:
-1. Create a conda environment using the `requirements.txt` file.
-2. Run the back-end using `uvicorn app:app --reload`
-3. Run the front-end using `npm start`
+To build the environment and run the code, we use conda. Make sure to have it installed on your computer by checking their [documentation](https://docs.conda.io/en/latest/) and then you can follow the next steps:
 
-**NOTE:** To observe our progress on the variational auto-encoder, launch the jupyter notebook present in the `VAE` folder, using the same conda environment.
+1. Create an empty conda environment.
+```
+conda create --name myenv
+```
+2. Activate The environment and install the packages using pip and the `requirements.txt` file.
+```
+conda activate myenv
+conda install pip
+pip install -r requirements.txt
+```
+3. Move to the backend directory and run the backend.
+```
+cd backend-project
+uvicorn app:app --reload
+```
+4. With another terminal, move to the front-end directory. Make sure your conda environment is activated. If it's the first time you run the project, you must create the node_modules directory using the second command (otherwise you can skip this command) and then run the front-end.
+```
+cd react-frontend
+npm install
+npm start
+```
+5. It should open a window in your browser with the app.
+
+**NOTES:** 
+* You only need to create the environment, install all the packages using pip and generate the node_modules folder the first time you run the project. Otherwise you can just skip these parts.
+* To observe our progress on the variational auto-encoder, launch the jupyter notebook present in the `VAE` folder, using the same conda environment. For that, you can move to the VAE folder and launch a jupyter notebook.
+```
+cd VAE
+conda activate myenv
+jupyter notebook
+```
 
 ## Milestones
 

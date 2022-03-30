@@ -7,7 +7,6 @@ import os
 import csv
 import codecs
 from io import StringIO
-from pydantic_models.example_data_points import ExampleDataResponse
 from typing import Callable
 from sklearn.cluster import KMeans
 import base64
@@ -60,18 +59,6 @@ app.add_middleware(
 #     return data
 
 
-# @app.post("/upload-data", response_model=ExampleDataResponse)
-# def upload_data(file: UploadFile = File(...)):
-#     print(file.filename)
-#     data = pd.read_csv(file.file)
-#     kmeans = KMeans(n_clusters=2, random_state=0).fit(data)
-#     labels = kmeans.labels_
-#     data["cluster"] = labels.tolist()
-#     print(data.head())
-#     print(data.to_dict(orient="records"))
-#     return data.to_dict(orient="records")
-# return pd.read_csv(file.file).to_dict()
-
 @app.post("/upload-picture", response_model=schemas.Picture)
 def upload_picture(file:str, db: Session = Depends(get_db)):
     picture = crud.get_picture_by_file_name(db, file)
@@ -80,16 +67,6 @@ def upload_picture(file:str, db: Session = Depends(get_db)):
     picture   = {'title': "test", 
                 'file_path': "data/test.png"}
     return crud.create_picture(db =db, item=picture)
-
-@app.post("/upload-data", response_model=ExampleDataResponse)
-def upload_data(name: str):
-    data = pd.read_csv(f"data/dataset_{name}.csv")
-    kmeans = KMeans(n_clusters=2, random_state=0).fit(data)
-    labels = kmeans.labels_
-    data["cluster"] = labels.tolist()
-    print(data.head())
-    print(data.to_dict(orient="records"))
-    return data.to_dict(orient="records")
     
 #@app.post("/get-data", response_class=FileResponse)
 #def get_data(name: str):
