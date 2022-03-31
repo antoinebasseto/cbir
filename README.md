@@ -108,9 +108,15 @@ jupyter notebook
 
 ## Milestones
 
-- [ ] Week 6
-  - [ ] Refactor git repo: [#1](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/1) 
-  - [ ] Research possible architectures to implement for beta-VAE: [#2](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/2)
+- [x] Week 6
+  - [x] Refactor git repo: [#1](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/1) 
+  - [x] Set up the backbone to train models: [#9](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/9)
+  - [x] Update 'Requirements & How to run' instructions in the readme: [#6](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/6)
+  - [x] Research beta-VAEs: [#2](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/2)
+  - [x] Write a basic VAE: [#3](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/3)
+  - [x] Spend time learning basics of React: [#10](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/10)
+  - [x] Write the first React components: [#11](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/11)
+
 
 ## Versioning
 
