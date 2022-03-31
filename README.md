@@ -120,5 +120,5 @@ jupyter notebook
 
 ## Versioning
 
-- Week 6: [Week 6 Tag]()
+- Week 6: [Week 6 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week6)
 
