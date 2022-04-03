@@ -45,11 +45,13 @@ class PatientBase(BaseModel):
     patient_id: str
 
 class PatientCreate(PatientBase):
-    pass
+    age: int
+    gender: str
 
 class Patient(PatientBase):
-    id: int
     #pictures: List[Picture] = []
-
+    id : int
+    age: int
+    gender: str
     class Config:
         orm_mode = True

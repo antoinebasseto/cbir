@@ -14,19 +14,21 @@ def get_patients(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_patient(db: Session, patient: schemas.PatientCreate):
-    db_user = models.Patient(patient_id=patient.patient_id)
+    db_user = models.Patient(patient_id=patient.patient_id, age = patient.age, gender = patient.gender)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
+def picture_ids(db: Session):
+    return [value for value in db.query(models.Patient.id).distinct()]
 
 def get_picture(db: Session, picture_id: int):
     return db.query(models.Picture).filter(models.Picture.id == picture_id).first()
 
-
 def get_picture_by_file_name(db: Session, file_name: str):
     return db.query(models.Picture).filter(models.Picture.title == file_name).first()
+
 
 
 def get_pictures(db: Session, skip: int = 0, limit: int = 100):
@@ -42,9 +44,9 @@ def create_picture(db: Session, item, patient_id: Optional[int] = 0):
     return db_item
 
 
-def populate_db(db: Session, item, patient_id: int):
+def populate_db(db: Session, item, patient_id: int, age: int, gender: str):
     if get_patient(db, patient_id) is None:
-        create_patient(db, schemas.PatientCreate(patient_id = patient_id))
+        create_patient(db, schemas.PatientCreate(patient_id = patient_id, age = age, gender = gender))
     db_item = models.Picture(**item)
     db.add(db_item)
     db.commit()

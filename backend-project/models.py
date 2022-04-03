@@ -11,6 +11,8 @@ class Patient(Base):
     __tablename__ = "patients"
     id = Column(Integer, primary_key = True, index=True)
     patient_id = Column(Integer, index = True)
+    gender = Column(String, index = True)
+    age = Column(Integer, index = True)
     #pictures = relationship("Picture", back_populates="patient")
 
 class Picture(Base):
