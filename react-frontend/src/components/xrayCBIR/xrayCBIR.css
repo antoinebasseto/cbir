@@ -1,0 +1,11 @@
+.XRayCBIR {
+    display: flex;
+}
+
+.uploadedImage{
+    flex:2;
+    background-color: royalblue;
+    height: 50vh;
+    margin: 100px;
+    position: sticky;
+}

@@ -1,5 +1,6 @@
 import React from 'react';
-import XRayListElementComponent from './XRayListElementComponent';
+import XRayListElementComponent from '../xrayListElement/XRayListElementComponent';
+import "./xrayList.css"
 
 
 class XRayListComponent extends React.Component<{imgList: string[]}, {}> {

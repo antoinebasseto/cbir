@@ -1,7 +1,7 @@
 import React, { useState }  from 'react';
 import './App.css';
 import { queryBackend } from './backend/BackendQueryEngine';
-import XRayCBIR from './components/XRayCBIRComponent';
+import XRayCBIR from './components/xrayCBIR/XRayCBIRComponent';
 import Sidebar from "./components/sidebar/sidebar"
 import DragDropUploader from './components/dragDropUploader/dragDropUploader';
 
@@ -9,6 +9,9 @@ function App() {
 
   const [file, setFile] = useState(null);
   const [indexActiv, setIndexActiv] = useState(0)
+
+  {/*To be updated with similar images from backend*/}
+  const similarImages = [require("./test.png"), require("./test.png")]
 
   function handleUpload(){
       setIndexActiv(0)
@@ -32,12 +35,9 @@ function App() {
       <div className="container">
         <Sidebar indexActiv={indexActiv} handleUpload={handleUpload} handleShow={handleShow} handleFilter={handleFilter}/>
         <div className="others">
-          {/*{file && <XRayCBIR uploadedImageSource={URL.createObjectURL(file)}/>}*/}
           {indexActiv===0 && <DragDropUploader onImageUploadedChange={handleImageUploaded}/>}
           {indexActiv===1 && file && 
-            <div className="uploadedImageContainer">
-              <img className="uploadedImage" src={URL.createObjectURL(file)}/>
-            </div>
+            <XRayCBIR uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/>
           }
         </div>
       </div>

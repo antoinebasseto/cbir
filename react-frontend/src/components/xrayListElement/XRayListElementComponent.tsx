@@ -1,4 +1,5 @@
 import React from 'react';
+import "./xrayListElement.css"
 
 class XRayListElementComponent extends React.Component<{imgSource: string, label: string, simScore: number}, {}> {
 
@@ -6,9 +7,9 @@ class XRayListElementComponent extends React.Component<{imgSource: string, label
     render() {
         return (
           <li className='XRayListElement'>
-              <img src={this.props.imgSource}/>
-              <text>label: {this.props.label}</text>
-              <text>similarity: {this.props.simScore}</text>
+              <img className="similarImage" src={this.props.imgSource}/>
+              <text className="diseaseText">label: {this.props.label}</text>
+              <text className="similarityText">similarity: {this.props.simScore}</text>
           </li>
         );
     } 
