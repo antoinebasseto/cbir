@@ -1,9 +1,9 @@
 import React, { useState }  from 'react';
 import './App.css';
 import { queryBackend } from './backend/BackendQueryEngine';
-import XRayCBIR from './components/xrayCBIR/XRayCBIRComponent';
 import Sidebar from "./components/sidebar/sidebar"
 import DragDropUploader from './components/dragDropUploader/dragDropUploader';
+import XrayDisplay from './components/xrayDisplay/xrayDisplay'
 
 function App() {
 
@@ -11,7 +11,9 @@ function App() {
   const [indexActiv, setIndexActiv] = useState(0)
 
   {/*To be updated with similar images from backend*/}
-  const similarImages = [require("./test.png"), require("./test.png")]
+  const similarImages = [[require("./test1.png"), 1, 0, "Cardiomegaly", 0.94],
+                        [require("./test2.png"), 1, 1, "Cardiomegaly|Emphysema", 0.85],
+                        [require("./test3.png"), 2, 0, "No Finding", 0.83]]
 
   function handleUpload(){
       setIndexActiv(0)
@@ -27,7 +29,7 @@ function App() {
   function handleImageUploaded(file) {
       setFile(file);
       setIndexActiv(1); {/*Back to show image.  Not necessary*/}
-      {/*TODO: Send image to backend*/}
+      {/*TODO: Send image to backend and get similar images*/}
   };
 
   return (
@@ -37,8 +39,8 @@ function App() {
         <div className="others">
           {indexActiv===0 && <DragDropUploader onImageUploadedChange={handleImageUploaded}/>}
           {indexActiv===1 && file && 
-            <XRayCBIR uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/>
-          }
+            <XrayDisplay uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
+        }
         </div>
       </div>
     </div>
