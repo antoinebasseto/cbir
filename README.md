@@ -106,6 +106,11 @@ conda activate myenv
 jupyter notebook
 ```
 
+## Weekly summary
+
+**Week 7**:
+This week, we implemented the first (real) version of the frontend which includes a sidebar, a button to upload an image and a panel to show a list of similar images, which we will update and improve during the following weeks. On the backend, we created a notebook to populate our database. Finally, we transformed our first linear version of the VAE into a convolutional one and kept on searching papers talking about the architecture (to know for example how big our latent space should be).
+
 ## Milestones
 
 - [x] Week 6
