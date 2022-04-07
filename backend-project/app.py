@@ -99,15 +99,17 @@ def get_data(name: str, db: Session = Depends(get_db)):
 #     with open(imagepath, 'rb') as f:
 #     	base64image = base64.b64encode(f.read())
 #     	return base64image
+
 @app.get("/image_ids")
 def image_list(db: Session = Depends(get_db)):
     return {"image_ids": crud.picture_ids(db)}
 
 @app.get("/image")
 def get_image(id: int, db: Session = Depends(get_db)):
-    image = crud.get_picture(db, id)
-    file_name = image.picture_id
-    path = PICTURE_FOLDER+'/'+file_name
+    # image = crud.get_picture(db, id)
+    # file_name = image.picture_id
+    # path = PICTURE_FOLDER+'/'+file_name
+    path = "/home/jj/Spring2022/Medical1-xai-iml22/backend-project/test.png"
     return FileResponse(path = path)
 
 @app.post("/files/")

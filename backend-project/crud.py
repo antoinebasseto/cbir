@@ -23,6 +23,27 @@ def create_patient(db: Session, patient: schemas.PatientCreate):
 def picture_ids(db: Session):
     return [value for value in db.query(models.Patient.id).distinct()]
 
+def build_query_tuple(picture_schema):
+    filters = []
+    for key, value in picture_schema:
+        filters.append(getattr(models.Picture, key) == value)
+    return filters
+
+def filter_pictures(db: Session, picture_schema, patient_schema):
+    """
+
+    :param db:
+    :param picture_schema: dict containing (k, v) picture attribute and value
+    :return:
+    """
+    if patient_schema is not None:
+        #reimplement join
+        db = db.query(models.Picture)
+    else:
+        filter = build_query_tuple((picture_schema))
+        return db.query(models.Picture).filter(*filter)
+
+
 def get_picture(db: Session, picture_id: int):
     return db.query(models.Picture).filter(models.Picture.id == picture_id).first()
 
