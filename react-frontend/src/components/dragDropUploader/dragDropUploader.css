@@ -1,0 +1,26 @@
+.uploaderIcon{
+    margin: 20px;
+    font-size: 40px;
+    color: #555;
+}
+
+.text{
+    font-size: 15px;
+    color: #555;
+}
+
+
+.uploaderContainer{
+    margin:50px;
+    background-color: rgb(245, 245, 245);
+    padding: 5px 0px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    border: 1px dashed grey;
+}
+
+.uploaderContainer:hover{
+    background-color: rgb(235, 235, 250);
+}

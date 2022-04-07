@@ -3,19 +3,11 @@
   height: 100vh;
 }
 
-.XRayCBIR {
-  width: 100vw;
-  height: 100vh;
+.container{
   display: flex;
-  flex-direction: row;
 }
 
-.XRayList {
-  list-style-type: none;
-}
-
-.XRayListElement {
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 10%;
+.others{
+  flex:4;
+  background-color: white;
 }

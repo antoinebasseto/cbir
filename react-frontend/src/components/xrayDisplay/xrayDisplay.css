@@ -1,0 +1,33 @@
+.xrayDisplayContainer{
+    background-color: white;
+    display: flex;
+    height:100vh;
+}
+
+.verticalLine{
+    background-color: rgb(235, 235, 235);
+    width: 5px;
+    height: 100vh;
+}
+
+.imageContainer{
+    flex:1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.uploadedImage{
+    height: 60vh;
+    position: sticky;
+    margin: 100px; /* Only used when screen is very small, otherwise has no impact */
+}
+
+
+.XRayListScroller{
+    flex:1;
+    overflow: auto;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+}
