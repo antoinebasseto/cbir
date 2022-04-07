@@ -117,8 +117,13 @@ jupyter notebook
   - [x] Spend time learning basics of React: [#10](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/10)
   - [x] Write the first React components: [#11](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/11)
 
+- [x] Week 7
+  - [x] Update frontend with sidebar [#13](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/13), an interface to let the users upload their image [#14](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/14) and display (hard-coded) similar images next to the newly uploaded image [#16](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/16)
+  - [x] Write a convolutional VAE [#4](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/4) (but not tested yet)
+  - [x] Write code to populate database
+
 
 ## Versioning
 
 - Week 6: [Week 6 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week6)
-
+- Week 7: [Week 7 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week7)
