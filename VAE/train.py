@@ -2,8 +2,7 @@ import matplotlib.pyplot as plt
 import torch
 
 
-
-def run_training(model, train_loader, val_loader, test_loader, loss_fn, optimizer, num_epochs = 10, verbose=1):
+def run_training(model, train_loader, val_loader, loss_fn, optimizer, num_epochs = 10, verbose=1):
     train_history = []
     val_history = []
     for e in range(num_epochs):
@@ -16,6 +15,8 @@ def run_training(model, train_loader, val_loader, test_loader, loss_fn, optimize
         val_history += val_loss
 
     return train_history, val_history
+
+
 def train_loop(autoencoder, train_loader, loss_fn, optimizer,  verbose=1):
     '''
     Train the autoencoder.
@@ -137,9 +138,9 @@ def test_loop(model, test_loader, loss_fn, verbose=1):
     return loss_history
 
 
-def plot_loss(epoch_losses, title='Train Loss'):
+def plot_loss(epoch_losses, title='Loss'):
     '''
-    Very Simple plot for the losses at each epoch.
+    Simple plot for the loss at each epoch.
 
     Parameters
     ----------
@@ -152,5 +153,5 @@ def plot_loss(epoch_losses, title='Train Loss'):
     plt.plot(epoch_losses)
     plt.title(title)
     plt.xlabel('Epochs')
-    plt.ylabel('MSE Loss')
+    plt.ylabel('Loss')
     plt.show()

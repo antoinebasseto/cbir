@@ -43,7 +43,7 @@ def main():
     test_loader = DataLoader(test_data,
                              batch_size=BATCH_SIZE,
                              shuffle=True)
-    # %%
+
     # Create our autoencoder and train it
     # Parameters
     #data moving to gpu if available
