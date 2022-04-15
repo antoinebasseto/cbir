@@ -132,7 +132,7 @@ This week, we implemented the first (real) version of the frontend which include
   - [x] Finish convolutional VAE, beta-VAE [#4](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/4)[#5](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/5)
   - [x] Struggled with adapting the FactorVAE loss function since different sampling seems to be needed [#8](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/8),
   - [x] Set up environment to train with GPU support[#17](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/17)
-  - [x] Some work on the frontend (still testing)
+  - [x] Implement filters to choose similar images in the frontend (still testing) [#18](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/18)
   - [x] Write code to link database, backend and frontend
 
  
