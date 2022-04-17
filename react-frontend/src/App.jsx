@@ -9,6 +9,8 @@ function App() {
 
   const [file, setFile] = useState(null);
   const [indexActiv, setIndexActiv] = useState(0)
+  const [filterActiv, setFilterActiv] = useState(false)
+
 
   {/*To be updated with similar images from backend*/}
   const similarImages = [[require("./test1.png"), 1, 0, "Cardiomegaly", 0.94],
@@ -24,7 +26,7 @@ function App() {
   }
 
   function handleFilter(){
-      setIndexActiv(2)
+    setFilterActiv(!filterActiv)
   }
   function handleImageUploaded(file) {
       setFile(file);
@@ -35,7 +37,7 @@ function App() {
   return (
     <div className="App">
       <div className="container">
-        <Sidebar indexActiv={indexActiv} handleUpload={handleUpload} handleShow={handleShow} handleFilter={handleFilter}/>
+        <Sidebar indexActiv={indexActiv} handleUpload={handleUpload} handleShow={handleShow} handleFilter={handleFilter} filterActiv={filterActiv}/>
         <div className="others">
           {indexActiv===0 && <DragDropUploader onImageUploadedChange={handleImageUploaded}/>}
           {indexActiv===1 && file && 

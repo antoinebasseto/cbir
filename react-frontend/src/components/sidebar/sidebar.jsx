@@ -24,12 +24,12 @@ export default function Sidebar(props) {
                         <BsImages className="sidebarIcon"/>
                         Similar Images
                     </li>
-                    <li className={props.indexActiv===2 ? "sidebarListItem active" : "sidebarListItem"}  onClick={props.handleFilter}>
+                    <li className={props.filterActiv? "sidebarListItem active" : "sidebarListItem"}  onClick={props.handleFilter}>
                         <IoMdSettings className="sidebarIcon"/>
                         Filter
                     </li>
 
-                    {props.indexActiv===2 && 
+                    {props.filterActiv && 
                     <li>
                         <Filters></Filters>
                     </li>
