@@ -3,6 +3,8 @@ import "./sidebar.css"
 import {FiUpload} from "react-icons/fi"
 import {IoMdSettings} from "react-icons/io"
 import {BsImages} from "react-icons/bs"
+import Filters from "../filters/filters"
+
 
 export default function Sidebar(props) {
 
@@ -26,6 +28,12 @@ export default function Sidebar(props) {
                         <IoMdSettings className="sidebarIcon"/>
                         Filter
                     </li>
+
+                    {props.indexActiv===2 && 
+                    <li>
+                        <Filters></Filters>
+                    </li>
+                    }
                 </ul>
             </div>
         </div>
