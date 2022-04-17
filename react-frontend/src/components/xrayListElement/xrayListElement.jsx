@@ -3,7 +3,7 @@ import "./xrayListElement.css"
 
 export default function XrayListElement(props) {
   return (
-    <li key={props.key} className="XRayListElement">
+    <li key={props.keyId} className="XRayListElement">
         <div className="imageAndDiseaseContainer">
             <h5 className="diseaseText">{props.label}</h5>
             <img className="similarImage" src={props.imgSource}/>
