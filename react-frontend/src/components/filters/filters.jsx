@@ -65,56 +65,44 @@ export default function Filters(props) {
         'Pneumonia',
         'Pneumothorax',
       ];
-    
-    
-    const [similarityThreshold, setSimilarityThreshold] = useState(90)
-    const [maxNumberImages, setMaxNumberImages] = useState(3)
-    const [diseasesFilter, setDiseasesFilter] = useState(['All'])
-    const [followUpInterval, setFollowUpInterval] = useState([1, 10])
+
+
 
     function handleSimilarityOnChange(_, newValue){
-        setSimilarityThreshold(newValue)
+        props.setSimilarityThreshold(newValue)
     }
-
+    
     function handleMaxNumberImagesOnChange(_, newValue){
-        setMaxNumberImages(newValue)
+        props.setMaxNumberImages(newValue)
     }
-
-    function handleDiseasesChange (event){
+    
+    function handleFollowUpOnChange(_, newValue){
+      if (!Array.isArray(newValue)) {
+        return;
+      }
+    
+      if (newValue[0] !== props.followUpInterval[0]) {
+        props.setFollowUpInterval([Math.min(newValue[0], props.followUpInterval[1]), props.followUpInterval[1]]);
+      } else {
+        props.setFollowUpInterval([props.followUpInterval[0], Math.max(newValue[1], props.followUpInterval[0])]);
+      }
+    }
+      function handleDiseasesChange (event){
         const {
           target: { value },
         } = event;
-
+    
         // On autofill we get a stringified value.
         let newValue = typeof value === 'string' ? value.split(',') : value
-
-
-        if (diseasesFilter.indexOf("All") > -1 && newValue.length > 0){
+    
+    
+        if ((props.diseasesFilter).indexOf("All") > -1 && newValue.length > 0){
             newValue = diseases.filter((disease) => newValue.indexOf(disease) == -1)
         }
         newValue = newValue.indexOf("All") > -1 ? ["All"] : newValue    
-        setDiseasesFilter(
-            newValue
-        );
+        props.setDiseasesFilter(newValue);
         
       };
-
-      function handleFollowUpOnChange(_, newValue){
-        if (!Array.isArray(newValue)) {
-          return;
-        }
-    
-        if (newValue[0] !== followUpInterval[0]) {
-            setFollowUpInterval([Math.min(newValue[0], followUpInterval[1]), followUpInterval[1]]);
-        } else {
-            setFollowUpInterval([followUpInterval[0], Math.max(newValue[1], followUpInterval[0])]);
-        }
-      }
-
-      function applyOnClickHandle(){
-          {/* TODO: call backend to retrieve images with given filters */}
-      }
-
 
     return (
         <div className="filtersContainer">
@@ -128,7 +116,7 @@ export default function Filters(props) {
                 <ThemeProvider theme={sliderTheme}>
                 <Slider
                     aria-label="Similarity"
-                    value={similarityThreshold}
+                    value={props.similarityThreshold}
                     step={1}
                     valueLabelDisplay="auto"
                     onChange={handleSimilarityOnChange}
@@ -147,7 +135,7 @@ export default function Filters(props) {
                 <ThemeProvider theme={sliderTheme}>
                 <Slider
                     aria-label="Similarity"
-                    value={maxNumberImages}
+                    value={props.maxNumberImages}
                     step={1}
                     min={1}
                     max={20}
@@ -169,14 +157,14 @@ export default function Filters(props) {
                     labelId="selectDiseaseLabel"
                     id="selectDisease"
                     multiple
-                    value={diseasesFilter}
+                    value={props.diseasesFilter}
                     onChange={handleDiseasesChange}
                     renderValue={(selected) => selected.sort().join(", ")}
                     MenuProps={MenuProps}
                     >
                     {diseases.map((disease) => (
                         <MenuItem key={disease} value={disease}>
-                        <Checkbox checked={diseasesFilter.indexOf(disease) > -1 || diseasesFilter.indexOf("All") > -1} />
+                        <Checkbox checked={props.diseasesFilter.indexOf(disease) > -1 || props.diseasesFilter.indexOf("All") > -1} />
                         <ListItemText primary={disease} />
                         </MenuItem>
                     ))}
@@ -194,7 +182,7 @@ export default function Filters(props) {
                 </div>
                 <ThemeProvider theme={sliderTheme}>
                 <Slider
-                    value={followUpInterval}
+                    value={props.followUpInterval}
                     step={1}
                     min={1}
                     max={10} /*Should check what actual max follow up is in the data*/
@@ -206,7 +194,7 @@ export default function Filters(props) {
 
 
             <div className="filterContainer">
-                <div className="applyButton" onClick={applyOnClickHandle}>
+                <div className="applyButton" onClick={props.applyOnClickHandle}>
                     Apply filters
                 </div>
             </div>

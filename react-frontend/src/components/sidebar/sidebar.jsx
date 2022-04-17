@@ -31,7 +31,10 @@ export default function Sidebar(props) {
 
                     {props.filterActiv && 
                     <li>
-                        <Filters></Filters>
+                        <Filters
+                        similarityThreshold={props.similarityThreshold} maxNumberImages={props.maxNumberImages} followUpInterval={props.followUpInterval} 
+                        diseasesFilter={props.diseasesFilter} setDiseasesFilter={props.setDiseasesFilter} setSimilarityThreshold={props.setSimilarityThreshold}
+                        setMaxNumberImages={props.setMaxNumberImages} setFollowUpInterval={props.setFollowUpInterval} applyOnClickHandle={props.applyOnClickHandle}></Filters>
                     </li>
                     }
                 </ul>
