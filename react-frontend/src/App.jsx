@@ -30,6 +30,10 @@ function App() {
       setIndexActiv(1)
   }
 
+  function handleShowProjection(){
+    setIndexActiv(2)
+  }
+
   function handleFilter(){
     setFilterActiv(!filterActiv)
   }
@@ -48,6 +52,7 @@ function App() {
     <div className="App">
       <div className="container">
         <Sidebar indexActiv={indexActiv} handleUpload={handleUpload} handleShow={handleShow} handleFilter={handleFilter} filterActiv={filterActiv} 
+                handleShowProjection={handleShowProjection}
                 similarityThreshold={similarityThreshold} maxNumberImages={maxNumberImages} followUpInterval={followUpInterval} diseasesFilter={diseasesFilter}
                 setDiseasesFilter = {setDiseasesFilter} setSimilarityThreshold={setSimilarityThreshold} setMaxNumberImages={setMaxNumberImages} 
                 setFollowUpInterval={setFollowUpInterval} applyOnClickHandle={applyOnClickHandle}/>
