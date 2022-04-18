@@ -3,6 +3,10 @@ import "./sidebar.css"
 import {FiUpload} from "react-icons/fi"
 import {IoMdSettings} from "react-icons/io"
 import {BsImages} from "react-icons/bs"
+import {VscActivateBreakpoints} from "react-icons/vsc"
+import {MdTravelExplore} from "react-icons/md"
+import Filters from "../filters/filters"
+
 
 export default function Sidebar(props) {
 
@@ -22,10 +26,28 @@ export default function Sidebar(props) {
                         <BsImages className="sidebarIcon"/>
                         Similar Images
                     </li>
-                    <li className={props.indexActiv===2 ? "sidebarListItem active" : "sidebarListItem"}  onClick={props.handleFilter}>
+                    <li className={props.indexActiv===2 ? "sidebarListItem active" : "sidebarListItem"}  onClick={props.handleShowProjection}>
+                        <VscActivateBreakpoints className="sidebarIcon"/>
+                        Projection
+                    </li>
+                    <li className={props.indexActiv===3 ? "sidebarListItem active" : "sidebarListItem"}  onClick={props.handleShowExplore}>
+                        <MdTravelExplore className="sidebarIcon"/>
+                        Explore dimensions
+                    </li>
+                    <li className={props.filterActiv ? "sidebarListItem active" : "sidebarListItem"}  onClick={props.handleFilter}>
                         <IoMdSettings className="sidebarIcon"/>
                         Filter
                     </li>
+
+                    {props.filterActiv && 
+                    <li>
+                        <Filters
+                        similarityThreshold={props.similarityThreshold} maxNumberImages={props.maxNumberImages} followUpInterval={props.followUpInterval} 
+                        diseasesFilter={props.diseasesFilter} setDiseasesFilter={props.setDiseasesFilter} setSimilarityThreshold={props.setSimilarityThreshold}
+                        setMaxNumberImages={props.setMaxNumberImages} setFollowUpInterval={props.setFollowUpInterval} applyOnClickHandle={props.applyOnClickHandle}></Filters>
+                    </li>
+                    }
+                    
                 </ul>
             </div>
         </div>

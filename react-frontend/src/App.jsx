@@ -9,6 +9,13 @@ function App() {
 
   const [file, setFile] = useState(null);
   const [indexActiv, setIndexActiv] = useState(0)
+  const [filterActiv, setFilterActiv] = useState(false)
+
+  /* Filters */
+  const [similarityThreshold, setSimilarityThreshold] = useState(90)
+  const [maxNumberImages, setMaxNumberImages] = useState(3)
+  const [followUpInterval, setFollowUpInterval] = useState([1, 10])
+  const [diseasesFilter, setDiseasesFilter] = useState(['All'])
 
   {/*To be updated with similar images from backend*/}
   const similarImages = [[require("./test1.png"), 1, 0, "Cardiomegaly", 0.94],
@@ -23,8 +30,16 @@ function App() {
       setIndexActiv(1)
   }
 
+  function handleShowProjection(){
+    setIndexActiv(2)
+  }
+
+  function handleShowExplore(){
+    setIndexActiv(3)
+  }
+
   function handleFilter(){
-      setIndexActiv(2)
+    setFilterActiv(!filterActiv)
   }
   function handleImageUploaded(file) {
       setFile(file);
@@ -32,15 +47,27 @@ function App() {
       {/*TODO: Send image to backend and get similar images*/}
   };
 
+  function applyOnClickHandle(){
+    console.log("Apply filters")
+    {/* TODO: call backend to retrieve images with given filters */}
+  }
+
   return (
     <div className="App">
       <div className="container">
-        <Sidebar indexActiv={indexActiv} handleUpload={handleUpload} handleShow={handleShow} handleFilter={handleFilter}/>
+        <Sidebar indexActiv={indexActiv} handleUpload={handleUpload} handleShow={handleShow} handleFilter={handleFilter} filterActiv={filterActiv} 
+                handleShowProjection={handleShowProjection} handleShowExplore={handleShowExplore}
+                similarityThreshold={similarityThreshold} maxNumberImages={maxNumberImages} followUpInterval={followUpInterval} diseasesFilter={diseasesFilter}
+                setDiseasesFilter = {setDiseasesFilter} setSimilarityThreshold={setSimilarityThreshold} setMaxNumberImages={setMaxNumberImages} 
+                setFollowUpInterval={setFollowUpInterval} applyOnClickHandle={applyOnClickHandle}/>
         <div className="others">
           {indexActiv===0 && <DragDropUploader onImageUploadedChange={handleImageUploaded}/>}
           {indexActiv===1 && file && 
             <XrayDisplay uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
-        }
+          }
+          {indexActiv===2 && <div>Here will be a Umap of the latent space</div>}
+          {indexActiv===3 && <div>Here will be a tool to explore the different dimensions of the uploaded image</div>}
+
         </div>
       </div>
     </div>
