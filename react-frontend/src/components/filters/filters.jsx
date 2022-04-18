@@ -16,7 +16,7 @@ import {IoMdImages} from "react-icons/io"
 
 export default function Filters(props) {
 
-    {/* Used to decide how many items will be shown */}
+    /* Used to decide how many items will be shown */
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const NUMBER_ITMES_SHOWN = 3
@@ -29,7 +29,7 @@ export default function Filters(props) {
       }
     };
 
-    {/* Used to customize the color of the slider. Seems like it cannot be done in CSS*/}
+    /* Used to customize the color of the slider. Seems like it cannot be done in CSS*/
     const sliderTheme = createTheme({
         overrides:{
           MuiSlider: {
@@ -46,7 +46,7 @@ export default function Filters(props) {
       }
     });
 
-    {/* List of diseases options*/}
+    /* List of diseases options*/
     const diseases = [
         'All',
         'Atelectasis',

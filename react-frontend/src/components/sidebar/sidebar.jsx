@@ -4,6 +4,7 @@ import {FiUpload} from "react-icons/fi"
 import {IoMdSettings} from "react-icons/io"
 import {BsImages} from "react-icons/bs"
 import {VscActivateBreakpoints} from "react-icons/vsc"
+import {MdTravelExplore} from "react-icons/md"
 import Filters from "../filters/filters"
 
 
@@ -29,7 +30,11 @@ export default function Sidebar(props) {
                         <VscActivateBreakpoints className="sidebarIcon"/>
                         Projection
                     </li>
-                    <li className={props.filterActiv? "sidebarListItem active" : "sidebarListItem"}  onClick={props.handleFilter}>
+                    <li className={props.indexActiv===3 ? "sidebarListItem active" : "sidebarListItem"}  onClick={props.handleShowExplore}>
+                        <MdTravelExplore className="sidebarIcon"/>
+                        Explore dimensions
+                    </li>
+                    <li className={props.filterActiv ? "sidebarListItem active" : "sidebarListItem"}  onClick={props.handleFilter}>
                         <IoMdSettings className="sidebarIcon"/>
                         Filter
                     </li>

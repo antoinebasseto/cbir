@@ -34,6 +34,10 @@ function App() {
     setIndexActiv(2)
   }
 
+  function handleShowExplore(){
+    setIndexActiv(3)
+  }
+
   function handleFilter(){
     setFilterActiv(!filterActiv)
   }
@@ -52,7 +56,7 @@ function App() {
     <div className="App">
       <div className="container">
         <Sidebar indexActiv={indexActiv} handleUpload={handleUpload} handleShow={handleShow} handleFilter={handleFilter} filterActiv={filterActiv} 
-                handleShowProjection={handleShowProjection}
+                handleShowProjection={handleShowProjection} handleShowExplore={handleShowExplore}
                 similarityThreshold={similarityThreshold} maxNumberImages={maxNumberImages} followUpInterval={followUpInterval} diseasesFilter={diseasesFilter}
                 setDiseasesFilter = {setDiseasesFilter} setSimilarityThreshold={setSimilarityThreshold} setMaxNumberImages={setMaxNumberImages} 
                 setFollowUpInterval={setFollowUpInterval} applyOnClickHandle={applyOnClickHandle}/>
@@ -60,7 +64,10 @@ function App() {
           {indexActiv===0 && <DragDropUploader onImageUploadedChange={handleImageUploaded}/>}
           {indexActiv===1 && file && 
             <XrayDisplay uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
-        }
+          }
+          {indexActiv===2 && <div>Here will be a Umap of the latent space</div>}
+          {indexActiv===3 && <div>Here will be a tool to explore the different dimensions of the uploaded image</div>}
+
         </div>
       </div>
     </div>
