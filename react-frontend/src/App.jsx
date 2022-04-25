@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import './App.css';
 import { queryBackend } from './backend/BackendQueryEngine';
 import Sidebar from "./components/sidebar/sidebar"
@@ -18,9 +18,15 @@ function App() {
   const [diseasesFilter, setDiseasesFilter] = useState(['All'])
 
   {/*To be updated with similar images from backend*/}
-  const similarImages = [[require("./test1.png"), 1, 0, "Cardiomegaly", 0.94],
-                        [require("./test2.png"), 1, 1, "Cardiomegaly|Emphysema", 0.85],
-                        [require("./test3.png"), 2, 0, "No Finding", 0.83]]
+  // const similarImages = [[require("./test1.png"), 1, 0, "Cardiomegaly", 0.94],
+  //                       [require("./test2.png"), 1, 1, "Cardiomegaly|Emphysema", 0.85],
+  //                       [require("./test3.png"), 2, 0, "No Finding", 0.83]]
+  const [similarImages, update_images] = useState([]);
+
+  useEffect(() => {queryBackend('query?id=0').then((exampleData)=>
+    {update_images(exampleData)})});
+
+  console.log(similarImages)
 
   function handleUpload(){
       setIndexActiv(0)
