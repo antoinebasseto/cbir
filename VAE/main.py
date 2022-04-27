@@ -66,7 +66,7 @@ def main():
     optimizer = optim.Adam(autoencoder.parameters(),
                            lr=LEARNING_RATE)
 
-    epoch_losses = run_training(autoencoder, train_loader, num_epochs=NUM_EPOCHS)
+    epoch_losses = run_training(autoencoder, train_loader, optimizer, =NUM_EPOCHS)
     plot_loss(epoch_losses, 'Training Loss - Simple Model')
 
 if __name__ == "__main__":
