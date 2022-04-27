@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import pandas as pd
@@ -29,7 +29,7 @@ app = FastAPI(
     version="0.1.0",
 )
 
-PICTURE_FOLDER = ""
+PICTURE_FOLDER = "/home/jj/Spring2022/Medical1-xai-iml22/backend-project/image_folder"
 
 #Dependency
 def get_db():
@@ -105,12 +105,23 @@ def image_list(db: Session = Depends(get_db)):
     return {"image_ids": crud.picture_ids(db)}
 
 @app.get("/image")
-def get_image(id: int, db: Session = Depends(get_db)):
+def get_image(name: str, db: Session = Depends(get_db)):
     # image = crud.get_picture(db, id)
     # file_name = image.picture_id
-    # path = PICTURE_FOLDER+'/'+file_name
-    path = "/home/jj/Spring2022/Medical1-xai-iml22/backend-project/test.png"
+    path = PICTURE_FOLDER+'/'+name
+    #path = "/home/jj/Spring2022/Medical1-xai-iml22/backend-project/test.png"
     return FileResponse(path = path)
+
+@app.post("/query")
+def get_array(id: str, db: Session = Depends(get_db)):
+
+    # dummy_return = [[ 0, 1, 0, "Cardiomegaly", 0.94],
+    #                     [ 1, 1, 1, "Cardiomegaly|Emphysema", 0.85],
+    #                     [2, 2, 0, "No Finding", 0.83]]
+    dummy_return = [["test1.png", 1, 0, "Cardiomegaly", 0.94],
+     ["test2.png", 1, 1, "Cardiomegaly|Emphysema", 0.85],
+     ["test3.png", 2, 0, "No Finding", 0.83]]
+    return JSONResponse(content=dummy_return)
 
 @app.post("/files/")
 async def create_file(file: bytes = File(...)):
@@ -120,6 +131,7 @@ async def create_file(file: bytes = File(...)):
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile):
     return {"filename": file.filename}
+
 
 
 @app.get("/", response_class=HTMLResponse)
