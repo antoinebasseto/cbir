@@ -1,68 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="90db424a-1a8f-4729-8d09-17eeb6405e70" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend-project/db_populate.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+    <list default="true" id="0444393e-9ef8-4979-84e4-5be846c332d9" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/Medical1-xai-iml22.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Medical1-xai-iml22.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/other.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-project/crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend-project/crud.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-project/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend-project/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-project/pydantic_models/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend-project/pydantic_models/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VAE/Beta-VAE.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VAE/Beta-VAE.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Jupyter Notebook" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectId" id="279HNcmdSjSdq8iZdat7d5bM5XT" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="28NQKqE48oJkgcN6OFbLAy12ny5" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="nodejs_package_manager_path" value="npm" />
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/jimmy/Medical1-xai-iml22/backend-project/data",
+    "nodejs_package_manager_path": "npm"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/backend-project/data" />
+    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="90db424a-1a8f-4729-8d09-17eeb6405e70" name="Changes" comment="" />
-      <created>1648725342646</created>
+      <changelist id="0444393e-9ef8-4979-84e4-5be846c332d9" name="Changes" comment="" />
+      <created>1651054503078</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1648725342646</updated>
-      <workItem from="1648725373536" duration="7895000" />
+      <updated>1651054503078</updated>
+      <workItem from="1651054506101" duration="5855000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
 </project>
