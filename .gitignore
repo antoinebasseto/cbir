@@ -11,5 +11,5 @@ __pycache__/
 # Data files
 data/
 *.db
-
+.idea/*
 backend-project/data/
