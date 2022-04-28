@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 
 
-def load_data(folder="data/", filenames_to_keep=None):
+def load_data(folder = "../backend-project/data/", filenames_to_keep=None):
     '''
     Load the data about each image, the names of the images used for training, the name of the ones used for testing
     and the bounding boxes.
