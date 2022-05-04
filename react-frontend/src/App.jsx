@@ -4,6 +4,7 @@ import { queryBackend } from './backend/BackendQueryEngine';
 import Sidebar from "./components/sidebar/sidebar"
 import DragDropUploader from './components/dragDropUploader/dragDropUploader';
 import XrayDisplay from './components/xrayDisplay/xrayDisplay'
+import ProjectionPlot from './components/projectionPlot/projectionPlot';
 
 function App() {
 
@@ -29,11 +30,11 @@ function App() {
   console.log(similarImages)
 
   function handleUpload(){
-      setIndexActiv(0)
+    setIndexActiv(0)
   }
 
   function handleShow(){
-      setIndexActiv(1)
+    setIndexActiv(1)
   }
 
   function handleShowProjection(){
@@ -71,9 +72,8 @@ function App() {
           {indexActiv===1 && file && 
             <XrayDisplay uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
           }
-          {indexActiv===2 && <div>Here will be a Umap of the latent space</div>}
+          {indexActiv===2 && <ProjectionPlot data={[{x:2, y:3}, {x:3, y:4}]}/>}
           {indexActiv===3 && <div>Here will be a tool to explore the different dimensions of the uploaded image</div>}
-
         </div>
       </div>
     </div>
