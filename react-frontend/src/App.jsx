@@ -24,10 +24,15 @@ function App() {
   //                       [require("./test3.png"), 2, 0, "No Finding", 0.83]]
   const [similarImages, update_images] = useState([]);
 
-  useEffect(() => {queryBackend('query?id=0').then((exampleData)=>
-    {update_images(exampleData)})});
-
-  console.log(similarImages)
+  useEffect(() => 
+    {
+      queryBackend('query?id=0').then((exampleData) => 
+        {
+          update_images(exampleData)
+        }
+      )
+    }
+  );
 
   function handleUpload(){
     setIndexActiv(0)
@@ -72,7 +77,7 @@ function App() {
           {indexActiv===1 && file && 
             <XrayDisplay uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
           }
-          {indexActiv===2 && <ProjectionPlot data={[{x:2, y:3}, {x:3, y:4}]}/>}
+          {indexActiv===2 && <ProjectionPlot data={[{x:2, y:3}, {x:2.3, y:3.8}, {x:3, y:4}]}/>}
           {indexActiv===3 && <div>Here will be a tool to explore the different dimensions of the uploaded image</div>}
         </div>
       </div>

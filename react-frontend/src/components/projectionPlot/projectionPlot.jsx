@@ -8,20 +8,15 @@ export default function ProjectionPlot(props) {
     useEffect(() => {
         // Setting up container
         var margin = {top: 10, right: 30, bottom: 30, left: 60},
-            w = 460 - margin.left - margin.right,
-            h = 400 - margin.top - margin.bottom;
+            width = 460 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
         const svg = d3.select(svgRef.current)
-            .style('overflow', 'visible')
             .append("svg")
-              .attr("width", w + margin.left + margin.right)
-              .attr("height", h + margin.top + margin.bottom)
-              .style('overflow', 'visible')
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
             .append("g")
               .attr("transform",
                     "translate(" + margin.left + "," + margin.top + ")");
-            
-            // .attr('width', w)
-            // .attr('height', h)
             
         // Setting up scaling
         let xMin = d3.min(props.data, (d) => d.x);
@@ -29,31 +24,60 @@ export default function ProjectionPlot(props) {
         let yMin = d3.min(props.data, (d) => d.y);
         let yMax = d3.max(props.data, (d) => d.y);
         const xScale = d3.scaleLinear()
-            .domain([0, 10])
-            .range([[0, w]]);
+            .domain([xMin, xMax])
+            .range([0, width]);
         const yScale = d3.scaleLinear()
-            .domain([0, 10])
-            .range([[h, 0]]);
+            .domain([yMin, yMax])
+            .range([height, 0]);
 
         // Setting up axis
         const xAxis = d3.axisBottom(xScale)
         const yAxis = d3.axisLeft(yScale)
         svg.append("g")
-            .attr("transform", "translate(0," + h + ")")
+            .attr("transform", "translate(0," + height + ")")
             .call(xAxis);
         svg.append('g')
             .call(yAxis)
 
         // Setting up axis labeling
-        svg.append('text')
-            .attr('x', w/2)
-            .attr('y', h+50)
-            .text('UMAP 1')
-        svg.append('text')
-            .attr('x', -50)
-            .attr('y', h/2)
-            .text('UMAP 2')
+        svg.append("text")
+            .attr("text-anchor", "end")
+            .attr("x", width/2 + margin.left)
+            .attr("y", height + margin.top + 20)
+            .text("UMAP1");
 
+        svg.append("text")
+            .attr("text-anchor", "end")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -margin.left + 20)
+            .attr("x", -margin.top - height/2 + 20)
+            .text("UMAP2")
+
+        // Setting up tooltips
+        const tooltip = d3.select('#projectionPlotContainer')
+            .append('div')
+            .style('visibility','visible')
+            .style('position','absolute')
+        
+        const mouseover = function(event, d) {
+            console.log(event)
+            console.log(d)
+
+            tooltip
+                .style('visibility','visible')
+                .text("TOOLTIP")
+        }
+        
+        const mousemove = function(event, d) {
+            tooltip
+                .style('top', (event.pageY+25) + 'px')
+                .style('left', (event.pageX+25) + 'px')
+        }
+        
+        const mouseleave = function(event, d) {
+            tooltip
+                .style('visibility','hidden')
+        }
         
         // Setting up svg data
         svg.append('g')
@@ -61,29 +85,20 @@ export default function ProjectionPlot(props) {
             .data(props.data)
             .enter()
             .append('circle')
-                .attr('cx', d => {
-                    console.log(xScale(0))
-                    return xScale(d.x)})
+                .attr('cx', d => xScale(d.x))
                 .attr('cy', d => yScale(d.y))
-                .attr('r', 2)
+                .attr('r', 5)
                 .style('fill', '#69b3a2')
-        
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave)
     }, [props.data, svgRef.current])
 
     return (
-        <svg
-            ref={svgRef}
-        />
+        <div id='projectionPlotContainer' className='projectionPlotContainer'>
+            <svg className='projectionPlotSVG'
+                ref={svgRef}
+            />
+        </div>
     )
-    
-    // (
-    //     <div className='projectionPlot'>
-    //         <div className='projectionPlotWrapper'>
-    //             <svg
-    //                 className='d3-scatter-plot'
-    //                 ref={svgRef}
-    //             />
-    //         </div>
-    //     </div>
-    // )
 }
