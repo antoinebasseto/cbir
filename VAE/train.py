@@ -35,8 +35,8 @@ def train_loop(autoencoder, train_loader, loss_fn, optimizer,  verbose=1):
 
     Return
     ----------
-    loss_history: list
-        A list of training losses. One for each epoch of training.
+    loss_history: int
+        The average loss over the epoch
     '''
     total_loss = 0
     number_samples = 0
@@ -44,17 +44,15 @@ def train_loop(autoencoder, train_loader, loss_fn, optimizer,  verbose=1):
             # X, dataset, bbox = batch
         X = batch
         output = autoencoder(X)
-        loss = loss_fn(output, X)
-        total_loss += loss.detach()
+        loss = loss_fn(*output)
+        total_loss += loss["loss"].detach()
         number_samples += X.shape[0]
         optimizer.zero_grad()
-        loss.backward()
+        loss["loss"].backward()
         optimizer.step()
 
         if verbose and not i % 100 and not i == 0:
             print(f"Done processing batch number {i}")
-
-        if verbose:
             print(f"Mean loss = {total_loss / number_samples}")
 
     loss_history = total_loss / number_samples
@@ -74,10 +72,9 @@ def validation_loop(model, val_loader, loss_fn, verbose=1):
         to get some information about the update.
     Return
     ----------
-    loss_history: list
-        A list of training losses. One for each epoch of training.
+    loss_history: int
+        The average loss over the epoch
     '''
-    loss_history = []
     with torch.no_grad:
         total_loss = 0
         number_samples = 0
@@ -85,8 +82,8 @@ def validation_loop(model, val_loader, loss_fn, verbose=1):
             # X, dataset, bbox = batch
             X = batch
             output = model(X)
-            loss = loss_fn(output, X)
-            total_loss += loss.detach()
+            loss = loss_fn(*output)
+            total_loss += loss["loss"].detach()
             number_samples += X.shape[0]
 
             if verbose and not i % 100 and not i == 0:
@@ -95,7 +92,7 @@ def validation_loop(model, val_loader, loss_fn, verbose=1):
         if verbose:
             print(f"Mean loss = {total_loss / number_samples}")
 
-        loss_history.append(total_loss / number_samples)
+    loss_history = total_loss / number_samples
     return loss_history
 
 
@@ -113,10 +110,9 @@ def test_loop(model, test_loader, loss_fn, verbose=1):
         to get some information about the update.
     Return
     ----------
-    loss_history: list
-        A list of training losses. One for each epoch of training.
+    loss_history: int
+        The average loss over the epoch
     '''
-    loss_history = []
     with torch.no_grad:
         total_loss = 0
         number_samples = 0
@@ -124,8 +120,8 @@ def test_loop(model, test_loader, loss_fn, verbose=1):
             # X, dataset, bbox = batch
             X = batch
             output = model(X)
-            loss = loss_fn(output, X)
-            total_loss += loss.detach()
+            loss = loss_fn(*output)
+            total_loss += loss["loss"].detach()
             number_samples += X.shape[0]
 
             if verbose and not i % 100 and not i == 0:
@@ -134,7 +130,7 @@ def test_loop(model, test_loader, loss_fn, verbose=1):
         if verbose:
             print(f"Mean loss = {total_loss / number_samples}")
 
-        loss_history.append(total_loss / number_samples)
+    loss_history = total_loss / number_samples
     return loss_history
 
 
