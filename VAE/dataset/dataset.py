@@ -7,8 +7,8 @@ from utils import load_data, read_image
 
 class XRayDataset(Dataset):
     '''
-    Class to represent our dataset of XRay images. Subclass of torch.utils.data.Dataset. Store the image directory,
-    images name, bounding boxes and data of the images we will use either for training or testing.
+    Class to represent our dataset of XRay images. Subclass of torch.utils.dataset.Dataset. Store the image directory,
+    images name, bounding boxes and dataset of the images we will use either for training or testing.
     '''
 
     def __init__(self, img_dir, transform=None, train=True):
@@ -22,7 +22,7 @@ class XRayDataset(Dataset):
         transform: optional, function
             Transformation used on every image before returning it such as scaling.
         train: optional, Boolean
-            If set to true, we keep only the training data in the corresponding folder and otherwise the testing one
+            If set to true, we keep only the training dataset in the corresponding folder and otherwise the testing one
         '''
         self.img_dir = img_dir
         # Read all the names of the PNG files in the directory
@@ -79,5 +79,5 @@ class XRayDataset(Dataset):
             if image.shape[0] == 1:
                 image = image.squeeze()
 
-        return image  # , data, bbox # Cannot pass data and bbox for the moment because they contain entries of
+        return image  # , dataset, bbox # Cannot pass dataset and bbox for the moment because they contain entries of
         # type "object" which is a problem for dataloader. Should transform the few entries having object type

@@ -41,7 +41,7 @@ def train_loop(autoencoder, train_loader, loss_fn, optimizer,  verbose=1):
     total_loss = 0
     number_samples = 0
     for i, batch in enumerate(train_loader):
-            # X, data, bbox = batch
+            # X, dataset, bbox = batch
         X = batch
         output = autoencoder(X)
         loss = loss_fn(output, X)
@@ -82,7 +82,7 @@ def validation_loop(model, val_loader, loss_fn, verbose=1):
         total_loss = 0
         number_samples = 0
         for i, batch in enumerate(val_loader):
-            # X, data, bbox = batch
+            # X, dataset, bbox = batch
             X = batch
             output = model(X)
             loss = loss_fn(output, X)
@@ -121,7 +121,7 @@ def test_loop(model, test_loader, loss_fn, verbose=1):
         total_loss = 0
         number_samples = 0
         for i, batch in enumerate(test_loader):
-            # X, data, bbox = batch
+            # X, dataset, bbox = batch
             X = batch
             output = model(X)
             loss = loss_fn(output, X)

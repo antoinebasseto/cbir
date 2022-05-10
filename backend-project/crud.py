@@ -25,8 +25,19 @@ def picture_ids(db: Session):
 
 def build_query_tuple(picture_schema):
     filters = []
-    for key, value in picture_schema:
-        filters.append(getattr(models.Picture, key) == value)
+    for key, (op, value) in picture_schema:
+        #might need better approach in general for operators
+        if op == "eq" :
+            filters.append(getattr(models.Picture, key) == value)
+        elif op == "gt":
+            filters.append(getattr(models.Picture, key) > value)
+        elif op == "geq":
+            filters.append(getattr(models.Picture, key) >= value)
+        elif op == "le":
+            filters.append(getattr(models.Picture, key) < value)
+        elif op == "leq":
+            filters.append(getattr(models.Picture, key) <= value)
+
     return filters
 
 def filter_pictures(db: Session, picture_schema, patient_schema):

@@ -185,7 +185,7 @@ export default function Filters(props) {
                     value={props.followUpInterval}
                     step={1}
                     min={1}
-                    max={10} /*Should check what actual max follow up is in the data*/
+                    max={10} /*Should check what actual max follow up is in the dataset*/
                     valueLabelDisplay="auto"
                     onChange={handleFollowUpOnChange}
                 />

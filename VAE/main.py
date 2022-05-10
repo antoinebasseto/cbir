@@ -13,7 +13,7 @@ from models.autoencoder import AutoEncoder, Encoder, Decoder
 from dataset.dataset import XRayDataset
 from train import run_training, plot_loss
 
-IMG_DIR = "data/images/images_001/"
+IMG_DIR = "dataset/images/images_001/"
 BATCH_SIZE = 2
 NUM_EPOCHS = 2
 LEARNING_RATE = 1e-3
@@ -24,7 +24,7 @@ def main():
     """
     Example training
     """
-    #initializing data sets
+    #initializing dataset sets
     training_data = XRayDataset(
         img_dir=IMG_DIR,
         train=True,
@@ -36,7 +36,7 @@ def main():
         train=False,
         transform=ToTensor()  # This method directly scale the image in [0, 1] range
     )
-    #put data sets into Dataloader
+    #put dataset sets into Dataloader
     train_loader = DataLoader(training_data,
                               batch_size=BATCH_SIZE,
                               shuffle=True)
@@ -46,7 +46,7 @@ def main():
 
     # Create our autoencoder and train it
     # Parameters
-    #data moving to gpu if available
+    #dataset moving to gpu if available
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     # Model

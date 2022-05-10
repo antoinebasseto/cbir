@@ -3,24 +3,24 @@ import numpy as np
 from PIL import Image
 
 
-def load_data(folder="data/", filenames_to_keep=None):
+def load_data(folder="dataset/", filenames_to_keep=None):
     '''
-    Load the data about each image, the names of the images used for training, the name of the ones used for testing
+    Load the dataset about each image, the names of the images used for training, the name of the ones used for testing
     and the bounding boxes.
 
     Parameters
     ----------
     folder : optional, str
-        The folder where the data is stored
+        The folder where the dataset is stored
     filenames_to_keep : optional, np.array(M,)
         List of all the filenames we want to keep, the other will be filtered. Default is None, meaning we
-        want to keep all the data in the folder.
+        want to keep all the dataset in the folder.
 
     Return
     ----------
-    data, train_val_filenames, test_filenames, bounding_boxes:
+    dataset, train_val_filenames, test_filenames, bounding_boxes:
     pd.DataFrame(N, 11), np.array(V, ), np.array(T, ),  pd.DataFrame(B, 6)
-        The data contains the info on the image such as disease, patient id/age, resolution.
+        The dataset contains the info on the image such as disease, patient id/age, resolution.
         The train_val_filenames contains the name of the images used for training/validation
         The test_filenames contains the name of the images used for testing
         The bounding_boxes contains the info on the bboxes of known diseases which are the name of the file
