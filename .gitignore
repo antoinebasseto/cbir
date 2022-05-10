@@ -13,3 +13,4 @@ data/
 *.db
 .idea/*
 backend-project/data/
+VAE/log/*
