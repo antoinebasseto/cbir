@@ -50,14 +50,14 @@ app.add_middleware(
 )
 
 
-# @app.post("/upload-data")
+# @app.post("/upload-dataset")
 # def upload_data(file: UploadFile = File(...)):
-#     ##data = pd.read_csv(file.file)
+#     ##dataset = pd.read_csv(file.file)
 #     ##if cluster_algo
 #     print(file)
-#     data = pd.read_csv(file.file).to_dict()
-#     print(data)
-#     return data
+#     dataset = pd.read_csv(file.file).to_dict()
+#     print(dataset)
+#     return dataset
 
 
 @app.post("/upload-picture", response_model=schemas.Picture)
@@ -66,10 +66,10 @@ def upload_picture(file:str, db: Session = Depends(get_db)):
     if picture:
         raise HTTPException(status_code=400, detail="file already exists")
     picture   = {'title': "test", 
-                'file_path': "data/test.png"}
+                'file_path': "dataset/test.png"}
     return crud.create_picture(db =db, item=picture)
     
-#@app.post("/get-data", response_class=FileResponse)
+#@app.post("/get-dataset", response_class=FileResponse)
 #def get_data(name: str):
 #    return FileResponse(imagepath)
 
@@ -85,7 +85,7 @@ def get_embedding(file: bytes = File(...)):
     
     return image_embedding
 
-@app.post("/get-data")
+@app.post("/get-dataset")
 def get_data(name: str, db: Session = Depends(get_db)):
     image = crud.get_picture_by_file_name(db, file_name="test")
     imagepath = image.file_path
@@ -94,7 +94,7 @@ def get_data(name: str, db: Session = Depends(get_db)):
     	base64image = base64.b64encode(f.read())
     	return base64image
 
-# @app.post("/get-data")
+# @app.post("/get-dataset")
 # def get_data(name: str):
 #     with open(imagepath, 'rb') as f:
 #     	base64image = base64.b64encode(f.read())

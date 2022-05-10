@@ -28,7 +28,7 @@ export const queryBackend2 = async (route: string): Promise<any> => {
 
 export const queryImages = (route: string) =>{
     const requestURL = `${BASE_URL}/image/?name=${route}`;
-    // const data = await fetch(requestURL,
+    // const dataset = await fetch(requestURL,
     //     {
     //         method: 'GET'
     //     }

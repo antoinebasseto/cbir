@@ -9,7 +9,6 @@ __pycache__/
 .ipynb_checkpoints
 
 # Data files
-data/
 *.db
 .idea/*
 backend-project/data/

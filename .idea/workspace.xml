@@ -10,16 +10,33 @@
       <change beforePath="$PROJECT_DIR$/VAE/Beta-VAE.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VAE/Beta-VAE.ipynb" afterDir="false" />
 =======
     <list default="true" id="90db424a-1a8f-4729-8d09-17eeb6405e70" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/VAE/models/NVAE.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< HEAD
+      <change beforePath="$PROJECT_DIR$/VAE/Beta-VAE.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/VAE/Beta-VAE.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-project/crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend-project/crud.py" afterDir="false" />
+=======
       <change beforePath="$PROJECT_DIR$/backend-project/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend-project/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/react-frontend/src/backend/BackendQueryEngine.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-frontend/src/backend/BackendQueryEngine.tsx" afterDir="false" />
 >>>>>>> 657c45987f85841ad3ad7efb92b437a8ac0411af
+>>>>>>> 2970260e41de2bc23d1562b4e0a971356bbf579b
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+<<<<<<< HEAD
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Jupyter Notebook" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+=======
+>>>>>>> 2970260e41de2bc23d1562b4e0a971356bbf579b
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -93,8 +110,19 @@
       <workItem from="1649347732736" duration="835000" />
       <workItem from="1649966995943" duration="1030000" />
       <workItem from="1650653426905" duration="6000" />
+<<<<<<< HEAD
+      <workItem from="1650898318632" duration="7448000" />
+      <workItem from="1651069487917" duration="42000" />
+      <workItem from="1651147922313" duration="911000" />
+      <workItem from="1651152274022" duration="3544000" />
+      <workItem from="1651235041446" duration="22000" />
+      <workItem from="1652182488036" duration="1370000" />
+      <workItem from="1652203800716" duration="2541000" />
+      <workItem from="1652207899778" duration="368000" />
+=======
       <workItem from="1650898318632" duration="7265000" />
 >>>>>>> 657c45987f85841ad3ad7efb92b437a8ac0411af
+>>>>>>> 2970260e41de2bc23d1562b4e0a971356bbf579b
     </task>
     <servers />
   </component>

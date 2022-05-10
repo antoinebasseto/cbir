@@ -2,20 +2,24 @@ import imageio
 import matplotlib.patches as patches
 import glob
 import torch.nn as nn
-from torch.utils.data import Dataset
 from torchvision.transforms import ToTensor
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 import torch
 from torch import nn
 import torch.optim as optim
 
 from models.autoencoder import AutoEncoder, Encoder, Decoder
+from models.beta_vae import BetaVAE
 from dataset.dataset import XRayDataset
 from train import run_training, plot_loss
 
-IMG_DIR = "data/images/images_001/"
+<<<<<<< HEAD
+IMG_DIR = "dataset/images/images_001/"
+=======
+IMG_DIR = "../backend-project/data/images/images_001/"
+>>>>>>> 2970260e41de2bc23d1562b4e0a971356bbf579b
 BATCH_SIZE = 2
-NUM_EPOCHS = 2
+NUM_EPOCHS = 10
 LEARNING_RATE = 1e-3
 LATENT_SPACE_DIM = 16
 
@@ -24,7 +28,7 @@ def main():
     """
     Example training
     """
-    #initializing data sets
+    #initializing dataset sets
     training_data = XRayDataset(
         img_dir=IMG_DIR,
         train=True,
@@ -36,38 +40,32 @@ def main():
         train=False,
         transform=ToTensor()  # This method directly scale the image in [0, 1] range
     )
-    #put data sets into Dataloader
+    #put data sets into Dataloader. We only use training and validation set, no test sets here.
+
     train_loader = DataLoader(training_data,
                               batch_size=BATCH_SIZE,
                               shuffle=True)
-    test_loader = DataLoader(test_data,
+    val_loader = DataLoader(test_data,
                              batch_size=BATCH_SIZE,
                              shuffle=True)
 
     # Create our autoencoder and train it
     # Parameters
-    #data moving to gpu if available
+    #dataset moving to gpu if available
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     # Model
-    autoencoder = AutoEncoder(
-        encoder=Encoder(
-            image_dimension=training_data[0].shape,
-            encoded_dimension=LATENT_SPACE_DIM,
-        ).to(device),
-        decoder=Decoder(
-            image_dimension=training_data[0].shape,
-            encoded_dimension=LATENT_SPACE_DIM,
-        ).to(device)
-    )
+    beta_vae = BetaVAE(in_channels=1, latent_dim=LATENT_SPACE_DIM)
 
     # Loss function & optimizer
-    loss_fn = nn.MSELoss()  # Mean squared error
-    optimizer = optim.Adam(autoencoder.parameters(),
-                           lr=LEARNING_RATE)
+    loss_fn = beta_vae.loss_function
+    optimizer = optim.Adam(beta_vae.parameters(),
+                        lr=LEARNING_RATE)
 
-    epoch_losses = run_training(autoencoder, train_loader, optimizer, =NUM_EPOCHS)
-    plot_loss(epoch_losses, 'Training Loss - Simple Model')
+    train_history, val_history = run_training(beta_vae, train_loader, val_loader, loss_fn, optimizer, num_epochs=NUM_EPOCHS)
+    
+    plot_loss(train_history, 'Training Loss')
+    plot_loss(val_history, 'Validation Loss')
 
 if __name__ == "__main__":
     main()
