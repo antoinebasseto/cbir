@@ -13,18 +13,19 @@ config['mode'] = 'train'  # 'train' or 'eval'
 """
 Data related settings 
 """
-config['dataset'] = 'sleep-edf-153'  # options: sleep-edf-153, ...
+config['dataset'] = 'HAM10000'  # options: sleep-edf-153, ...
 # load input size from json file of the dataset 
-with open(f"dataset/processed/{config['dataset']}/info.json") as f:
-    data = json.load(f)
-    config['input_width'] =  data['input_width'] 
-    config['input_height'] = data['input_height']
+
+# with open(f"data/{config['dataset']}/info.json") as f:
+#     data = json.load(f)
+#     config['input_width']  = data['input_width']
+#     config['input_height'] = data['input_height']
 
 """
 Model related settings 
 Available models: DETRtime
 """
-config['model'] = 'DETRtime'
+config['model'] = 'BetaVAEConv'
 
 """
 Training related settings

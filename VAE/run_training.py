@@ -511,7 +511,7 @@ def plot_loss(epoch_losses, title='Loss'):
 
 # %%
 # Compute the dataloader for training and testing using our custom dataset
-IMG_DIR = "../backend-project/data/skin/HAM10000_images_part_1/"
+IMG_DIR = "../LightningVAE/data/HAM10000/HAM10000_images_part_1/"
 BATCH_SIZE = 2
 
 training_data = XRayDataset(

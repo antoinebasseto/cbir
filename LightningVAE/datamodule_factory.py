@@ -9,10 +9,11 @@ from pathlib import Path
 
 
 def get_datamodule():
-    if config['dataset'] == 'sleep-edf-153':
-        return SLEEP_EDF_DataModule(
-            data_dir=Path('dataset', 'processed', config['dataset']),
-            batch_size=params[config['model']]['batch_size']
+    if config['dataset'] == 'HAM10000':
+        return ImageDataModule(
+            Path('data', config['dataset']),
+            batch_size=params[config['model']]['batch_size'],
+            input_dim=params[config['model']]['input_dim']
             )
     else:
         raise NotImplementedError("Choose valid dataset in config.py")

@@ -9,9 +9,9 @@ from pytorch_lightning.loggers import WandbLogger
 from src.utils.model_factory import get_model
 from src.models.hyperparameters import params
 import time
-from src.utils.logger import Logger, log_params
+from utils.logger import Logger, log_params
 import os
-from LightningVAE.datamodule_factory import get_datamodule
+from datamodule_factory import get_datamodule
 import logging
 
 
@@ -21,6 +21,8 @@ def main():
     log_dir = f"reports/logs/{run_id}_{config['model']}"
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
+    if not os.path.exists(f"{log_dir}/pictures"):
+        os.makedirs(f"{log_dir}/pictures")
     sys.stdout = Logger(print_fp=os.path.join(log_dir, 'out.txt'))
     # Create logging file
     logging.basicConfig(filename=f"{log_dir}/info.log", encoding='utf-8', level=logging.INFO)
@@ -32,7 +34,7 @@ def main():
 
     # Create model based on config.py and hyperparameters.py settings
     #changed to include model factory
-    model = get_model(params[config['model']], config['model'])
+    model = get_model(params[config['model']], config['model'], f'{log_dir}/pictures')
     logging.info("Created model.")
     # print model summary
     # summary(model, (config['input_height'], config['input_width']))
@@ -45,17 +47,18 @@ def main():
                                   name=f"{run_id}_{config['model']}"
                                   )
     tb_logger.log_hyperparams(params[config['model']])  # log hyperparameters
-    wandb_logger = WandbLogger(project=f"{config['dataset']}",
-                               entity="deepseg",
-                               save_dir=f"reports/logs/{run_id}_{config['model']}",
-                               id=f"{run_id}_{config['model']}"
-                               )
+    # wandb_logger = WandbLogger(project=f"{config['dataset']}",
+    #                            entity="deepseg",
+    #                            save_dir=f"reports/logs/{run_id}_{config['model']}",
+    #                            id=f"{run_id}_{config['model']}"
+    #                            )
     trainer = pl.Trainer(accelerator="gpu",  # cpu or gpu
                          devices=-1,  # -1: use all available gpus, for cpu e.g. 4
                          enable_progress_bar=False,  # disable progress bar
                          # progress_bar_refresh_rate=500, # show progress bar every 500 iterations
                          # precision=16, # 16 bit float precision for training
-                         logger=[tb_logger, wandb_logger],  # log to tensorboard and wandb
+                         #logger=[tb_logger, wandb_logger],  # log to tensorboard and wandb
+                         logger = [tb_logger],
                          max_epochs=params[config['model']]['epochs'],  # max number of epochs
                          callbacks=[EarlyStopping(monitor="Validation Loss"),  # early stopping
                                     ModelSummary(max_depth=1),  # model summary

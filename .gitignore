@@ -13,3 +13,6 @@ __pycache__/
 .idea/*
 backend-project/data/
 VAE/log/*
+LightningVAE/log/*
+LightningVAE/data/*
+LightningVAE/reports/*
