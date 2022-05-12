@@ -31,7 +31,7 @@ app = FastAPI(
 
 PICTURE_FOLDER = "/home/jj/Spring2022/Medical1-xai-iml22/backend-project/image_folder"
 
-#Dependency
+# Dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -49,29 +49,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-# @app.post("/upload-dataset")
-# def upload_data(file: UploadFile = File(...)):
-#     ##dataset = pd.read_csv(file.file)
-#     ##if cluster_algo
-#     print(file)
-#     dataset = pd.read_csv(file.file).to_dict()
-#     print(dataset)
-#     return dataset
-
-
 @app.post("/upload-picture", response_model=schemas.Picture)
 def upload_picture(file:str, db: Session = Depends(get_db)):
     picture = crud.get_picture_by_file_name(db, file)
     if picture:
         raise HTTPException(status_code=400, detail="file already exists")
-    picture   = {'title': "test", 
-                'file_path': "dataset/test.png"}
-    return crud.create_picture(db =db, item=picture)
-    
-#@app.post("/get-dataset", response_class=FileResponse)
-#def get_data(name: str):
-#    return FileResponse(imagepath)
+    picture = {'title': "test", 
+               'file_path': "dataset/test.png"}
+    return crud.create_picture(db=db, item=picture)
 
 @app.post("/embedding")
 def get_embedding(file: bytes = File(...)):
@@ -81,8 +66,7 @@ def get_embedding(file: bytes = File(...)):
     @return:
     """
     image_embedding = get_embedding(file, dlmodel)
-    #add possible annotations?
-    
+    # Add possible annotations?
     return image_embedding
 
 @app.post("/get-dataset")

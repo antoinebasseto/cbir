@@ -11,7 +11,6 @@ engine = create_engine(
 if not database_exists(engine.url):
     create_database(engine.url)
 
-#instances of databsed session
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

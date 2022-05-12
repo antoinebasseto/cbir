@@ -8,10 +8,8 @@ from pydantic_models import schemas
 def get_patient(db: Session, user_id: int):
     return db.query(models.Patient).filter(models.Patient.patient_id == user_id).first()
 
-
 def get_patients(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Patient).offset(skip).limit(limit).all()
-
 
 def create_patient(db: Session, patient: schemas.PatientCreate):
     db_user = models.Patient(patient_id=patient.patient_id, age = patient.age, gender = patient.gender)
@@ -60,8 +58,6 @@ def get_picture(db: Session, picture_id: int):
 
 def get_picture_by_file_name(db: Session, file_name: str):
     return db.query(models.Picture).filter(models.Picture.title == file_name).first()
-
-
 
 def get_pictures(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Picture).offset(skip).limit(limit).all()
