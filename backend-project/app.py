@@ -132,6 +132,34 @@ async def create_file(file: bytes = File(...)):
 async def create_upload_file(file: UploadFile):
     return {"filename": file.filename}
 
+# Upload an image, calculate score and return similar files
+#To be finalized once dataset/database is decided
+
+#@app.post("/uploadfile2/")
+#async def create_upload_file2(file: UploadFile, picture_schema, threshold):
+    #get dimensions of image in VAE space
+    #assuming get_embedding returns tuple/list of dimensions
+#    pic_embedding = get_embedding(file, dlmodel)
+    #query DB for all images (filtered)
+#    pictures = crud.filter_pictures(picture_schema)
+
+    #array with dists
+#    dists = np.array(len(pictures))
+
+    #calculate distance scores for each    
+#    for i, pic in enumerate(pictures):
+#        cur_embedding = [pic.Dim1, pic.Dim2, pic.Dim3, pic.Dim4, pic.Dim5]
+#        dists[i] =np.linalg.norm(pic_embedding - cur_embedding)
+    #threshold distance array, take corresponding pictures
+#    thresh_pics = pictures[dists<threshold]
+#    smal_dists =dists[dists<threshold]
+    #return smallest distance
+#    thresh_pics[np.argsort(small_dists)[-10:]]
+    #todo based on final DB layout
+#    dummy_return = [["test1.png", 1, 0, "Cardiomegaly", 0.94],
+#     ["test2.png", 1, 1, "Cardiomegaly|Emphysema", 0.85],
+#     ["test3.png", 2, 0, "No Finding", 0.83]]
+#   return JSONResponse(content=dummy_return)
 
 
 @app.get("/", response_class=HTMLResponse)
