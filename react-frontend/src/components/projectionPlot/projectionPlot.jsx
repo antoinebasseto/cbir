@@ -60,9 +60,6 @@ export default function ProjectionPlot(props) {
             .style('position','absolute')
         
         const mouseover = function(event, d) {
-            console.log(event)
-            console.log(d)
-
             tooltip
                 .style('visibility','visible')
                 .text("TOOLTIP")
@@ -87,7 +84,7 @@ export default function ProjectionPlot(props) {
             .append('circle')
                 .attr('cx', d => xScale(d.x))
                 .attr('cy', d => yScale(d.y))
-                .attr('r', 5)
+                .attr('r', 10)
                 .style('fill', '#69b3a2')
             .on("mouseover", mouseover)
             .on("mousemove", mousemove)
@@ -95,10 +92,13 @@ export default function ProjectionPlot(props) {
     }, [props.data, svgRef.current])
 
     return (
-        <div id='projectionPlotContainer' className='projectionPlotContainer'>
-            <svg className='projectionPlotSVG'
+        // <div id="projectionPlotContainer" className="projectionPlotContainer">
+            <svg 
+                className="projectionPlotSVG" 
+                width={460} 
+                height={400}
                 ref={svgRef}
             />
-        </div>
+        // </div>
     )
 }
