@@ -172,8 +172,17 @@ if __name__ == '__main__':
     target_image = transform(target_image)
     #cut out middle of the image
     target_image_subsection = torch.zeros_like(target_image)
-    target_image_subsection[ :, int(input_dim/4):int(input_dim*3/4), int(input_dim/4):int(input_dim*3/4)] = \
-        target_image[ :, int(input_dim/4):int(input_dim*3/4), int(input_dim/4):int(input_dim*3/4)]
+
+    subsection_upper_left = (0, 0)
+    subsection_lower_right = (0.5, 0.5)
+
+    subsection_upper_left = (int(subsection_upper_left[0] * input_dim), int(subsection_upper_left[1] * input_dim))
+    subsection_lower_right = (int(subsection_lower_right[0] * input_dim), int(subsection_lower_right[1] * input_dim))
+
+    target_image_subsection[:, subsection_upper_left[1]:subsection_lower_right[1], subsection_upper_left[0]:subsection_lower_right[0]] = \
+        target_image[:, subsection_upper_left[1]:subsection_lower_right[1], subsection_upper_left[0]:subsection_lower_right[0]]
+    # target_image_subsection[ :, int(input_dim/4):int(input_dim*3/4), int(input_dim/4):int(input_dim*3/4)] = \
+    #     target_image[ :, int(input_dim/4):int(input_dim*3/4), int(input_dim/4):int(input_dim*3/4)]
     target_image_subsection = target_image_subsection.unsqueeze(0)
     target_image = target_image.unsqueeze(0)
     # LRP
