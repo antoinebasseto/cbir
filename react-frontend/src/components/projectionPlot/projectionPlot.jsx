@@ -92,13 +92,13 @@ export default function ProjectionPlot(props) {
     }, [props.data, svgRef.current])
 
     return (
-        // <div id="projectionPlotContainer" className="projectionPlotContainer">
+        <div id="projectionPlotContainer" className="projectionPlotContainer">
             <svg 
                 className="projectionPlotSVG" 
                 width={460} 
                 height={400}
                 ref={svgRef}
             />
-        // </div>
+        </div>
     )
 }
