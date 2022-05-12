@@ -14,7 +14,7 @@ params = {
         'gamma': 1.0,
         'input_channels': 3,
         'input_dim': 128,
-        'latent_dim': 32,
+        'latent_dim': 12,
         'loss_type': 'H',
         'trainset_size':5000
     },

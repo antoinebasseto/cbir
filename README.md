@@ -111,6 +111,9 @@ jupyter notebook
 **Week 7**:
 This week, we implemented the first (real) version of the frontend which includes a sidebar, a button to upload an image and a panel to show a list of similar images, which we will update and improve during the following weeks. On the backend, we created a notebook to populate our database. Finally, we transformed our first linear version of the VAE into a convolutional one and kept on searching papers talking about the architecture (to know for example how big our latent space should be).
 
+**Week 10**:
+In the previous weeks, a lot of work went into model training, trying different losses, architectures and overall strategies. After discussions with the professor and Lukas Klein, a PhD candidate working on similar subjects, we decided that the current dataset was not appropriate for our task, as no AE could be trained to have an interesting enough latent space. Our decision is therefore to pivot onto a new dataset, the [HAM10000](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000). Previous results by Lukas show that this is a promising lead for our project, notably because of [this paper](https://openreview.net/pdf?id=3uQ2Z0MhnoE). We are therefore adapting our dashboard to this, but expect to keep a CBIR tool, with latent space exploration thanks to rollouts and a projection of the latent space as the main features. Depending on our progress, we hope to implement interpretability features seen in the previously mentionned paper.
+
 ## Milestones
 
 - [x] Week 6
@@ -135,13 +138,17 @@ This week, we implemented the first (real) version of the frontend which include
   - [x] Implement filters to choose similar images in the frontend (still testing) [#18](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/18)
   - [x] Write code to link database, backend and frontend
 
- 
-
-
-
-
+- [x] Week 10
+  - [x] Paper reading and brainstorming (see Week 10 summary) [#24](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/24)
+  - [x] Front-end for latent space projection [#20](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/20)
+  - [x] Explore other possible architectures to improve model results [#21](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/21)
+  - [x] Almost finish implementing similarity feature [#22](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/22)
+  - [x] Added pytorch lightning [#25](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/25)
+  - [x] Computed rollouts [#25](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/25)
+  - [x] Layerwise relevance computation [#25](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/25)
 ## Versioning
 
 - Week 6: [Week 6 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week6)
 - Week 7: [Week 7 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week7)
 - Week 8: [Week 8 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week8)
+- Week 10: [Week 10 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week10)

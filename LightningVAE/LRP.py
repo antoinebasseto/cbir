@@ -165,7 +165,7 @@ if __name__ == '__main__':
     image = image.unsqueeze(0)
     pretrained_model = get_model(params[config['model']], config['model'], f'{log_dir}/pictures')
 
-    pretrained_model.load_from_checkpoint(model_path)
+    pretrained_model = pretrained_model.load_from_checkpoint(model_path)
 
     mu, logvar = pretrained_model.encoder(image)
     target_image = Image.open(target_path)
