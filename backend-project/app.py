@@ -9,6 +9,7 @@ import codecs
 from io import StringIO
 from typing import Callable
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 import base64
 #db dependencies
 from sqlalchemy.orm import Session
@@ -30,7 +31,7 @@ app = FastAPI(
 )
 
 DATA_PATH = "data"
-METADATA_PATH = "data/HAM10000_metadata.csv"
+METADATA_PATH = "data/HAM10000_metadata_with_dummy_latent.csv"
 
 # Dependency
 def get_db():
@@ -51,8 +52,37 @@ app.add_middleware(
 @app.get("/projection")
 def get_projection_data():
     metadata = pd.read_csv(METADATA_PATH)
-    age = metadata["age"]
-    return [{"x":2, "y":3, "age":age[0]}, {"x":2.3, "y":3.8, "age":age[134]}, {"x":3, "y":4, "age":age[2345]}]
+    
+    coordinates = metadata[["latent_coordinate" + str(i) for i in range(12)]]
+    pca_coordinates = PCA(n_components=2).fit_transform(coordinates)
+
+    projection_data = [{
+                "x": pca[0],
+                "y": pca[1],
+            } for pca in pca_coordinates]
+
+    # projection_data = [{
+    #             "x": pca[0],
+    #             "y": pca[1],
+    #             "dx": d["dx"],
+    #             "dx_type": d["dx_type"],
+    #             "age": d["age"],
+    #             "sex": d["sex"],
+    #             "localization": d["localization"]
+    #         } for pca, d in zip(pca_coordinates, metadata[["dx", "dx_type", "age", "sex", "localization"]])]
+    # for pca, d in zip(pca_coordinates, metadata.values):
+    #     projection_data.append(
+    #         {
+    #             "x": pca[0],
+    #             "y": pca[1],
+    #             "dx": d["dx"],
+    #             "dx_type": d["dx_type"],
+    #             "age": d["age"],
+    #             "sex": d["sex"],
+    #             "localization": d["localization"]
+    #         }
+    #     )
+    return projection_data
 
 @app.post("/upload-picture", response_model=schemas.Picture)
 def upload_picture(file:str, db: Session = Depends(get_db)):
