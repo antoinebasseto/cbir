@@ -29,7 +29,8 @@ app = FastAPI(
     version="0.1.0",
 )
 
-PICTURE_FOLDER = "/home/jj/Spring2022/Medical1-xai-iml22/backend-project/image_folder"
+DATA_PATH = "data"
+METADATA_PATH = "data/HAM10000_metadata.csv"
 
 # Dependency
 def get_db():
@@ -39,8 +40,6 @@ def get_db():
     finally:
         db.close()
 
-imagepath = "./test.png"
-
 # Allow CORS
 app.add_middleware(
     CORSMiddleware,
@@ -48,6 +47,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/projection")
+def get_projection_data():
+    metadata = pd.read_csv(METADATA_PATH)
+    age = metadata["age"]
+    return [{"x":2, "y":3, "age":age[0]}, {"x":2.3, "y":3.8, "age":age[134]}, {"x":3, "y":4, "age":age[2345]}]
 
 @app.post("/upload-picture", response_model=schemas.Picture)
 def upload_picture(file:str, db: Session = Depends(get_db)):

@@ -22,35 +22,38 @@ function App() {
   // const similarImages = [[require("./test1.png"), 1, 0, "Cardiomegaly", 0.94],
   //                       [require("./test2.png"), 1, 1, "Cardiomegaly|Emphysema", 0.85],
   //                       [require("./test3.png"), 2, 0, "No Finding", 0.83]]
-  const [similarImages, update_images] = useState([]);
+  const [similarImages, setSimilarImages] = useState([]);
+  const [projectionData, setProjectionData] = useState([]);
 
-  useEffect(() => 
-    {
-      queryBackend('query?id=0').then((exampleData) => 
-        {
-          update_images(exampleData)
-        }
-      )
-    }
-  );
+  useEffect(() => {
+      queryBackend('query?id=0', 'POST').then((data) => {
+        setSimilarImages(data)
+      })
+    }, []);
 
-  function handleUpload(){
+  useEffect(() => {
+      queryBackend('projection', 'GET').then((data) => {
+        setProjectionData(data)
+      })
+    }, []);
+
+  function handleUpload() {
     setIndexActiv(0)
   }
 
-  function handleShow(){
+  function handleShow() {
     setIndexActiv(1)
   }
 
-  function handleShowProjection(){
+  function handleShowProjection() {
     setIndexActiv(2)
   }
 
-  function handleShowExplore(){
+  function handleShowExplore() {
     setIndexActiv(3)
   }
 
-  function handleFilter(){
+  function handleFilter() {
     setFilterActiv(!filterActiv)
   }
   function handleImageUploaded(file) {
@@ -59,7 +62,7 @@ function App() {
       {/*TODO: Send image to backend and get similar images*/}
   };
 
-  function applyOnClickHandle(){
+  function applyOnClickHandle() {
     console.log("Apply filters")
     {/* TODO: call backend to retrieve images with given filters */}
   }
@@ -77,7 +80,7 @@ function App() {
           {indexActiv===1 && file && 
             <XrayDisplay uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
           }
-          {indexActiv===2 && <ProjectionPlot data={[{x:2, y:3}, {x:2.3, y:3.8}, {x:3, y:4}]}/>}
+          {indexActiv===2 && <ProjectionPlot data={projectionData}/>}
           {indexActiv===3 && <div>Here will be a tool to explore the different dimensions of the uploaded image</div>}
         </div>
       </div>

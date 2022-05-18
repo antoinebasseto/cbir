@@ -62,7 +62,7 @@ export default function ProjectionPlot(props) {
         const mouseover = function(event, d) {
             tooltip
                 .style('visibility','visible')
-                .text("TOOLTIP")
+                .text(`age: ${d.age}`)
         }
         
         const mousemove = function(event, d) {
