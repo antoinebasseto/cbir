@@ -72,12 +72,6 @@ def upload_picture(file:str, db: Session = Depends(get_db)):
 #def get_data(name: str):
 #    return FileResponse(imagepath)
 
-
-# Method used to send an image to show it in the frontend. The method should be called from within a <img src=.../> in the front-end
-@app.get("/get_image")
-def get_image_url(imagePath):
-    return FileResponse(imagePath)
-
 # Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
 @app.get("/get_latent_space_images_url")
 def get_latent_space_images_url():
@@ -133,15 +127,12 @@ def get_image(name: str):
     path = PICTURE_FOLDER+'/'+name
     return FileResponse(path)
 
-@app.post("/query")
-def get_array(id: str, db: Session = Depends(get_db)):
-
-    # dummy_return = [[ 0, 1, 0, "Cardiomegaly", 0.94],
-    #                     [ 1, 1, 1, "Cardiomegaly|Emphysema", 0.85],
-    #                     [2, 2, 0, "No Finding", 0.83]]
-    dummy_return = [["ISIC_0024334.jpg", 1, 0, "Cardiomegaly", 0.94],
-     ["ISIC_0024335.jpg", 1, 1, "Cardiomegaly|Emphysema", 0.85],
-     ["ISIC_0024336.jpg", 2, 0, "No Finding", 0.83]]
+@app.post("/get_similar_images")
+def get_similar_images():
+    #TODO get real similar images
+    dummy_return = [["ISIC_0024334.jpg", 1, 0, "HAM_0001472", 0.94],
+                    ["ISIC_0024335.jpg", 1, 1, "HAM_0004431", 0.85],
+                    ["ISIC_0024336.jpg", 2, 0, "HAM_0006732", 0.83]]
     return JSONResponse(content=dummy_return)
 
 @app.post("/files/")
