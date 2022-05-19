@@ -3,6 +3,7 @@ export interface queryBackendProps {
 }
 
 export const BASE_URL = 'http://127.0.0.1:8000';
+const PATH_GET_IMAGES = "/image/?name=";
 
 export const queryBackend = async (route: string, method: string = "POST"): Promise<any> => {
     const requestURL = `${BASE_URL}/${route}`;
@@ -14,25 +15,10 @@ export const queryBackend = async (route: string, method: string = "POST"): Prom
 
     return data;
 }
-//added to implement images
-export const queryBackend2 = async (route: string): Promise<any> => {
-    const requestURL = `${BASE_URL}/${route}`;
-    const data = await fetch(requestURL,
-        {
-            method: 'POST'
-        }
-    ).then(response => response.json());
 
-    return data;
-}
 
-export const queryImages = (route: string) =>{
-    const requestURL = `${BASE_URL}/image/?name=${route}`;
-    // const dataset = await fetch(requestURL,
-    //     {
-    //         method: 'GET'
-    //     }
-    // );
+export const queryImage = (imageName: string) =>{
+    const requestURL = `${BASE_URL}${PATH_GET_IMAGES}${imageName}`;
     return requestURL;
 }
 

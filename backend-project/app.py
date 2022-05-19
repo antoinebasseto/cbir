@@ -28,7 +28,7 @@ app = FastAPI(
     version="0.1.0",
 )
 
-PICTURE_FOLDER = "/home/jj/Spring2022/Medical1-xai-iml22/backend-project/image_folder"
+PICTURE_FOLDER = "./data/images"
 
 #Dependency
 def get_db():
@@ -83,16 +83,16 @@ def get_image_url(imagePath):
 def get_latent_space_images_url():
     # TODO: return the path to the real rollout images to get rollout images
     # 10x10 images
-    dummy_return = [["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
-                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
-                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
-                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
-                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
-                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
-                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
-                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
-                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
-                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"]]
+    dummy_return = [["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
+                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
+                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
+                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
+                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
+                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
+                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
+                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
+                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
+                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],]
     return dummy_return
 
 
@@ -129,12 +129,9 @@ def image_list(db: Session = Depends(get_db)):
     return {"image_ids": crud.picture_ids(db)}
 
 @app.get("/image")
-def get_image(name: str, db: Session = Depends(get_db)):
-    # image = crud.get_picture(db, id)
-    # file_name = image.picture_id
+def get_image(name: str):
     path = PICTURE_FOLDER+'/'+name
-    #path = "/home/jj/Spring2022/Medical1-xai-iml22/backend-project/test.png"
-    return FileResponse(path = path)
+    return FileResponse(path)
 
 @app.post("/query")
 def get_array(id: str, db: Session = Depends(get_db)):
@@ -142,9 +139,9 @@ def get_array(id: str, db: Session = Depends(get_db)):
     # dummy_return = [[ 0, 1, 0, "Cardiomegaly", 0.94],
     #                     [ 1, 1, 1, "Cardiomegaly|Emphysema", 0.85],
     #                     [2, 2, 0, "No Finding", 0.83]]
-    dummy_return = [["test1.png", 1, 0, "Cardiomegaly", 0.94],
-     ["test2.png", 1, 1, "Cardiomegaly|Emphysema", 0.85],
-     ["test3.png", 2, 0, "No Finding", 0.83]]
+    dummy_return = [["ISIC_0024334.jpg", 1, 0, "Cardiomegaly", 0.94],
+     ["ISIC_0024335.jpg", 1, 1, "Cardiomegaly|Emphysema", 0.85],
+     ["ISIC_0024336.jpg", 2, 0, "No Finding", 0.83]]
     return JSONResponse(content=dummy_return)
 
 @app.post("/files/")
