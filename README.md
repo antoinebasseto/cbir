@@ -1,4 +1,4 @@
-# Chest XRay CBIR using VAE's latent space
+# Skin lesions CBIR using VAE's latent space
 
 [[_TOC_]]
 
@@ -106,12 +106,7 @@ npm start
 
 **NOTES:** 
 * You only need to create the environment, install all the packages using pip and generate the node_modules folder the first time you run the project. Otherwise you can just skip these parts.
-* To observe our progress on the variational auto-encoder, launch the jupyter notebook present in the `VAE` folder, using the same conda environment. For that, you can move to the VAE folder and launch a jupyter notebook.
-```
-cd VAE
-conda activate myenv
-jupyter notebook
-```
+* Our latest change in the VAE have been made in the LightningVAE folder, hence the VAE folder might not be fully up-to-date.
 
 ## Weekly summary
 
