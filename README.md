@@ -19,6 +19,7 @@ The dataset used is the  HAM10000 dataset, a large collection of multi-source de
 - HAM10000_images_part_1.zip
 - HAM10000_images_part_2.zip
 - HAM10000_metadata.tab
+
 Then, you should create a folder called data inside the backend-project and inside it another folder called images. The two zip files should be unziped in the images folder and the HAM10000\_metadata.tab should be first renamed as HAM10000\_metadata.csv (if not already in csv format) and placed in the data folder. You can see the [Folder Structure](Folder Structure) below for help.
 
 
@@ -37,7 +38,7 @@ Our dashboard aims to allow users to:
 ├── backend-project
 │   ├──data # data to be downloaded and placed here
 │   │	├── images # The two images.zip files should be unzipped here
-│   │	└── HAM10000\_metadata.csv
+│   │	└── HAM10000_metadata.csv
 │   ├── app.py
 │   └── ...
 │
