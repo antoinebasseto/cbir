@@ -82,7 +82,17 @@ def get_image_url(imagePath):
 @app.get("/get_latent_space_images_url")
 def get_latent_space_images_url():
     # TODO: return the path to the real rollout images to get rollout images
-    dummy_return = ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"]
+    # 10x10 images
+    dummy_return = [["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"]]
     return dummy_return
 
 

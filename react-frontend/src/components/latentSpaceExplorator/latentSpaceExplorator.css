@@ -1,0 +1,44 @@
+.latentSpaceExploratorContainer{
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    height:100vh;
+    overflow-x: scroll;
+    overflow-y: auto;
+}
+
+.rollout_full_row_container{
+    flex:1;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    margin-top: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.rollout_row_images_container{
+    flex:10;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.rollout_image{
+    width:8%;
+    margin-right: 3px;
+}
+
+.dim_text{
+    flex:1;
+    background-color: white;
+    font-size: 20;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+
