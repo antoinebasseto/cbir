@@ -1,4 +1,4 @@
-import React, { useState, useEffect }  from 'react';
+import { useState, useEffect }  from 'react';
 import './App.css';
 import { queryBackend } from './backend/BackendQueryEngine';
 import Sidebar from "./components/sidebar/sidebar"
