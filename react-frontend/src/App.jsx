@@ -16,7 +16,7 @@ function App() {
   /* Filters */
   const [similarityThreshold, setSimilarityThreshold] = useState(90)
   const [maxNumberImages, setMaxNumberImages] = useState(3)
-  const [followUpInterval, setFollowUpInterval] = useState([1, 10])
+  const [ageInterval, setAgeInterval] = useState([0, 85])
   const [diseasesFilter, setDiseasesFilter] = useState(['All'])
 
   {/*To be updated with similar images from backend*/}
@@ -76,9 +76,9 @@ function App() {
       <div className="container">
         <Sidebar indexActiv={indexActiv} handleUpload={handleUpload} handleShow={handleShow} handleFilter={handleFilter} filterActiv={filterActiv} 
                 handleShowProjection={handleShowProjection} handleShowExplore={handleShowExplore}
-                similarityThreshold={similarityThreshold} maxNumberImages={maxNumberImages} followUpInterval={followUpInterval} diseasesFilter={diseasesFilter}
+                similarityThreshold={similarityThreshold} maxNumberImages={maxNumberImages} ageInterval={ageInterval} diseasesFilter={diseasesFilter}
                 setDiseasesFilter = {setDiseasesFilter} setSimilarityThreshold={setSimilarityThreshold} setMaxNumberImages={setMaxNumberImages} 
-                setFollowUpInterval={setFollowUpInterval} applyOnClickHandle={applyOnClickHandle}/>
+                setAgeInterval={setAgeInterval} applyOnClickHandle={applyOnClickHandle}/>
         <div className="others">
           {indexActiv===0 && <DragDropUploader onImageUploadedChange={handleImageUploaded}/>}
           {indexActiv===1 && file && 

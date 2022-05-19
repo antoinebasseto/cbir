@@ -30,6 +30,16 @@ app = FastAPI(
 
 PICTURE_FOLDER = "./data/images"
 
+ABBREVIATION_TO_DISEASE = {
+    "akiec" : "Actinic keratoses and intraepithelial carcinoma",
+    "bcc" : "Basal cell carcinoma",
+    "bkl" : "Benign keratosis-like lesions",
+    "df" : "Dermatofibroma",
+    "mel" : "Melanoma",
+    "nv" : "Melanocytic nevi",
+    "vasc" : "vascular lesions"
+}
+
 #Dependency
 def get_db():
     db = SessionLocal()
@@ -130,9 +140,9 @@ def get_image(name: str):
 @app.post("/get_similar_images")
 def get_similar_images():
     #TODO get real similar images
-    dummy_return = [["ISIC_0024334.jpg", 1, 0, "HAM_0001472", 0.94],
-                    ["ISIC_0024335.jpg", 1, 1, "HAM_0004431", 0.85],
-                    ["ISIC_0024336.jpg", 2, 0, "HAM_0006732", 0.83]]
+    dummy_return = [["ISIC_0024334.jpg", 1, 0, "Melanocytic nevi", 0.94],
+                    ["ISIC_0024335.jpg", 1, 1, "Melanocytic nevi", 0.85],
+                    ["ISIC_0024336.jpg", 2, 0, "Benign keratosis-like lesions", 0.83]]
     return JSONResponse(content=dummy_return)
 
 @app.post("/files/")
