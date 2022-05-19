@@ -17,7 +17,6 @@ from pydantic_models import schemas
 from database import SessionLocal, engine
 from DL_model.model import get_model, get_embedding
 
-
 models.Base.metadata.create_all(bind=engine)
 
 dlmodel = get_model()
@@ -72,6 +71,31 @@ def upload_picture(file:str, db: Session = Depends(get_db)):
 #@app.post("/get-dataset", response_class=FileResponse)
 #def get_data(name: str):
 #    return FileResponse(imagepath)
+
+
+# Method used to send an image to show it in the frontend. The method should be called from within a <img src=.../> in the front-end
+@app.get("/get_image")
+def get_image_url(imagePath):
+    return FileResponse(imagePath)
+
+# Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
+@app.get("/get_latent_space_images_url")
+def get_latent_space_images_url():
+    # TODO: return the path to the real rollout images to get rollout images
+    # 10x10 images
+    dummy_return = [["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"],
+                    ["./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png", "./image_folder/test2.png", "./image_folder/test3.png", "./image_folder/test1.png"]]
+    return dummy_return
+
+
 
 @app.post("/embedding")
 def get_embedding(file: bytes = File(...)):
