@@ -4,11 +4,11 @@ export interface queryBackendProps {
 
 export const BASE_URL = 'http://127.0.0.1:8000';
 
-export const queryBackend = async (route: string): Promise<any> => {
+export const queryBackend = async (route: string, method: string = "POST"): Promise<any> => {
     const requestURL = `${BASE_URL}/${route}`;
     const data = await fetch(requestURL,
         {
-            method: 'POST'
+            method: method
         }
     ).then(response => response.json());
 

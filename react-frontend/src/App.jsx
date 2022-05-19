@@ -5,6 +5,7 @@ import Sidebar from "./components/sidebar/sidebar"
 import DragDropUploader from './components/dragDropUploader/dragDropUploader';
 import XrayDisplay from './components/xrayDisplay/xrayDisplay'
 import ProjectionPlot from './components/projectionPlot/projectionPlot';
+import LatentSpaceExplorator from './components/latentSpaceExplorator/latentSpaceExplorator';
 
 function App() {
 
@@ -23,7 +24,9 @@ function App() {
   //                       [require("./test2.png"), 1, 1, "Cardiomegaly|Emphysema", 0.85],
   //                       [require("./test3.png"), 2, 0, "No Finding", 0.83]]
   const [similarImages, update_images] = useState([]);
+  const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
 
+  
   useEffect(() => 
     {
       queryBackend('query?id=0').then((exampleData) => 
@@ -55,8 +58,16 @@ function App() {
   }
   function handleImageUploaded(file) {
       setFile(file);
-      setIndexActiv(1); {/*Back to show image.  Not necessary*/}
-      {/*TODO: Send image to backend and get similar images*/}
+      setIndexActiv(1); /*Back to show image.*/
+      
+      /* TODO: Send image to backend and compute latent space and images for rollout in latent space */
+      
+      /* We get the rollout images for latent space exploration*/
+      queryBackend('get_latent_space_images_url', "GET").then((latent_space_images_url) => 
+      {
+        setLatentSpaceExplorationImages(latent_space_images_url)
+      }
+    )
   };
 
   function applyOnClickHandle(){
@@ -78,7 +89,7 @@ function App() {
             <XrayDisplay uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
           }
           {indexActiv===2 && <ProjectionPlot data={[{x:2, y:3}, {x:2.3, y:3.8}, {x:3, y:4}]}/>}
-          {indexActiv===3 && <div>Here will be a tool to explore the different dimensions of the uploaded image</div>}
+          {indexActiv===3 && <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages}/>}
         </div>
       </div>
     </div>
