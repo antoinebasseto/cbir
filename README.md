@@ -9,19 +9,25 @@
 4. Antoine Basseto
 
 ## Project Description 
-Our goal is to develop a tool allowing radiologists to leverage advancements in deep learning as new tools for them to work with. More precisely, using a variational auto-encoder's latent space to compute similarities between images, we hope to make possible the retrieval of medically similar XRays to the one the radiologist is studying, in order to take into consideration previous similar cases and their outcomes. This is commonly called content-based image retrieval (CBIR).
+Our goal is to develop a tool allowing doctors to leverage advancements in deep learning as new tools for them to work with. More precisely, using a variational auto-encoder's latent space to compute similarities between images, we hope to make possible the retrieval of medically similar XRays to the one the doctor is studying, in order to take into consideration previous similar cases and their outcomes. This is commonly called content-based image retrieval (CBIR).
 
 ### Users
-Our target users are therefore domain experts, i.e. radiologists.
+Our target users are therefore domain experts, i.e. doctors.
 
 ### Datasets
-The dataset used is the [NIH chest Xrays](https://nihcc.app.box.com/v/ChestXray-NIHCC). Because the dataset is quite big, it is not placed in this repository and you should download it on [their website](https://nihcc.app.box.com/v/ChestXray-NIHCC) and then place it in a folder named "/data".
+The dataset used is the  HAM10000 dataset, a large collection of multi-source dermatoscopic images of common pigmented skin lesions. Because the dataset is quite big, it is not placed in this repository and you should download it on [their website](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FDBW86T). You only need to download the 3 following files:
+- HAM10000_images_part_1.zip
+- HAM10000_images_part_2.zip
+- HAM10000_metadata.tab
+Then, you should create a folder called data inside the backend-project and inside it another folder called images. The two zip files should be unziped in the images folder and the HAM10000\_metadata.tab should be first renamed as HAM10000\_metadata.csv (if not already in csv format) and placed in the data folder. You can see the [Folder Structure](Folder Structure) below for help.
+
 
 ### Tasks
 Our dashboard aims to allow users to:
-- Upload a chest XRay they want to study.
+- Upload an image of a skin lesion they want to study.
 - Get back a list of medically relevant similar images, the diagnoses made for them and the computed similarity, as well as to explore and filter that list.
-- To view a patient's history and consider their evolution when looking at similar cases, as much as the data available allows us to do.
+- See a projection of this data point and the rest of the dataset into 2D using UMAP.
+- Analyze the latent space by seeing a rollout of images made by varying one dimension of at the time.
 
 - - -
 ## Folder Structure
@@ -29,45 +35,47 @@ Our dashboard aims to allow users to:
 ``` bash
 ├── README.md  
 ├── backend-project
+│   ├──data # data to be downloaded and placed here
+│   │	├── images # The two images.zip files should be unzipped here
+│   │	└── HAM10000\_metadata.csv
 │   ├── app.py
-│   ├── crud.py
-│   ├── database.py
-│   ├── models.py
-│   ├── data    # data to be downloaded and placed here
-│   ├── DL_model
-│   │   └── model.py    # class to define deep learning model
-│   └── pydantic_models
-│       └── schemas.py
+│   └── ...
+│
 ├── react-frontend
 │   ├── README.md
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── src
-│   │   ├── App.css
-│   │   ├── App.test.tsx
-│   │   ├── App.tsx
-│   │   ├── backend
-│   │   │   └── BackendQueryEngine.tsx
-│   │   ├── components
-│   │   │   ├── XRayCBIRComponent.tsx
-│   │   │   ├── XRayListComponent.tsx
-│   │   │   └── XRayListElementComponent.tsx
-│   │   ├── index.css
-│   │   ├── index.tsx
-│   │   ├── react-app-env.d.ts
-│   │   ├── reportWebVitals.ts
-│   │   ├── setupTests.ts
-│   │   └── types
-│   └── tsconfig.json
+│   │   └── ...
+│   │
+│   ├── public
+│   │   └── ...
+│   │
+│   │
+│   ├── tsconfig.json
+│   └── node_modules # needs to be generated the first time the project is ran, see below
+│	└── ...
+│
 ├── VAE
 │   ├── main.py
 │   ├── train.py
+│   ├── run_training.py
 │   ├── VAE.ipynb
+│   ├── Beta-VAE.ipynb
 │   ├── models
-│   │   └── autoencoder.py
+│   │   └── ...
 │   └── dataset
-│       ├── dataset.py
-│       └── utils.py
+│       └── ...
+│
+├── LightningVAE
+│   ├── config.py
+│   ├── datamodule_factory.py
+│   ├── LRP.py
+│   ├── rollout.py
+│   ├── train.py
+│   └── src
+│       └── ...
+│
 └── requirements.txt
 ```
 
