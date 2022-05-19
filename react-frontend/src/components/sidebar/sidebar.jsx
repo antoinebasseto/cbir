@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import "./sidebar.css"
 import {FiUpload} from "react-icons/fi"
 import {IoMdSettings} from "react-icons/io"

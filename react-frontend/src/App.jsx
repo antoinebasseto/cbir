@@ -1,4 +1,4 @@
-import React, { useState, useEffect }  from 'react';
+import { useState, useEffect }  from 'react';
 import './App.css';
 import { queryBackend } from './backend/BackendQueryEngine';
 import Sidebar from "./components/sidebar/sidebar"
@@ -27,16 +27,6 @@ function App() {
   const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
 
   
-  useEffect(() => 
-    {
-      queryBackend('query?id=0').then((exampleData) => 
-        {
-          update_images(exampleData)
-        }
-      )
-    }
-  );
-
   function handleUpload(){
     setIndexActiv(0)
   }
@@ -62,6 +52,12 @@ function App() {
       
       /* TODO: Send image to backend and compute latent space and images for rollout in latent space */
       
+      //TODO
+      queryBackend('get_similar_images').then((exampleData) => 
+      {
+        update_images(exampleData)
+      }
+      )
       /* We get the rollout images for latent space exploration*/
       queryBackend('get_latent_space_images_url', "GET").then((latent_space_images_url) => 
       {
