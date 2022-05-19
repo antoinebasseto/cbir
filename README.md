@@ -36,8 +36,9 @@ Our dashboard aims to allow users to:
 ``` bash
 ├── README.md  
 ├── backend-project
-│   ├──data # data to be downloaded and placed here
-│   │	├── images # The two images.zip files should be unzipped here
+│   ├──data
+│   │	├── images
+│   │	│    └── # The two zip files containing the images should be unzipped here
 │   │	└── HAM10000_metadata.csv
 │   ├── app.py
 │   └── ...
@@ -48,11 +49,8 @@ Our dashboard aims to allow users to:
 │   ├── package.json
 │   ├── src
 │   │   └── ...
-│   │
 │   ├── public
 │   │   └── ...
-│   │
-│   │
 │   ├── tsconfig.json
 │   └── node_modules # needs to be generated the first time the project is ran, see below
 │	└── ...
