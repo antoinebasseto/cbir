@@ -7,9 +7,9 @@ export default function ProjectionPlot(props) {
 
     useEffect(() => {
         // Setting up container
-        var margin = {top: 10, right: 30, bottom: 30, left: 60},
-            width = 460 - margin.left - margin.right,
-            height = 400 - margin.top - margin.bottom;
+        var margin = {top: 60, right: 60, bottom: 60, left: 60},
+            width = 800 - margin.left - margin.right,
+            height = 600 - margin.top - margin.bottom;
         const svg = d3.select(svgRef.current)
             .append("svg")
               .attr("width", width + margin.left + margin.right)
@@ -43,14 +43,14 @@ export default function ProjectionPlot(props) {
         svg.append("text")
             .attr("text-anchor", "end")
             .attr("x", width/2 + margin.left)
-            .attr("y", height + margin.top + 20)
+            .attr("y", height + margin.bottom - 20)
             .text("UMAP1");
 
         svg.append("text")
             .attr("text-anchor", "end")
             .attr("transform", "rotate(-90)")
             .attr("y", -margin.left + 20)
-            .attr("x", -margin.top - height/2 + 20)
+            .attr("x", -margin.top - height/2)
             .text("UMAP2")
 
         // Setting up tooltips
@@ -58,11 +58,17 @@ export default function ProjectionPlot(props) {
             .append('div')
             .style('visibility','visible')
             .style('position','absolute')
+            .attr("class", "tooltip")
+            .style("background-color", "white")
+            .style("border", "solid")
+            .style("border-width", "1px")
+            .style("border-radius", "5px")
+            .style("padding", "10px")
         
         const mouseover = function(event, d) {
             tooltip
                 .style('visibility','visible')
-                .text(`age: ${d.age}`)
+                .html(`<b>dx<b/>: ${d.dx}`)
         }
         
         const mousemove = function(event, d) {
@@ -75,6 +81,33 @@ export default function ProjectionPlot(props) {
             tooltip
                 .style('visibility','hidden')
         }
+
+        // Setting up class colours
+        var keys = ["nv", "mel", "bkl", "bcc", "akiec"]
+        var color = d3.scaleOrdinal()
+            .domain(keys)
+            .range(d3.schemeSet2);
+    
+        // Setting up legend
+        svg.selectAll("legendDots")
+            .data(keys)
+            .enter()
+            .append("circle")
+            .attr("cx", 25)
+            .attr("cy", function(d,i) {return i*25})
+            .attr("r", 7)
+            .style("fill", function(d) {return color(d)})
+
+         svg.selectAll("legendLabels")
+            .data(keys)
+            .enter()
+            .append("text")
+              .attr("x", 45)
+              .attr("y", function(d,i) {return i*25})
+              .style("fill", function(d) {return color(d)})
+              .text(function(d){return d})
+              .attr("text-anchor", "left")
+              .style("alignment-baseline", "middle")
         
         // Setting up svg data
         svg.append('g')
@@ -84,8 +117,8 @@ export default function ProjectionPlot(props) {
             .append('circle')
                 .attr('cx', d => xScale(d.x))
                 .attr('cy', d => yScale(d.y))
-                .attr('r', 10)
-                .style('fill', '#69b3a2')
+                .attr('r', 2)
+                .style("fill", function (d) { return color(d.dx) } )
             .on("mouseover", mouseover)
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave)
@@ -95,8 +128,8 @@ export default function ProjectionPlot(props) {
         <div id="projectionPlotContainer" className="projectionPlotContainer">
             <svg 
                 className="projectionPlotSVG" 
-                width={460} 
-                height={400}
+                width={800}
+                height={600}
                 ref={svgRef}
             />
         </div>

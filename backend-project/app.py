@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from numpy import record
 import uvicorn
 import pandas as pd
 import os
@@ -55,34 +56,11 @@ def get_projection_data():
     
     coordinates = metadata[["latent_coordinate" + str(i) for i in range(12)]]
     pca_coordinates = PCA(n_components=2).fit_transform(coordinates)
-
-    projection_data = [{
-                "x": pca[0],
-                "y": pca[1],
-            } for pca in pca_coordinates]
-
-    # projection_data = [{
-    #             "x": pca[0],
-    #             "y": pca[1],
-    #             "dx": d["dx"],
-    #             "dx_type": d["dx_type"],
-    #             "age": d["age"],
-    #             "sex": d["sex"],
-    #             "localization": d["localization"]
-    #         } for pca, d in zip(pca_coordinates, metadata[["dx", "dx_type", "age", "sex", "localization"]])]
-    # for pca, d in zip(pca_coordinates, metadata.values):
-    #     projection_data.append(
-    #         {
-    #             "x": pca[0],
-    #             "y": pca[1],
-    #             "dx": d["dx"],
-    #             "dx_type": d["dx_type"],
-    #             "age": d["age"],
-    #             "sex": d["sex"],
-    #             "localization": d["localization"]
-    #         }
-    #     )
-    return projection_data
+    projection_data = metadata[["dx", "dx_type", "age", "sex", "localization"]].copy()
+    projection_data["x"] = [pca[0] for pca in pca_coordinates]
+    projection_data["y"] = [pca[1] for pca in pca_coordinates]
+    projection_data = projection_data.fillna("NA")
+    return projection_data.to_dict(orient="records")
 
 @app.post("/upload-picture", response_model=schemas.Picture)
 def upload_picture(file:str, db: Session = Depends(get_db)):
