@@ -12,6 +12,7 @@ from typing import Callable
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 import base64
+import numpy as np
 
 app = FastAPI(
     title="Test Python Backend",
@@ -79,13 +80,34 @@ def get_image(name: str):
     path = IMAGES_PATH+'/'+name
     return FileResponse(path)
 
-@app.get("/get_similar_images")
-def get_similar_images():
-    #TODO get real similar images
-    dummy_return = [["ISIC_0024334.jpg", 1, 0, "Melanocytic nevi", 0.94],
-                    ["ISIC_0024335.jpg", 1, 1, "Melanocytic nevi", 0.85],
-                    ["ISIC_0024336.jpg", 2, 0, "Benign keratosis-like lesions", 0.83]]
-    return JSONResponse(content=dummy_return)
+#todo filters and thresholds
+@app.post("/get_similar_images")
+def get_similar_images(file: UploadFile = File(...)):
+    pictures = pd.read_csv(METADATA_PATH)
+    
+    #TODO actually use image
+    #get dimensions of image in VAE space
+    #assuming get_embedding returns tuple/list of dimensions
+#    pic_embedding = get_embedding(file, dlmodel)
+    pic_embedding = np.random.rand(12)
+
+    #array with dists of uploaded image to saved images
+    dists = np.zeros(pictures.shape[0])
+
+    #calculate distance scores for each    
+    for i, pic in pictures.iterrows():
+        cur_embedding = (pic.values[8:21])
+        dists[i] =np.linalg.norm(pic_embedding - cur_embedding)
+
+    pictures["dist"] = dists
+    closest_pictures = (pictures.sort_values(by=['dist'])).iloc[:3]
+    result = closest_pictures[["image_id", "lesion_id","dx_type","dx", "dist"]]
+    return_result = result.values.tolist()
+
+    #dummy_return = [["ISIC_0024334.jpg", 1, 0, "Melanocytic nevi", 0.94],
+     #                   ["ISIC_0024335.jpg", 1, 1, "Melanocytic nevi", 0.85],
+      #                  ["ISIC_0024336.jpg", 2, 0, "Benign keratosis-like lesions", 0.83]]
+    return JSONResponse(content=return_result)
 
 @app.post("/files/")
 async def create_file(file: bytes = File(...)):
@@ -95,3 +117,5 @@ async def create_file(file: bytes = File(...)):
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile):
     return {"filename": file.filename}
+    
+

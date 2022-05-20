@@ -1,6 +1,6 @@
 import { useState, useEffect }  from 'react';
 import './App.css';
-import { queryBackend } from './backend/BackendQueryEngine';
+import { queryBackend , uploadToBackend } from './backend/BackendQueryEngine';
 import Sidebar from "./components/sidebar/sidebar"
 import DragDropUploader from './components/dragDropUploader/dragDropUploader';
 import XrayDisplay from './components/xrayDisplay/xrayDisplay'
@@ -61,7 +61,7 @@ function App() {
     /* TODO: Send image to backend and compute latent space and images for rollout in latent space */
     
     //TODO
-    queryBackend('get_similar_images', 'GET').then((data) => {
+    uploadToBackend('get_similar_images', 'POST', file).then((data) => {
         setSimilarImages(data)
       }
     )

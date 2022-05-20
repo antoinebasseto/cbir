@@ -8,8 +8,8 @@ export default function XrayListElement(props) {
             <img className="similarImage" src={props.imgSource}/>
         </div>
         <div className = "imageInfosContainer">
-            <h5 className="patientIdText"> Patient {props.patientId}</h5>
-            <h5 className="followUpText">Scan number: {props.followUp}</h5>
+            <h5 className="patientIdText"> Lesion {props.patientId}</h5>
+            <h5 className="followUpText">Label: {props.label}</h5>
             <h5 className="similarityText">Similarity: {props.similarity}</h5>
         </div>
     </li>
