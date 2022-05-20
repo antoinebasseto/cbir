@@ -8,8 +8,8 @@ export default function ProjectionPlot(props) {
     useEffect(() => {
         // Setting up container
         var margin = {top: 60, right: 60, bottom: 60, left: 60},
-            width = 800 - margin.left - margin.right,
-            height = 600 - margin.top - margin.bottom;
+            width = 1000 - margin.left - margin.right,
+            height = 700 - margin.top - margin.bottom;
         const svg = d3.select(svgRef.current)
             .append("svg")
               .attr("width", width + margin.left + margin.right)
@@ -56,6 +56,7 @@ export default function ProjectionPlot(props) {
         // Setting up tooltips
         const tooltip = d3.select('#projectionPlotContainer')
             .append('div')
+            .style("opacity", 0.7)
             .style('visibility','visible')
             .style('position','absolute')
             .attr("class", "tooltip")
@@ -67,8 +68,12 @@ export default function ProjectionPlot(props) {
         
         const mouseover = function(event, d) {
             tooltip
+                .style("border-color", color(d.dx))
                 .style('visibility','visible')
-                .html(`<b>dx<b/>: ${d.dx}`)
+                .text(`diagnosis: ${d.dx}
+                localization: ${d.localization}
+                age: ${d.age}
+                sex: ${d.sex}`)
         }
         
         const mousemove = function(event, d) {
@@ -83,12 +88,13 @@ export default function ProjectionPlot(props) {
         }
 
         // Setting up class colours
-        var keys = ["nv", "mel", "bkl", "bcc", "akiec"]
+        var keys = ["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"]
+
         var color = d3.scaleOrdinal()
             .domain(keys)
             .range(d3.schemeSet2);
     
-        // Setting up legend
+        // Setting up the legend
         svg.selectAll("legendDots")
             .data(keys)
             .enter()
@@ -118,18 +124,29 @@ export default function ProjectionPlot(props) {
                 .attr('cx', d => xScale(d.x))
                 .attr('cy', d => yScale(d.y))
                 .attr('r', 2)
-                .style("fill", function (d) { return color(d.dx) } )
+                .style("fill", function(d) {return color(d.dx)} )
             .on("mouseover", mouseover)
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave)
-    }, [props.data, svgRef.current])
+
+        // Setting up uploaded data
+        svg.append('g')
+            .selectAll()
+            .data(props.uploadedData)
+            .enter()
+            .append('circle')
+                .attr('cx', d => xScale(d.x))
+                .attr('cy', d => yScale(d.y))
+                .attr('r', 5)
+                .style("fill", "black")
+    }, [props.data, props.uploadedData])
 
     return (
         <div id="projectionPlotContainer" className="projectionPlotContainer">
             <svg 
                 className="projectionPlotSVG" 
-                width={800}
-                height={600}
+                width={1000}
+                height={700}
                 ref={svgRef}
             />
         </div>

@@ -41,7 +41,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/projection")
+@app.get("/get_projection_data")
 def get_projection_data():
     metadata = pd.read_csv(METADATA_PATH)
     
@@ -50,8 +50,12 @@ def get_projection_data():
     projection_data = metadata[["dx", "dx_type", "age", "sex", "localization"]].copy()
     projection_data["x"] = [pca[0] for pca in pca_coordinates]
     projection_data["y"] = [pca[1] for pca in pca_coordinates]
-    projection_data = projection_data.fillna("NA")
+    projection_data = projection_data.fillna("unknown")
     return projection_data.to_dict(orient="records")
+
+@app.get("/get_uploaded_projection_data")
+def get_uploaded_projection_data():
+    return [{"x": 0, "y": 0}]
 
 # Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
 @app.get("/get_latent_space_images_url")
@@ -75,7 +79,7 @@ def get_image(name: str):
     path = IMAGES_PATH+'/'+name
     return FileResponse(path)
 
-@app.post("/get_similar_images")
+@app.get("/get_similar_images")
 def get_similar_images():
     #TODO get real similar images
     dummy_return = [["ISIC_0024334.jpg", 1, 0, "Melanocytic nevi", 0.94],

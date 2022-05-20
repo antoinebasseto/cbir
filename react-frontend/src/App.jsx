@@ -25,16 +25,11 @@ function App() {
   //                       [require("./test3.png"), 2, 0, "No Finding", 0.83]]
   const [similarImages, setSimilarImages] = useState([]);
   const [projectionData, setProjectionData] = useState([]);
+  const [uploadedProjectionData, setUploadedProjectionData] = useState([]);
   const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
 
   useEffect(() => {
-      queryBackend('query?id=0', 'POST').then((data) => {
-        setSimilarImages(data)
-      })
-    }, []);
-
-  useEffect(() => {
-      queryBackend('projection', 'GET').then((data) => {
+      queryBackend('get_projection_data', 'GET').then((data) => {
         setProjectionData(data)
       })
     }, []);
@@ -66,12 +61,18 @@ function App() {
     /* TODO: Send image to backend and compute latent space and images for rollout in latent space */
     
     //TODO
-    queryBackend('get_similar_images', 'POST').then((exampleData) => {
-        setSimilarImages(exampleData)
+    queryBackend('get_similar_images', 'GET').then((data) => {
+        setSimilarImages(data)
+      }
+    )
+    
+    // Get uploaded image projection data
+    queryBackend('get_uploaded_projection_data', 'GET').then((data) => {
+        setUploadedProjectionData(data)
       }
     )
 
-    /* We get the rollout images for latent space exploration*/
+    // Get the rollout images for latent space exploration
     queryBackend('get_latent_space_images_url', 'GET').then((latent_space_images_url) => {
         setLatentSpaceExplorationImages(latent_space_images_url)
       }
@@ -96,7 +97,7 @@ function App() {
           {indexActiv===1 && file && 
             <XrayDisplay uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
           }
-          {indexActiv===2 && <ProjectionPlot data={projectionData}/>}
+          {indexActiv===2 && <ProjectionPlot data={projectionData} uploadedData={uploadedProjectionData}/>}
           {indexActiv===3 && <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages}/>}
         </div>
       </div>
