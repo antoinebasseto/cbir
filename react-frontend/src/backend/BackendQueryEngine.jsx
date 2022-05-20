@@ -1,6 +1,7 @@
 export const BASE_URL = 'http://127.0.0.1:8000';
+const PATH_GET_IMAGES = "/image/?name=";
 
-export const queryBackend = async (route, method) => {
+export const queryBackend = async (route, method = "POST") => {
     const requestURL = `${BASE_URL}/${route}`;
     const data = await fetch(requestURL,
         {
@@ -11,26 +12,9 @@ export const queryBackend = async (route, method) => {
     return data;
 }
 
-export const queryImages = (route) =>{
-    const requestURL = `${BASE_URL}/image/?name=${route}`;
-    // const dataset = await fetch(requestURL,
-    //     {
-    //         method: 'GET'
-    //     }
-    // );
+export const queryImage = (imageName) =>{
+    const requestURL = `${BASE_URL}${PATH_GET_IMAGES}${imageName}`;
     return requestURL;
 }
-
-// //added to implement images
-// export const queryBackend2 = async (route: string): Promise<any> => {
-//     const requestURL = `${BASE_URL}/${route}`;
-//     const data = await fetch(requestURL,
-//         {
-//             method: 'POST'
-//         }
-//     ).then(response => response.json());
-
-//     return data;
-// }
 
 export default queryBackend;

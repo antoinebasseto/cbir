@@ -58,21 +58,21 @@ function App() {
   function handleFilter() {
     setFilterActiv(!filterActiv)
   }
+
   function handleImageUploaded(file) {
-      setFile(file);
-      setIndexActiv(1); /*Back to show image.*/
-      
-      /* TODO: Send image to backend and compute latent space and images for rollout in latent space */
-      
-      //TODO
-      queryBackend('get_similar_images').then((exampleData) => 
-      {
-        update_images(exampleData)
+    setFile(file);
+    setIndexActiv(1); /*Back to show image.*/
+    
+    /* TODO: Send image to backend and compute latent space and images for rollout in latent space */
+    
+    //TODO
+    queryBackend('get_similar_images', 'POST').then((exampleData) => {
+        setSimilarImages(exampleData)
       }
-      )
-      /* We get the rollout images for latent space exploration*/
-      queryBackend('get_latent_space_images_url', "GET").then((latent_space_images_url) => 
-      {
+    )
+
+    /* We get the rollout images for latent space exploration*/
+    queryBackend('get_latent_space_images_url', 'GET').then((latent_space_images_url) => {
         setLatentSpaceExplorationImages(latent_space_images_url)
       }
     )
