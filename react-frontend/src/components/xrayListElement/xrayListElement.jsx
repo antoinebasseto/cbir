@@ -1,4 +1,3 @@
-import React from 'react'
 import "./xrayListElement.css"
 
 export default function XrayListElement(props) {

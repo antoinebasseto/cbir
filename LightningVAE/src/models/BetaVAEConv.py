@@ -1,5 +1,11 @@
 import os
 
+from src.models.losses import betatc_loss
+
+"""
+TO DO: Add additional MLP classifier with gradient ascent possibilities
+"""
+
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingLR
 import pytorch_lightning as pl
@@ -10,6 +16,7 @@ from PIL import Image
 from torch import nn
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingLR
+
 from src.utils.init import weights_init
 
 class BetaVAEConv(pl.LightningModule):
@@ -29,7 +36,7 @@ class BetaVAEConv(pl.LightningModule):
 
     def __init__(
         self,
-        #alpha: float = 1.0,
+        alpha: float = 1.0,
         beta: float = 1.0,
         gamma: float = 1.0,
         input_channels=1,
@@ -37,6 +44,8 @@ class BetaVAEConv(pl.LightningModule):
         latent_dim=20,
         loss_type='H',
         trainset_size=5000,
+        anneal_steps=200,
+        is_mss=False,
         lr=0.001,
         batch_size=32,
         num_epochs=100,
@@ -68,7 +77,9 @@ class BetaVAEConv(pl.LightningModule):
 
         if input_dim == 32:
             hidden_dims = [32, 32, 64]
-        else:
+        elif input_dim == 64:
+            hidden_dims = [32, 32, 64, 64]
+        elif input_dim == 128:
             hidden_dims = [32, 32, 32, 64, 64]
 
         modules = []
@@ -152,14 +163,14 @@ class BetaVAEConv(pl.LightningModule):
         self.dec = nn.Sequential(*modules)
 
         # Loss
-        # self.loss = betatc_loss(
-        #     is_mss=is_mss,
-        #     steps_anneal=anneal_steps,
-        #     n_data=trainset_size,
-        #     alpha=alpha,
-        #     beta=beta,
-        #     gamma=gamma,
-        # )
+        self.loss = betatc_loss(
+            is_mss=is_mss,
+            steps_anneal=anneal_steps,
+            n_data=trainset_size,
+            alpha=alpha,
+            beta=beta,
+            gamma=gamma,
+        )
 
         # Weight init
         self.init_weights()
@@ -251,28 +262,28 @@ class BetaVAEConv(pl.LightningModule):
         mu, log_var = self.encoder(x)
         return self.decoder(mu)
 
-    def loss(self, *args):
-        self.num_iter += 1
-        recons = args[0]
-        input = args[1]
-        mu = args[2]
-        log_var = args[3]
-
-        recons_loss =F.mse_loss(recons, input)
-
-        kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(),
-                                               dim=1), dim=0)
-
-        if self.hparams.loss_type == 'H': # https://openreview.net/forum?id=Sy2fzU9gl
-            kld_loss = self.hparams.beta * kld_loss
-        elif self.hparams.loss_type == 'B': # https://arxiv.org/pdf/1804.03599.pdf
-            self.C_max = self.C_max.to(input.device)
-            C = torch.clamp(self.hparams.C_max/self.hparams.C_stop_iter * self.hparams.num_iter, 0, self.hparams.C_max.data[0])
-            kld_loss + self.hparams.gamma * (kld_loss - C).abs()
-        else:
-            raise ValueError('Undefined loss type.')
-
-        return recons_loss, kld_loss
+    # def loss(self, *args):
+    #     self.num_iter += 1
+    #     recons = args[0]
+    #     input = args[1]
+    #     mu = args[2]
+    #     log_var = args[3]
+    #
+    #     recons_loss =F.mse_loss(recons, input)
+    #
+    #     kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(),
+    #                                            dim=1), dim=0)
+    #
+    #     if self.hparams.loss_type == 'H': # https://openreview.net/forum?id=Sy2fzU9gl
+    #         kld_loss = self.hparams.beta * kld_loss
+    #     elif self.hparams.loss_type == 'B': # https://arxiv.org/pdf/1804.03599.pdf
+    #         self.C_max = self.C_max.to(input.device)
+    #         C = torch.clamp(self.hparams.C_max/self.hparams.C_stop_iter * self.hparams.num_iter, 0, self.hparams.C_max.data[0])
+    #         kld_loss + self.hparams.gamma * (kld_loss - C).abs()
+    #     else:
+    #         raise ValueError('Undefined loss type.')
+    #
+    #     return recons_loss, kld_loss
 
 
     def training_step(self, batch, batch_idx):
@@ -281,7 +292,7 @@ class BetaVAEConv(pl.LightningModule):
         recon_batch, mu, logvar, latent_sample = self(x)
 
         rec_loss, kld = self.loss(
-            recon_batch, x, self.training, mu, logvar)
+            x, recon_batch, (mu, logvar), self.training, latent_sample)
 
         if self.current_epoch == 0:
             self.warm_up += x.shape[0]
@@ -307,7 +318,7 @@ class BetaVAEConv(pl.LightningModule):
         recon_batch, mu, logvar, latent_sample = self(x)
 
         rec_loss, kld_val = self.loss(
-            recon_batch, x, self.training, mu, logvar)
+            x, recon_batch, (mu, logvar) ,self.training, latent_sample)
 
         val_loss = rec_loss + kld_val
 
@@ -316,6 +327,31 @@ class BetaVAEConv(pl.LightningModule):
         )
 
         self.log("val_kld", kld_val)
+
+        if batch_idx < 10:
+            recon = self.forward_pass(batch)
+            transform = T.ToPILImage()
+            for i in range(2):
+                img = transform(batch[i])
+                img.save(os.path.join(self.hparams.log_dir, f'{self.current_epoch}_{batch_idx}_{i}val_real.png'))
+                recon_img = transform(recon[i])
+                recon_img.save(os.path.join(self.hparams.log_dir, f'{self.current_epoch}_{batch_idx}_{i}val_recon.png'))
+        return val_loss
+
+    def test_step(self, batch, batch_idx):
+        x = batch
+
+        recon_batch, mu, logvar, latent_sample = self(x)
+
+        rec_loss, kld_val = self.loss(
+            x, recon_batch, (mu, logvar), self.training, latent_sample)
+        val_loss = rec_loss + kld_val
+
+        self.log(
+            "Test Loss", val_loss
+        )
+
+        self.log("test_kld", kld_val)
 
         if batch_idx < 10:
             recon = self.forward_pass(batch)

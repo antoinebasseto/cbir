@@ -60,7 +60,7 @@ def main():
                          #logger=[tb_logger, wandb_logger],  # log to tensorboard and wandb
                          logger = [tb_logger],
                          max_epochs=params[config['model']]['epochs'],  # max number of epochs
-                         callbacks=[EarlyStopping(monitor="Validation Loss"),  # early stopping
+                         callbacks=[EarlyStopping(monitor="Validation Loss", patience=15),  # early stopping
                                     ModelSummary(max_depth=1),  # model summary
                                     ModelCheckpoint(log_dir, monitor='Validation Loss', save_top_k=1)  # save best model
                                     ],

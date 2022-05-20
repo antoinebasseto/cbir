@@ -1,10 +1,11 @@
-import React, { useState, useEffect }  from 'react';
+import { useState, useEffect }  from 'react';
 import './App.css';
 import { queryBackend } from './backend/BackendQueryEngine';
 import Sidebar from "./components/sidebar/sidebar"
 import DragDropUploader from './components/dragDropUploader/dragDropUploader';
 import XrayDisplay from './components/xrayDisplay/xrayDisplay'
 import ProjectionPlot from './components/projectionPlot/projectionPlot';
+import LatentSpaceExplorator from './components/latentSpaceExplorator/latentSpaceExplorator';
 
 function App() {
 
@@ -15,7 +16,7 @@ function App() {
   /* Filters */
   const [similarityThreshold, setSimilarityThreshold] = useState(90)
   const [maxNumberImages, setMaxNumberImages] = useState(3)
-  const [followUpInterval, setFollowUpInterval] = useState([1, 10])
+  const [ageInterval, setAgeInterval] = useState([0, 85])
   const [diseasesFilter, setDiseasesFilter] = useState(['All'])
 
   {/*To be updated with similar images from backend*/}
@@ -24,6 +25,7 @@ function App() {
   //                       [require("./test3.png"), 2, 0, "No Finding", 0.83]]
   const [similarImages, setSimilarImages] = useState([]);
   const [projectionData, setProjectionData] = useState([]);
+  const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
 
   useEffect(() => {
       queryBackend('query?id=0', 'POST').then((data) => {
@@ -36,8 +38,8 @@ function App() {
         setProjectionData(data)
       })
     }, []);
-
-  function handleUpload() {
+  
+  function handleUpload(){
     setIndexActiv(0)
   }
 
@@ -58,8 +60,22 @@ function App() {
   }
   function handleImageUploaded(file) {
       setFile(file);
-      setIndexActiv(1); {/*Back to show image.  Not necessary*/}
-      {/*TODO: Send image to backend and get similar images*/}
+      setIndexActiv(1); /*Back to show image.*/
+      
+      /* TODO: Send image to backend and compute latent space and images for rollout in latent space */
+      
+      //TODO
+      queryBackend('get_similar_images').then((exampleData) => 
+      {
+        update_images(exampleData)
+      }
+      )
+      /* We get the rollout images for latent space exploration*/
+      queryBackend('get_latent_space_images_url', "GET").then((latent_space_images_url) => 
+      {
+        setLatentSpaceExplorationImages(latent_space_images_url)
+      }
+    )
   };
 
   function applyOnClickHandle() {
@@ -72,16 +88,16 @@ function App() {
       <div className="container">
         <Sidebar indexActiv={indexActiv} handleUpload={handleUpload} handleShow={handleShow} handleFilter={handleFilter} filterActiv={filterActiv} 
                 handleShowProjection={handleShowProjection} handleShowExplore={handleShowExplore}
-                similarityThreshold={similarityThreshold} maxNumberImages={maxNumberImages} followUpInterval={followUpInterval} diseasesFilter={diseasesFilter}
+                similarityThreshold={similarityThreshold} maxNumberImages={maxNumberImages} ageInterval={ageInterval} diseasesFilter={diseasesFilter}
                 setDiseasesFilter = {setDiseasesFilter} setSimilarityThreshold={setSimilarityThreshold} setMaxNumberImages={setMaxNumberImages} 
-                setFollowUpInterval={setFollowUpInterval} applyOnClickHandle={applyOnClickHandle}/>
+                setAgeInterval={setAgeInterval} applyOnClickHandle={applyOnClickHandle}/>
         <div className="others">
           {indexActiv===0 && <DragDropUploader onImageUploadedChange={handleImageUploaded}/>}
           {indexActiv===1 && file && 
             <XrayDisplay uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
           }
           {indexActiv===2 && <ProjectionPlot data={projectionData}/>}
-          {indexActiv===3 && <div>Here will be a tool to explore the different dimensions of the uploaded image</div>}
+          {indexActiv===3 && <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages}/>}
         </div>
       </div>
     </div>

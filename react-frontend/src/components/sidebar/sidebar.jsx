@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import "./sidebar.css"
 import {FiUpload} from "react-icons/fi"
 import {IoMdSettings} from "react-icons/io"
@@ -42,9 +41,9 @@ export default function Sidebar(props) {
                     {props.filterActiv && 
                     <li>
                         <Filters
-                        similarityThreshold={props.similarityThreshold} maxNumberImages={props.maxNumberImages} followUpInterval={props.followUpInterval} 
+                        similarityThreshold={props.similarityThreshold} maxNumberImages={props.maxNumberImages} ageInterval={props.ageInterval} 
                         diseasesFilter={props.diseasesFilter} setDiseasesFilter={props.setDiseasesFilter} setSimilarityThreshold={props.setSimilarityThreshold}
-                        setMaxNumberImages={props.setMaxNumberImages} setFollowUpInterval={props.setFollowUpInterval} applyOnClickHandle={props.applyOnClickHandle}></Filters>
+                        setMaxNumberImages={props.setMaxNumberImages} setAgeInterval={props.setAgeInterval} applyOnClickHandle={props.applyOnClickHandle}></Filters>
                     </li>
                     }
                     

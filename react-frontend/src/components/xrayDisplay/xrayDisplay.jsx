@@ -1,6 +1,5 @@
-import React from 'react'
 import "./xrayDisplay.css"
-import {queryImages, BASE_URL} from "../../backend/BackendQueryEngine";
+import {queryImage} from "../../backend/BackendQueryEngine";
 import XrayListElement from "../xrayListElement/xrayListElement"
 
 export default function XrayDisplay(props) {
@@ -11,7 +10,7 @@ export default function XrayDisplay(props) {
                 <ol>
                     {props.imgList.map((imageInfos) => {
                         const [imgSource, patientId, followUp, label, similarity] = imageInfos
-                        return  <XrayListElement keyId={imgSource} imgSource={queryImages(imgSource)} patientId={patientId} followUp={followUp} label={label} similarity={similarity}/>
+                        return  <XrayListElement keyId={imgSource} imgSource={queryImage(imgSource)} patientId={patientId} followUp={followUp} label={label} similarity={similarity}/>
                     })}
                 </ol>
             </div>
