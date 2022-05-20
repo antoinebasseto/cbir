@@ -8,6 +8,8 @@
 }
 
 .others{
+  display: flex;
+  justify-content: center;
   flex:4;
   background-color: white;
 }

@@ -23,50 +23,63 @@ function App() {
   // const similarImages = [[require("./test1.png"), 1, 0, "Cardiomegaly", 0.94],
   //                       [require("./test2.png"), 1, 1, "Cardiomegaly|Emphysema", 0.85],
   //                       [require("./test3.png"), 2, 0, "No Finding", 0.83]]
-  const [similarImages, update_images] = useState([]);
+  const [similarImages, setSimilarImages] = useState([]);
+  const [projectionData, setProjectionData] = useState([]);
+  const [uploadedProjectionData, setUploadedProjectionData] = useState([]);
   const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
 
+  useEffect(() => {
+      queryBackend('get_projection_data', 'GET').then((data) => {
+        setProjectionData(data)
+      })
+    }, []);
   
   function handleUpload(){
     setIndexActiv(0)
   }
 
-  function handleShow(){
+  function handleShow() {
     setIndexActiv(1)
   }
 
-  function handleShowProjection(){
+  function handleShowProjection() {
     setIndexActiv(2)
   }
 
-  function handleShowExplore(){
+  function handleShowExplore() {
     setIndexActiv(3)
   }
 
-  function handleFilter(){
+  function handleFilter() {
     setFilterActiv(!filterActiv)
   }
+
   function handleImageUploaded(file) {
-      setFile(file);
-      setIndexActiv(1); /*Back to show image.*/
-      
-      /* TODO: Send image to backend and compute latent space and images for rollout in latent space */
-      
-      //TODO
-      queryBackend('get_similar_images').then((exampleData) => 
-      {
-        update_images(exampleData)
+    setFile(file);
+    setIndexActiv(1); /*Back to show image.*/
+    
+    /* TODO: Send image to backend and compute latent space and images for rollout in latent space */
+    
+    //TODO
+    queryBackend('get_similar_images', 'GET').then((data) => {
+        setSimilarImages(data)
       }
-      )
-      /* We get the rollout images for latent space exploration*/
-      queryBackend('get_latent_space_images_url', "GET").then((latent_space_images_url) => 
-      {
+    )
+    
+    // Get uploaded image projection data
+    queryBackend('get_uploaded_projection_data', 'GET').then((data) => {
+        setUploadedProjectionData(data)
+      }
+    )
+
+    // Get the rollout images for latent space exploration
+    queryBackend('get_latent_space_images_url', 'GET').then((latent_space_images_url) => {
         setLatentSpaceExplorationImages(latent_space_images_url)
       }
     )
   };
 
-  function applyOnClickHandle(){
+  function applyOnClickHandle() {
     console.log("Apply filters")
     {/* TODO: call backend to retrieve images with given filters */}
   }
@@ -84,7 +97,7 @@ function App() {
           {indexActiv===1 && file && 
             <XrayDisplay uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
           }
-          {indexActiv===2 && <ProjectionPlot data={[{x:2, y:3}, {x:2.3, y:3.8}, {x:3, y:4}]}/>}
+          {indexActiv===2 && <ProjectionPlot data={projectionData} uploadedData={uploadedProjectionData}/>}
           {indexActiv===3 && <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages}/>}
         </div>
       </div>
