@@ -30,6 +30,19 @@ export const uploadToBackend = async (route, method = "POST", file) => {
 }
 
 
+export const updateFiltersBackend= async(route, method='POST', similarityThreshold, maxNumberImages, ageInterval, diseasesFilter) => {
+    const requestURL = `${BASE_URL}/${route}`;
+    const data = await fetch(requestURL,
+        {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ similarityThreshold: similarityThreshold, maxNumberImages: maxNumberImages, ageInterval: ageInterval, diseasesFilter: diseasesFilter })
+        }
+    ).then(response => response.json());
+
+    return data;
+}
+
 export const queryImage = (imageName) =>{
     const requestURL = `${BASE_URL}${PATH_GET_IMAGES}${imageName}`;
     return requestURL;

@@ -34,6 +34,11 @@ ABBREVIATION_TO_DISEASE = {
     "vasc" : "Vascular lesions"
 }
 
+similarityThreshold= 0
+maxNumberImages = 3
+ageInterval = [0,100]
+diseasesFilter = ["All"]
+
 # Allow CORS
 app.add_middleware(
     CORSMiddleware,
@@ -80,6 +85,19 @@ def get_image(name: str):
     path = IMAGES_PATH+'/'+name
     return FileResponse(path)
 
+@app.post("/update_filters")
+def update_filters(filters: dict):
+    print(filters)
+    global similarityThreshold, maxNumberImages, ageInterval, diseasesFilter
+    similarityThreshold = filters['similarityThreshold']
+    maxNumberImages = filters['maxNumberImages']
+    ageInterval = filters['ageInterval']
+    diseasesFilter = filters['diseasesFilter']
+    print(diseasesFilter)
+    print(ageInterval[0])
+    print(maxNumberImages)
+    return True
+
 #todo filters and thresholds
 @app.post("/get_similar_images")
 def get_similar_images(file: UploadFile = File(...)):
@@ -100,8 +118,16 @@ def get_similar_images(file: UploadFile = File(...)):
         dists[i] =np.linalg.norm(pic_embedding - cur_embedding)
 
     pictures["dist"] = dists
-    closest_pictures = (pictures.sort_values(by=['dist'])).iloc[:3]
-    result = closest_pictures[["image_id", "lesion_id","dx_type","dx", "dist"]]
+    sorted_pictures = (pictures.sort_values(by=['dist']))
+    #age
+    #filtered_pictures = sorted_pictures[((sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[1]))]
+    filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[0])]
+    #threshold
+    filtered_pictures = filtered_pictures[filtered_pictures['dist'] > similarityThreshold]
+    #diseases
+    #filtered_pictures
+    closest_pictures = filtered_pictures.iloc[:maxNumberImages]
+    result = closest_pictures[["image_id", "lesion_id","dx_type","dx", "dist", "latent_coordinate1","latent_coordinate2","latent_coordinate3","latent_coordinate4","latent_coordinate5","latent_coordinate6","latent_coordinate7","latent_coordinate8","latent_coordinate9","latent_coordinate10","latent_coordinate11"]]
     return_result = result.values.tolist()
 
     #dummy_return = [["ISIC_0024334.jpg", 1, 0, "Melanocytic nevi", 0.94],

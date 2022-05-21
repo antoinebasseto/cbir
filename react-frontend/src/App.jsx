@@ -1,6 +1,6 @@
 import { useState, useEffect }  from 'react';
 import './App.css';
-import { queryBackend , uploadToBackend } from './backend/BackendQueryEngine';
+import { queryBackend , uploadToBackend, updateFiltersBackend } from './backend/BackendQueryEngine';
 import Sidebar from "./components/sidebar/sidebar"
 import DragDropUploader from './components/dragDropUploader/dragDropUploader';
 import XrayDisplay from './components/xrayDisplay/xrayDisplay'
@@ -58,9 +58,7 @@ function App() {
     setFile(file);
     setIndexActiv(1); /*Back to show image.*/
     
-    /* TODO: Send image to backend and compute latent space and images for rollout in latent space */
     
-    //TODO
     uploadToBackend('get_similar_images', 'POST', file).then((data) => {
         setSimilarImages(data)
       }
@@ -80,8 +78,9 @@ function App() {
   };
 
   function applyOnClickHandle() {
-    console.log("Apply filters")
-    {/* TODO: call backend to retrieve images with given filters */}
+    updateFiltersBackend('update_filters', 'POST', similarityThreshold, maxNumberImages, ageInterval, diseasesFilter)
+    if (file !== null)
+    	handleImageUploaded(file)
   }
 
   return (
