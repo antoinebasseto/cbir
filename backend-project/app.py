@@ -13,6 +13,9 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 import base64
 import numpy as np
+from DL_model.config import config
+from DL_model.hyperparameters import params
+from DL_model.model import get_model
 
 app = FastAPI(
     title="Test Python Backend",
@@ -20,6 +23,14 @@ app = FastAPI(
                    It provides acess via REST API.""",
     version="0.1.0",
 )
+
+model = None
+async def get_dl():
+    global model
+    if not model:
+        model = get_model(params[config['model']], config['model'])
+    return model
+
 
 IMAGES_PATH = "./data/images"
 METADATA_PATH = "./data/HAM10000_metadata_with_dummy_latent.csv"
@@ -67,6 +78,8 @@ def get_uploaded_projection_data():
 @app.get("/get_latent_space_images_url")
 def get_latent_space_images_url():
     # TODO: return the path to the real rollout images to get rollout images
+    #honestly this should only be parametrized
+    #or cached I guess
     # 10x10 images
     dummy_return = [["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
                     ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],

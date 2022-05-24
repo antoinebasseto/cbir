@@ -142,7 +142,8 @@ def apply_heatmap(R, sx, sy):
     heatmap = plt.imshow(R, cmap=my_cmap, vmin=-b, vmax=b, interpolation='nearest')
     return heatmap
 
-model_path = '/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220511-040101_BetaVAEConv/epoch=69-step=10990.ckpt'
+#model_path = '/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220511-040101_BetaVAEConv/epoch=69-step=10990.ckpt'
+model_path = '/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220512-185952_BetaVAEConv/epoch=41-step=6594.ckpt'
 image_path = '/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220511-040101_BetaVAEConv/pictures/62_7_0val_real.png'
 target_path = '/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220511-040101_BetaVAEConv/pictures/62_7_0val_recon.png'
 input_dim = 128
