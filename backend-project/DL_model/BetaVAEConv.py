@@ -1,6 +1,6 @@
 import os
 
-from src.models.losses import betatc_loss
+from .losses import betatc_loss
 
 """
 TO DO: Add additional MLP classifier with gradient ascent possibilities
@@ -17,7 +17,7 @@ from torch import nn
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingLR
 
-from src.utils.init import weights_init
+from .utils.init import weights_init
 
 class BetaVAEConv(pl.LightningModule):
     """beta-TCVAE model with encoder and decoder, inherit from Lightning module.
