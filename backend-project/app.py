@@ -28,7 +28,7 @@ model = None
 async def get_dl():
     global model
     if not model:
-        model = get_model(params[config['model']], config['model'])
+        model = get_model(params[config[model]], config['model'], config['results_dir'], config['model_path'])
     return model
 
 
@@ -60,8 +60,10 @@ def get_projection_data():
     projection_data = projection_data.fillna("unknown")
     return projection_data.to_dict(orient="records")
 
-@app.get("/get_uploaded_projection_data")
-def get_uploaded_projection_data():
+@app.post("/get_uploaded_projection_data")
+def get_uploaded_projection_data(file: UploadFile):
+    print(file)
+    res = model(file)
     return [{"x": 0, "y": 0}]
 
 # Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
@@ -71,22 +73,22 @@ def get_latent_space_images_url():
     #honestly this should only be parametrized
     #or cached I guess
     # 10x10 images
-    dummy_return = [["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
-                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
-                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
-                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
-                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
-                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
-                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
-                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
-                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],
-                    ["ISIC_0024306.jpg", "ISIC_0024307.jpg", "ISIC_0024308.jpg", "ISIC_0024309.jpg", "ISIC_0024310.jpg", "ISIC_0024311.jpg", "ISIC_0024312.jpg", "ISIC_0024313.jpg", "ISIC_0024314.jpg", "ISIC_0024315.jpg"],]
+    dummy_return = [["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],]
     return dummy_return
 
-# @app.get("/image")
-# def get_image(name: str):
-#     path = IMAGES_PATH+'/'+name
-#     return FileResponse(path)
+@app.get("/image")
+def get_image(name: str):
+    path = f"{IMAGES_PATH}/{name}.jpg"
+    return FileResponse(path)
 
 @app.post("/update_filters")
 def update_filters(filters: dict):
@@ -99,7 +101,7 @@ def update_filters(filters: dict):
 
 #todo filters and thresholds
 @app.post("/get_similar_images")
-def get_similar_images(file: UploadFile = File(...)):
+def get_similar_images(file: UploadFile):
     pictures = pd.read_csv(METADATA_PATH)
     
     #TODO actually use image
@@ -111,9 +113,9 @@ def get_similar_images(file: UploadFile = File(...)):
     #array with dists of uploaded image to saved images
     dists = np.zeros(pictures.shape[0])
 
-    #calculate distance scores for each    
+    #calculate distance scores for each
     for i, pic in pictures.iterrows():
-        cur_embedding = (pic.values[8:21])
+        cur_embedding = (pic.values[7:])
         dists[i] = np.linalg.norm(pic_embedding - cur_embedding)
 
     pictures["dist"] = dists

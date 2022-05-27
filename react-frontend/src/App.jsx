@@ -1,6 +1,6 @@
 import { useState, useEffect }  from 'react';
 import './App.css';
-import { queryBackend , uploadToBackend, updateFiltersBackend } from './backend/BackendQueryEngine';
+import { queryBackend , queryBackendWithFile, updateFiltersBackend } from './backend/BackendQueryEngine';
 import Sidebar from "./components/sidebar/sidebar"
 import DragDropUploader from './components/dragDropUploader/dragDropUploader';
 import XrayDisplay from './components/xrayDisplay/xrayDisplay'
@@ -59,13 +59,13 @@ function App() {
     setIndexActiv(1); /*Back to show image.*/
     
     
-    uploadToBackend('get_similar_images', 'POST', file).then((data) => {
+    queryBackendWithFile('get_similar_images', file).then((data) => {
         setSimilarImages(data)
       }
     )
     
     // Get uploaded image projection data
-    queryBackend('get_uploaded_projection_data', 'GET').then((data) => {
+    queryBackendWithFile('get_uploaded_projection_data', file).then((data) => {
         setUploadedProjectionData(data)
       }
     )
