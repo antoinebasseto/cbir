@@ -1,18 +1,11 @@
-from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
-from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
+from fastapi import FastAPI, UploadFile
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from numpy import record
-import uvicorn
+
 import pandas as pd
-import os
-import csv
-import codecs
-from io import StringIO
-from typing import Callable
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-import base64
 import numpy as np
+import umap.umap_ as umap
+
 from DL_model.config import config
 from DL_model.hyperparameters import params
 from DL_model.model import get_model
@@ -28,7 +21,9 @@ model = None
 async def get_dl():
     global model
     if not model:
+        print(model)
         model = get_model(params[config[model]], config['model'], config['results_dir'], config['model_path'])
+        print(model)
     return model
 
 
@@ -53,18 +48,25 @@ def get_projection_data():
     metadata = pd.read_csv(METADATA_PATH)
     
     coordinates = metadata[["latent_coordinate" + str(i) for i in range(12)]]
-    pca_coordinates = PCA(n_components=2).fit_transform(coordinates)
+    global reducer
+    reducer = umap.UMAP(random_state = 0)
+    reducer = reducer.fit(coordinates)
+
+    embeddings = reducer.transform(coordinates)
+
     projection_data = metadata[["dx", "dx_type", "age", "sex", "localization"]].copy()
-    projection_data["x"] = [pca[0] for pca in pca_coordinates]
-    projection_data["y"] = [pca[1] for pca in pca_coordinates]
     projection_data = projection_data.fillna("unknown")
+
+    projection_data["x"] = [embedding[0] for embedding in embeddings]
+    projection_data["y"] = [embedding[1] for embedding in embeddings]
+    
     return projection_data.to_dict(orient="records")
 
 @app.post("/get_uploaded_projection_data")
 def get_uploaded_projection_data(file: UploadFile):
-    print(file)
-    res = model(file)
-    return [{"x": 0, "y": 0}]
+    embedding = reducer.transform([['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']])
+    print(embedding)
+    return [{"x": embedding[0][1], "y": embedding[0][1]}]
 
 # Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
 @app.get("/get_latent_space_images_url")
@@ -107,26 +109,17 @@ def get_similar_images(file: UploadFile):
     #TODO actually use image
     #get dimensions of image in VAE space
     #assuming get_embedding returns tuple/list of dimensions
-    #pic_embedding = get_embedding(file, dlmodel)
-    pic_embedding = np.random.rand(12)
+    # pic_embedding = get_embedding(file, dlmodel)
+    uploaded_image_embedding = np.random.rand(12)
 
-    #array with dists of uploaded image to saved images
-    dists = np.zeros(pictures.shape[0])
-
-    #calculate distance scores for each
-    for i, pic in pictures.iterrows():
-        cur_embedding = (pic.values[7:])
-        dists[i] = np.linalg.norm(pic_embedding - cur_embedding)
-
-    pictures["dist"] = dists
+    # Calculate distance scores for each 
+    pictures["dist"] = (pictures.iloc[:, 7:] - uploaded_image_embedding).apply(np.linalg.norm, axis=1)
     sorted_pictures = (pictures.sort_values(by=['dist']))
     filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[0])]
     filtered_pictures = filtered_pictures[filtered_pictures['dist'] > similarityThreshold]
     closest_pictures = filtered_pictures.iloc[:maxNumberImages]
-    result = closest_pictures[["image_id", "lesion_id", "dx_type", "dx", "dist", "latent_coordinate1","latent_coordinate2","latent_coordinate3","latent_coordinate4","latent_coordinate5","latent_coordinate6","latent_coordinate7","latent_coordinate8","latent_coordinate9","latent_coordinate10","latent_coordinate11"]]
-    return_result = result.values.tolist()
-
-    return JSONResponse(content=return_result)
+    
+    return JSONResponse(content=closest_pictures.values.tolist())
 
 # @app.post("/files/")
 # async def create_file(file: bytes = File(...)):

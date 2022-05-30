@@ -23,11 +23,13 @@ export default function ProjectionPlot(props) {
         let xMax = d3.max(props.data, (d) => d.x);
         let yMin = d3.min(props.data, (d) => d.y);
         let yMax = d3.max(props.data, (d) => d.y);
+        let xMargin = (xMax - xMin) / 15
+        let yMargin = (yMax - yMin) / 15
         const xScale = d3.scaleLinear()
-            .domain([xMin, xMax])
+            .domain([xMin - xMargin, xMax + xMargin])
             .range([0, width]);
         const yScale = d3.scaleLinear()
-            .domain([yMin, yMax])
+            .domain([yMin - yMargin, yMax + yMargin])
             .range([height, 0]);
 
         // Setting up axis
@@ -70,10 +72,10 @@ export default function ProjectionPlot(props) {
             tooltip
                 .style("border-color", color(d.dx))
                 .style('visibility','visible')
-                .text(`diagnosis: ${d.dx}
-                localization: ${d.localization}
-                age: ${d.age}
-                sex: ${d.sex}`)
+                .html(`<b>diagnosis:</b> ${d.dx} <br/>
+                <b>localization:</b> ${d.localization} <br/>
+                <b>age:</b> ${d.age} <br/> 
+                <b>sex:</b> ${d.sex}`)
         }
         
         const mousemove = function(event, d) {

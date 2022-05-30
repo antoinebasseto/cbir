@@ -1,0 +1,29 @@
+.similarImagesListElement {
+    display: flex;
+    flex-direction: row;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px dashed grey;
+}
+
+.label {
+    text-align: center;
+}
+
+.infoContainer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.additionalInfoContainer {
+    display: flex;
+}
+
+.similarImage {
+    object-fit: contain;
+    width: 15vw;
+    height: auto;
+    flex: 2;
+}

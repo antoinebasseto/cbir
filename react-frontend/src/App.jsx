@@ -3,7 +3,7 @@ import './App.css';
 import { queryBackend , queryBackendWithFile, updateFiltersBackend } from './backend/BackendQueryEngine';
 import Sidebar from "./components/sidebar/sidebar"
 import DragDropUploader from './components/dragDropUploader/dragDropUploader';
-import XrayDisplay from './components/xrayDisplay/xrayDisplay'
+import SimilarImages from './components/similarImages/similarImages'
 import ProjectionPlot from './components/projectionPlot/projectionPlot';
 import LatentSpaceExplorator from './components/latentSpaceExplorator/latentSpaceExplorator';
 
@@ -94,7 +94,7 @@ function App() {
         <div className="others">
           {indexActiv===0 && <DragDropUploader onImageUploadedChange={handleImageUploaded}/>}
           {indexActiv===1 && file && 
-            <XrayDisplay uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
+            <SimilarImages uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
           }
           {indexActiv===2 && <ProjectionPlot data={projectionData} uploadedData={uploadedProjectionData}/>}
           {indexActiv===3 && <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages}/>}

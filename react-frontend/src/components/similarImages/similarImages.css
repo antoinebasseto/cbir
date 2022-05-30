@@ -1,4 +1,4 @@
-.xrayDisplayContainer{
+.similarImagesContainer{
     background-color: white;
     display: flex;
     height:100vh;
@@ -11,21 +11,19 @@
 }
 
 .imageContainer{
-    flex:1;
+    width: 35vw;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .uploadedImage{
-    height: 60vh;
+    object-fit: contain;
+    width: 30vw;
     position: sticky;
-    margin: 100px; /* Only used when screen is very small, otherwise has no impact */
 }
 
-
-.XRayListScroller{
-    flex:1;
+.similarImagesListScroller{
     overflow: auto;
     height: 100vh;
     display: flex;
