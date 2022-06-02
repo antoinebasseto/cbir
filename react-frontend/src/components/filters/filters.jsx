@@ -78,7 +78,7 @@ export default function Filters(props) {
         props.setAgeInterval([props.ageInterval[0], Math.max(newValue[1], props.ageInterval[0])]);
       }
     }
-      function handleDiseasesChange (event){
+      function handleDiseasesChange(event) {
         const {
           target: { value },
         } = event;
@@ -126,7 +126,7 @@ export default function Filters(props) {
                 <div className="filterTitleContainer">
                     <IoMdImages className="filterIcon"/>
                     <div className="filterName">
-                        Maximum number of images
+                        Max number of images
                     </div>
                 </div>
                 <ThemeProvider theme={sliderTheme}>

@@ -15,7 +15,10 @@ export default function SimilarImagesListElement(props) {
           <h5>localization: {props.localization}</h5>
         </div>
 
-        <div className = "radarChart">
+        <h5 className="similarityText">Similarity: {props.similarity}</h5>
+
+      </div>
+      <div className = "radarChart">
           <RadarChart 
             captions={props.captions}
             data={props.data} 
@@ -23,11 +26,9 @@ export default function SimilarImagesListElement(props) {
             size={200}
           />
         </div>
-
-        <h5 className="similarityText">Similarity: {props.similarity}</h5>
-
+      <div className="imageContainer">
+        <img className="similarImage" src={props.imgId}/>
       </div>
-      <img className="similarImage" src={props.imgId} />
     </li>
   )
 }

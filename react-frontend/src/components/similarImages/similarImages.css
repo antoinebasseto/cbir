@@ -1,31 +1,27 @@
 .similarImagesContainer{
-    background-color: white;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     height:100vh;
 }
 
-.verticalLine{
-    background-color: rgb(235, 235, 235);
-    width: 5px;
-    height: 100vh;
-}
-
 .imageContainer{
-    width: 35vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    max-height: 40vh;
+    max-width: 40vw;
+    margin: 20px;
 }
 
 .uploadedImage{
-    object-fit: contain;
-    width: 30vw;
+    max-height: 40vh;
+    max-width: 40vw;
     position: sticky;
+    border-radius: 25px;
+    box-shadow: 0 10px 15px rgb(230, 230, 230);
 }
 
 .similarImagesListScroller{
-    overflow: auto;
-    height: 100vh;
+    overflow-x: auto;
+    width: 70vw;
     display: flex;
-    justify-content: center;
+    flex-direction: row;
 }

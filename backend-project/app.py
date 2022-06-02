@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+import joblib
 
 import pandas as pd
 import numpy as np
@@ -28,7 +29,7 @@ async def get_dl():
 
 
 IMAGES_PATH = "./data/images"
-METADATA_PATH = "./data/HAM10000_metadata_with_dummy_latent.csv"
+METADATA_PATH = "./data/HAM10000_metadata_processed.csv"
 
 similarityThreshold = 0
 maxNumberImages = 3
@@ -46,27 +47,17 @@ app.add_middleware(
 @app.get("/get_projection_data")
 def get_projection_data():
     metadata = pd.read_csv(METADATA_PATH)
-    
-    coordinates = metadata[["latent_coordinate" + str(i) for i in range(12)]]
-    global reducer
-    reducer = umap.UMAP(random_state = 0)
-    reducer = reducer.fit(coordinates)
 
-    embeddings = reducer.transform(coordinates)
-
-    projection_data = metadata[["dx", "dx_type", "age", "sex", "localization"]].copy()
+    projection_data = metadata[["image_id", "dx", "dx_type", "age", "sex", "localization", "umap1", "umap2"]].copy()
     projection_data = projection_data.fillna("unknown")
-
-    projection_data["x"] = [embedding[0] for embedding in embeddings]
-    projection_data["y"] = [embedding[1] for embedding in embeddings]
     
     return projection_data.to_dict(orient="records")
 
 @app.post("/get_uploaded_projection_data")
 def get_uploaded_projection_data(file: UploadFile):
-    embedding = reducer.transform([['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']])
-    print(embedding)
-    return [{"x": embedding[0][1], "y": embedding[0][1]}]
+    reducer = joblib.load("umap.sav")
+    embedding = reducer.transform(np.array(['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']).reshape(1, -1))
+    return [{"umap1": embedding[0][0].item(), "umap2": embedding[0][1].item()}]
 
 # Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
 @app.get("/get_latent_space_images_url")
@@ -113,7 +104,7 @@ def get_similar_images(file: UploadFile):
     uploaded_image_embedding = np.random.rand(12)
 
     # Calculate distance scores for each 
-    pictures["dist"] = (pictures.iloc[:, 7:] - uploaded_image_embedding).apply(np.linalg.norm, axis=1)
+    pictures["dist"] = (pictures.loc[:, [f"latent_coordinate{i}" for i in range(12)]] - uploaded_image_embedding).apply(np.linalg.norm, axis=1)
     sorted_pictures = (pictures.sort_values(by=['dist']))
     filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[0])]
     filtered_pictures = filtered_pictures[filtered_pictures['dist'] > similarityThreshold]

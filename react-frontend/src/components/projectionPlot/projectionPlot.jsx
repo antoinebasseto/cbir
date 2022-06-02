@@ -10,6 +10,9 @@ export default function ProjectionPlot(props) {
         var margin = {top: 60, right: 60, bottom: 60, left: 60},
             width = 1000 - margin.left - margin.right,
             height = 700 - margin.top - margin.bottom;
+
+        d3.select(svgRef.current).selectAll("*").remove()
+
         const svg = d3.select(svgRef.current)
             .append("svg")
               .attr("width", width + margin.left + margin.right)
@@ -19,10 +22,19 @@ export default function ProjectionPlot(props) {
                     "translate(" + margin.left + "," + margin.top + ")");
             
         // Setting up scaling
-        let xMin = d3.min(props.data, (d) => d.x);
-        let xMax = d3.max(props.data, (d) => d.x);
-        let yMin = d3.min(props.data, (d) => d.y);
-        let yMax = d3.max(props.data, (d) => d.y);
+        let xMin = d3.min(props.data, (d) => d.umap1);
+        let xMax = d3.max(props.data, (d) => d.umap1);
+        let yMin = d3.min(props.data, (d) => d.umap2);
+        let yMax = d3.max(props.data, (d) => d.umap2);
+
+        // if (props.uploadedData) {
+        //     xMin = d3.min(xMin, props.uploadedData.umap1)
+        //     xMax = d3.max(xMax, props.uploadedData.umap1)
+
+        //     yMin = d3.min(yMin, props.uploadedData.umap2)
+        //     yMax = d3.max(yMax, props.uploadedData.umap2)
+        // }
+
         let xMargin = (xMax - xMin) / 15
         let yMargin = (yMax - yMin) / 15
         const xScale = d3.scaleLinear()
@@ -59,7 +71,7 @@ export default function ProjectionPlot(props) {
         const tooltip = d3.select('#projectionPlotContainer')
             .append('div')
             .style("opacity", 0.7)
-            .style('visibility','visible')
+            .style('visibility','hidden')
             .style('position','absolute')
             .attr("class", "tooltip")
             .style("background-color", "white")
@@ -75,7 +87,8 @@ export default function ProjectionPlot(props) {
                 .html(`<b>diagnosis:</b> ${d.dx} <br/>
                 <b>localization:</b> ${d.localization} <br/>
                 <b>age:</b> ${d.age} <br/> 
-                <b>sex:</b> ${d.sex}`)
+                <b>sex:</b> ${d.sex} <br/>
+                img_id: ${d.image_id}`)
         }
         
         const mousemove = function(event, d) {
@@ -90,7 +103,7 @@ export default function ProjectionPlot(props) {
         }
 
         // Setting up class colours
-        var keys = ["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"]
+        var keys = (props.uploadedData.length > 0) ? ["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc", "uploaded image"] : ["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"]
 
         var color = d3.scaleOrdinal()
             .domain(keys)
@@ -113,19 +126,26 @@ export default function ProjectionPlot(props) {
               .attr("x", 45)
               .attr("y", function(d,i) {return i*25})
               .style("fill", function(d) {return color(d)})
-              .text(function(d){return d})
+              .text(function(d) {return d})
               .attr("text-anchor", "left")
               .style("alignment-baseline", "middle")
         
         // Setting up svg data
         svg.append('g')
-            .selectAll()
+            .selectAll('circles')
             .data(props.data)
             .enter()
             .append('circle')
-                .attr('cx', d => xScale(d.x))
-                .attr('cy', d => yScale(d.y))
-                .attr('r', 2)
+                .attr('cx', d => xScale(d.umap1))
+                .attr('cy', d => yScale(d.umap2))
+                .attr('r', function(d) {
+                    if (props.similarImages.length > 0 && props.similarImages.includes(d.image_id)) {return 4}
+                    else {return 2}
+                })
+                .style("opacity", function(d) {
+                    if (props.similarImages.length == 0 || props.similarImages.includes(d.image_id)) {return 1}
+                    else {return 0.2}
+                })
                 .style("fill", function(d) {return color(d.dx)} )
             .on("mouseover", mouseover)
             .on("mousemove", mousemove)
@@ -133,15 +153,15 @@ export default function ProjectionPlot(props) {
 
         // Setting up uploaded data
         svg.append('g')
-            .selectAll()
+            .selectAll('uploadedCircle')
             .data(props.uploadedData)
             .enter()
             .append('circle')
-                .attr('cx', d => xScale(d.x))
-                .attr('cy', d => yScale(d.y))
+                .attr('cx', d => xScale(d.umap1))
+                .attr('cy', d => yScale(d.umap2))
                 .attr('r', 5)
-                .style("fill", "black")
-    }, [props.data, props.uploadedData])
+                .style("fill", color("uploaded image"))
+    }, [props.data, props.uploadedData, props.similarImages])
 
     return (
         <div id="projectionPlotContainer" className="projectionPlotContainer">
