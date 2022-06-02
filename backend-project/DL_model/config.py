@@ -1,5 +1,3 @@
-import json 
-
 """
 Training and evaluation settings
 """
@@ -23,7 +21,6 @@ config['dataset'] = 'HAM10000'  # options: sleep-edf-153, ...
 
 """
 Model related settings 
-Available models: DETRtime
 """
 config['model'] = 'BetaVAEConv'
 
@@ -36,3 +33,8 @@ Training related settings
 Logging and Analysis 
 """
 config['results_dir'] = 'reports/logs'
+
+"""
+Logging and Analysis 
+"""
+config['model_path'] = f"model/{config['model']}"

@@ -100,6 +100,7 @@ uvicorn app:app --reload
 ```
 cd react-frontend
 npm install
+npm install react-svg-radar-chart
 npm start
 ```
 5. It should open a window in your browser with the app.

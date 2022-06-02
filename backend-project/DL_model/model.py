@@ -4,7 +4,7 @@ import torch
 import torchvision.transforms as T
 from PIL.Image import Image
 
-from BetaVAEConv import build_betavaeconv
+from .BetaVAEConv import build_betavaeconv
 
 def get_model(args, model_name, log_dir, model_path):
     if model_name == 'BetaVAEConv':

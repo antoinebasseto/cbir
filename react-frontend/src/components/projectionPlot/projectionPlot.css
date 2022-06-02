@@ -1,6 +1,4 @@
-.projectionPlotContainer{
-    align-self: center;
+.projectionPlotContainer {
+    display: flex;
 }
 
-.projectionPlotSVG{
-}

@@ -48,23 +48,23 @@ export default function Filters(props) {
 
     /* List of diseases options*/
     const diseases = [
-        'All',
-        'Actinic keratoses and intraepithelial carcinoma',
-        'Basal cell carcinoma',
-        'Benign keratosis-like lesions',
-        'Dermatofibroma',
-        'Melanoma',
-        'Melanocytic nevi',
-        'Vascular lesions',
-      ];
+      'All',
+      'Actinic keratoses and intraepithelial carcinoma',
+      'Basal cell carcinoma',
+      'Benign keratosis-like lesions',
+      'Dermatofibroma',
+      'Melanoma',
+      'Melanocytic nevi',
+      'Vascular lesions',
+    ];
 
 
     function handleSimilarityOnChange(_, newValue){
-        props.setSimilarityThreshold(newValue)
+      props.setSimilarityThreshold(newValue)
     }
     
     function handleMaxNumberImagesOnChange(_, newValue){
-        props.setMaxNumberImages(newValue)
+      props.setMaxNumberImages(newValue)
     }
     
     function handleAgeOnChange(_, newValue){
@@ -78,7 +78,7 @@ export default function Filters(props) {
         props.setAgeInterval([props.ageInterval[0], Math.max(newValue[1], props.ageInterval[0])]);
       }
     }
-      function handleDiseasesChange (event){
+      function handleDiseasesChange(event) {
         const {
           target: { value },
         } = event;
@@ -87,7 +87,7 @@ export default function Filters(props) {
         let newValue = typeof value === 'string' ? value.split(',') : value
 
         if ((props.diseasesFilter).indexOf("All") > -1 && newValue.length > 0){
-            newValue = diseases.filter((disease) => newValue.indexOf(disease) == -1)
+          newValue = diseases.filter((disease) => newValue.indexOf(disease) == -1)
         }
         // If "All" is contained in the list, we just return "All" and not all the other elements
         newValue = newValue.indexOf("All") > -1 ? ["All"] : newValue
@@ -95,7 +95,7 @@ export default function Filters(props) {
         // If all the elements are checked but not "All" yet, we use "All" instead. The filter method computes the intersection of the two arrays
         newValue = 
         newValue.filter(function(disease) {
-            return diseases.indexOf(disease) !== -1;
+          return diseases.indexOf(disease) !== -1;
         }).length === diseases.length-1 ? ["All"] :newValue
   
         props.setDiseasesFilter(newValue);        
@@ -126,7 +126,7 @@ export default function Filters(props) {
                 <div className="filterTitleContainer">
                     <IoMdImages className="filterIcon"/>
                     <div className="filterName">
-                        Maximum number of images
+                        Max number of images
                     </div>
                 </div>
                 <ThemeProvider theme={sliderTheme}>
