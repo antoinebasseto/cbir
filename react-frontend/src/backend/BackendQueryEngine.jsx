@@ -1,7 +1,7 @@
 export const BASE_URL = 'http://127.0.0.1:8000';
 const PATH_GET_IMAGES = "/image/?name=";
 
-export const queryBackend = async (route, method = "POST") => {
+export const queryBackend = async (route, method) => {
     const requestURL = `${BASE_URL}/${route}`;
     const data = await fetch(requestURL,
         {
@@ -12,16 +12,15 @@ export const queryBackend = async (route, method = "POST") => {
     return data;
 }
 
-export const uploadToBackend = async (route, method = "POST", file) => {
+export const queryBackendWithFile = async (route, file) => {
     const requestURL = `${BASE_URL}/${route}`;
-    
     
     let frm = new FormData();
     //data.append('filters', 'filtersPlaceholder');
     frm.append('file', file);
     const data = await fetch(requestURL,
         {
-            method: method,
+            method: "POST",
             body: frm
         }
     ).then(response => response.json());
@@ -30,13 +29,17 @@ export const uploadToBackend = async (route, method = "POST", file) => {
 }
 
 
-export const updateFiltersBackend= async(route, method='POST', similarityThreshold, maxNumberImages, ageInterval, diseasesFilter) => {
+export const updateFiltersBackend = async(route, method='POST', similarityThreshold, maxNumberImages, ageInterval, diseasesFilter) => {
     const requestURL = `${BASE_URL}/${route}`;
     const data = await fetch(requestURL,
         {
             method: method,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ similarityThreshold: similarityThreshold, maxNumberImages: maxNumberImages, ageInterval: ageInterval, diseasesFilter: diseasesFilter })
+            body: JSON.stringify({similarityThreshold: similarityThreshold,
+                                  maxNumberImages: maxNumberImages, 
+                                  ageInterval: ageInterval, 
+                                  diseasesFilter: diseasesFilter,
+                                })
         }
     ).then(response => response.json());
 

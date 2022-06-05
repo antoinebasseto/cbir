@@ -35,24 +35,28 @@
 
 .applyButton{
     margin-top: 40px;
-    background-color: rgb(245, 245, 245);
-    color: black;
+
+    color: #555;
+    background-color: #f1f1f1;
+
     padding: 5px 0px 5px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    border: 1px solid #555;
-    box-shadow: 0 3px #999;
+
+    /* border: 1px dashed #555; */
+
+    box-shadow: 0 10px 15px rgb(230, 230, 230);
 }
 
 .applyButton:hover{
-    background-color: rgb(235, 235, 250);
+    color: #104242;
+    background-color: #effbfb;
 }
 
 .applyButton:active {
-    background-color: rgb(235, 235, 250);
-    box-shadow: 0 4px #555;
+    box-shadow: 0 0 0 rgb(255, 255, 255);
     transform: translateY(2px);
-  }
+}
