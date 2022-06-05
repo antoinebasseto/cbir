@@ -1,3 +1,6 @@
+import io
+
+from PIL import Image
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,7 +18,7 @@ import base64
 import numpy as np
 from DL_model.config import config
 from DL_model.hyperparameters import params
-from DL_model.model import get_model
+from DL_model.model import get_model, get_image_preprocessor
 
 app = FastAPI(
     title="Test Python Backend",
@@ -25,12 +28,18 @@ app = FastAPI(
 )
 
 model = None
+image_preprocessor = None
 async def get_dl():
     global model
     if not model:
         model = get_model(params[config['model']], config['model'])
     return model
 
+async def get_image_processor():
+    global image_preprocessor
+    if not image_preprocessor:
+        image_preprocessor = get_image_preprocessor()
+    return image_preprocessor
 
 IMAGES_PATH = "./data/images"
 METADATA_PATH = "./data/HAM10000_metadata_with_dummy_latent.csv"
@@ -113,14 +122,22 @@ def update_filters(filters: dict):
 
 #todo filters and thresholds
 @app.post("/get_similar_images")
-def get_similar_images(file: UploadFile = File(...)):
+def get_similar_images(file: UploadFile = File(...), model = Depends(get_model), preprocess = Depends(get_image_processor)):
     pictures = pd.read_csv(METADATA_PATH)
     
     #TODO actually use image
     #get dimensions of image in VAE space
     #assuming get_embedding returns tuple/list of dimensions
 #    pic_embedding = get_embedding(file, dlmodel)
-    pic_embedding = np.random.rand(12)
+    try:
+        contents = await file.read()
+        img = Image.open(io.BytesIO(contents))
+    except:
+        return {"message": "Error uploading file"}
+    finally:
+        await file.close()
+    pic_embedding = model.encoder(preprocess(img))
+    #pic_embedding = np.random.rand(12)
 
     #array with dists of uploaded image to saved images
     dists = np.zeros(pictures.shape[0])
