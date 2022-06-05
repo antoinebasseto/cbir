@@ -10,7 +10,7 @@ import joblib
 
 import pandas as pd
 import numpy as np
-import umap.umap_ as umap
+#import umap.umap_ as umap
 
 from DL_model.config import config
 from DL_model.hyperparameters import params
@@ -25,6 +25,7 @@ app = FastAPI(
 
 model = None
 image_preprocessor = None
+
 async def get_dl():
     global model
     if not model:
