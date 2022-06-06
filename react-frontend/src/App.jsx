@@ -7,6 +7,8 @@ import SimilarImages from './components/similarImages/similarImages'
 import ProjectionPlot from './components/projectionPlot/projectionPlot';
 import LatentSpaceExplorator from './components/latentSpaceExplorator/latentSpaceExplorator';
 
+
+
 function App() {
 
   // Navigation
@@ -26,6 +28,9 @@ function App() {
   const [uploadedProjectionData, setUploadedProjectionData] = useState([]);
   const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
 
+  //Latent space explorator names
+  const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] = useState([]);
+
   const [latent_space, setLatentSpace] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
   useEffect(() => {
       queryBackend('get_projection_data', 'GET').then((data) => {
@@ -33,6 +38,13 @@ function App() {
       })
     }, []);
   
+
+  function handleRenameLatent(event, dim){
+    let temp = latentSpaceExplorationNames.map((x) => x) // We do that to copy the array
+    temp[dim] = event.target.value
+    setLatentSpaceExplorationNames(temp)
+  }
+
   function handleUpload(){
     setIndexActiv(0)
   }
@@ -70,6 +82,7 @@ function App() {
     queryBackendWithFile('get_latent_space', file).then((data) => {
       setLatentSpace(data);
       console.log(data)
+      
     });
 
     console.log(latent_space)
@@ -77,6 +90,7 @@ function App() {
     queryBackend(`get_uploaded_projection_data?latent=[${latent_space}]`, 'GET').then((data) => {
 
         setUploadedProjectionData(data)
+        
       }
     );
     queryBackend(`get_similar_images?latent=[${latent_space}]`, 'GET').then((data) => {
@@ -87,6 +101,11 @@ function App() {
 
     queryBackend(`get_latent_space_images_url?latent=[${latent_space}]`, 'GET').then((latent_space_images_url) => {
         setLatentSpaceExplorationImages(latent_space_images_url)
+        
+        let initialNames = latent_space_images_url.map((_, index) => {
+          return "Dim " + (index + 1)
+        })
+        setLatentSpaceExplorationNames(initialNames)
     })
   };
 
@@ -135,7 +154,7 @@ function App() {
           }
           {
             indexActiv===3 && 
-            <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages}/>
+            <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages} dimensionNames={latentSpaceExplorationNames} handleRenameLatent={handleRenameLatent}/>
           }
         </div>
       </div>

@@ -30,15 +30,39 @@
     margin-right: 3px;
 }
 
-.dim_text{
-    flex:1;
-    background-color: white;
-    font-size: 20;
-    font-weight: bold;
+.input_dimension{
+    width:142px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.container_dim_text_and_editor{
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    width:150px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
+.dim_text{
+    font-size: 20;
+    font-weight: bold;
+    overflow: auto;
+    margin-right: 5px;
+    margin-left: 5px;
+}
 
+.edit_button:hover{
+    background-color: #f1f1f1;
+    box-shadow: 0 10px 15px rgb(230, 230, 230);
+}
+
+.edit_button{
+    cursor: pointer;
+}
+
+.edit_icon{
+    font-size: 20px;
+}

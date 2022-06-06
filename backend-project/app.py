@@ -187,15 +187,15 @@ def get_similar_images(latent, model=Depends(get_dl),
     # latent = str(latent).split(",")
     print('latent', latent)
     pic_embedding = np.array(latent, dtype=np.float32)
-    pictures["dist"] = (pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]] - pic_embedding).apply(
-        np.linalg.norm, axis=1)
+    # pictures["dist"] = (pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]] - pic_embedding).apply(
+    #     np.linalg.norm, axis=1)
 
     # print(pic_embedding)
     # pic_embedding = np.random.rand(12)
     # Calculate distance scores for each
     #pictures = pd.read_csv("HAM10000_metadata_with_dummy_latent.csv")
     pictures["dx"]= pictures["dx"].apply(lambda x: ABBREVIATION_TO_DISEASE[x])
-    latents = pictures.loc[:, [f"latent_coordinate{i}" for i in range(12)]]
+    latents = pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]]
     weighted_latents =latents.multiply(distanceWeights)
     pictures["dist"] = (weighted_latents - pic_embedding).apply(np.linalg.norm, ord=1, axis=1)
 
@@ -218,5 +218,5 @@ def update_schema_name(app: FastAPI, function: Callable, name: str) -> None:
             break
 
 
-update_schema_name(app, get_latent_space, "get_latent_space")
-# update_schema_name(app, get_uploaded_projection_data, "get_uploaded_data")
+#update_schema_name(app, get_latent_space, "get_similar_images")
+#update_schema_name(app, get_uploaded_projection_data, "get_uploaded_data")
