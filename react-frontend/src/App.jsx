@@ -31,6 +31,7 @@ function App() {
   //Latent space explorator names
   const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] = useState([]);
 
+  const [latent_space, setLatentSpace] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
   useEffect(() => {
       queryBackend('get_projection_data', 'GET').then((data) => {
         setProjectionData(data)
@@ -67,22 +68,38 @@ function App() {
     setFilterActiv(!filterActiv)
   }
 
-  function handleImageUploaded(file) {
-    setFile(file);
-    
-    queryBackendWithFile('get_similar_images', file).then((data) => {
+  function handleImageUploaded(file0) {
+    setFile(file0);
+    // queryBackendWithFile('get_latent_space_images_url', file).then((data) => {
+    //     setLatentSpaceExplorationImages(data)
+    //   }
+    // // )
+    // queryBackendWithFile('get_similar_images', file).then((data) => {
+    //     setSimilarImages(data)
+    //   }
+    // )
+    //Get latent space
+    queryBackendWithFile('get_latent_space', file).then((data) => {
+      setLatentSpace(data);
+      console.log(data)
+      
+    });
+
+    console.log(latent_space)
+    // Get uploaded image projection data
+    queryBackend(`get_uploaded_projection_data?latent=[${latent_space}]`, 'GET').then((data) => {
+
+        setUploadedProjectionData(data)
+        
+      }
+    );
+    queryBackend(`get_similar_images?latent=[${latent_space}]`, 'GET').then((data) => {
         setSimilarImages(data)
       }
     )
-    
-    // Get uploaded image projection data
-    queryBackendWithFile('get_uploaded_projection_data', file).then((data) => {
-        setUploadedProjectionData(data)
-      }
-    )
-
     // Get the rollout images for latent space exploration
-    queryBackend('get_latent_space_images_url', 'GET').then((latent_space_images_url) => {
+
+    queryBackend(`get_latent_space_images_url?latent=[${latent_space}]`, 'GET').then((latent_space_images_url) => {
         setLatentSpaceExplorationImages(latent_space_images_url)
         
         let initialNames = latent_space_images_url.map((_, index) => {

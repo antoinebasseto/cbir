@@ -50,4 +50,9 @@ export const queryImage = (imageName) =>{
     return requestURL;
 }
 
+export const queryCache = (imageName) =>{
+    const requestURL = `${BASE_URL}/cache/?name=${imageName}`;
+    return requestURL;
+}
+
 export default queryBackend;
