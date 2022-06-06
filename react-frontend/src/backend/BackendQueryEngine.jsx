@@ -1,5 +1,5 @@
 export const BASE_URL = 'http://127.0.0.1:8000';
-const PATH_GET_IMAGES = "/image/?name=";
+const PATH_GET_IMAGES = "/image?name=";
 
 export const queryBackend = async (route, method) => {
     const requestURL = `${BASE_URL}/${route}`;
