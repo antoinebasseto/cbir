@@ -7,6 +7,8 @@ import SimilarImages from './components/similarImages/similarImages'
 import ProjectionPlot from './components/projectionPlot/projectionPlot';
 import LatentSpaceExplorator from './components/latentSpaceExplorator/latentSpaceExplorator';
 
+
+
 function App() {
 
   // Navigation
@@ -26,12 +28,22 @@ function App() {
   const [uploadedProjectionData, setUploadedProjectionData] = useState([]);
   const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
 
+  //Latent space explorator names
+  const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] = useState([]);
+
   useEffect(() => {
       queryBackend('get_projection_data', 'GET').then((data) => {
         setProjectionData(data)
       })
     }, []);
   
+
+  function handleRenameLatent(event, dim){
+    let temp = latentSpaceExplorationNames.map((x) => x) // We do that to copy the array
+    temp[dim] = event.target.value
+    setLatentSpaceExplorationNames(temp)
+  }
+
   function handleUpload(){
     setIndexActiv(0)
   }
@@ -72,6 +84,11 @@ function App() {
     // Get the rollout images for latent space exploration
     queryBackend('get_latent_space_images_url', 'GET').then((latent_space_images_url) => {
         setLatentSpaceExplorationImages(latent_space_images_url)
+        
+        let initialNames = latent_space_images_url.map((_, index) => {
+          return "Dim " + (index + 1)
+        })
+        setLatentSpaceExplorationNames(initialNames)
     })
   };
 
@@ -120,7 +137,7 @@ function App() {
           }
           {
             indexActiv===3 && 
-            <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages}/>
+            <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages} dimensionNames={latentSpaceExplorationNames} handleRenameLatent={handleRenameLatent}/>
           }
         </div>
       </div>
