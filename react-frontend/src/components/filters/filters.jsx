@@ -6,9 +6,9 @@ import { createTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
-import {FaVirus} from "react-icons/fa"
+import {FaVirus, FaBirthdayCake} from "react-icons/fa"
 import {AiOutlineOrderedList} from "react-icons/ai"
 
 import {IoMdImages} from "react-icons/io"
@@ -48,60 +48,57 @@ export default function Filters(props) {
 
     /* List of diseases options*/
     const diseases = [
-        'All',
-        'Atelectasis',
-        'Cardiomegaly',
-        'Consolidation',
-        'Edema',
-        'Effusion',
-        'Emphysema',
-        'Fibrosis',
-        'Hernia',
-        'Infiltration',
-        'Mass',
-        'Nodule',
-        'No Finding',
-        'Pleural Thickening',
-        'Pneumonia',
-        'Pneumothorax',
-      ];
-
+      'All',
+      'Actinic keratoses and intraepithelial carcinoma',
+      'Basal cell carcinoma',
+      'Benign keratosis-like lesions',
+      'Dermatofibroma',
+      'Melanoma',
+      'Melanocytic nevi',
+      'Vascular lesions',
+    ];
 
 
     function handleSimilarityOnChange(_, newValue){
-        props.setSimilarityThreshold(newValue)
+      props.setSimilarityThreshold(newValue)
     }
     
     function handleMaxNumberImagesOnChange(_, newValue){
-        props.setMaxNumberImages(newValue)
+      props.setMaxNumberImages(newValue)
     }
     
-    function handleFollowUpOnChange(_, newValue){
+    function handleAgeOnChange(_, newValue){
       if (!Array.isArray(newValue)) {
         return;
       }
     
-      if (newValue[0] !== props.followUpInterval[0]) {
-        props.setFollowUpInterval([Math.min(newValue[0], props.followUpInterval[1]), props.followUpInterval[1]]);
+      if (newValue[0] !== props.ageInterval[0]) {
+        props.setAgeInterval([Math.min(newValue[0], props.ageInterval[1]), props.ageInterval[1]]);
       } else {
-        props.setFollowUpInterval([props.followUpInterval[0], Math.max(newValue[1], props.followUpInterval[0])]);
+        props.setAgeInterval([props.ageInterval[0], Math.max(newValue[1], props.ageInterval[0])]);
       }
     }
-      function handleDiseasesChange (event){
+      function handleDiseasesChange(event) {
         const {
           target: { value },
         } = event;
     
         // On autofill we get a stringified value.
         let newValue = typeof value === 'string' ? value.split(',') : value
-    
-    
+
         if ((props.diseasesFilter).indexOf("All") > -1 && newValue.length > 0){
-            newValue = diseases.filter((disease) => newValue.indexOf(disease) == -1)
+          newValue = diseases.filter((disease) => newValue.indexOf(disease) == -1)
         }
-        newValue = newValue.indexOf("All") > -1 ? ["All"] : newValue    
-        props.setDiseasesFilter(newValue);
-        
+        // If "All" is contained in the list, we just return "All" and not all the other elements
+        newValue = newValue.indexOf("All") > -1 ? ["All"] : newValue
+
+        // If all the elements are checked but not "All" yet, we use "All" instead. The filter method computes the intersection of the two arrays
+        newValue = 
+        newValue.filter(function(disease) {
+          return diseases.indexOf(disease) !== -1;
+        }).length === diseases.length-1 ? ["All"] :newValue
+  
+        props.setDiseasesFilter(newValue);        
       };
 
     return (
@@ -129,7 +126,7 @@ export default function Filters(props) {
                 <div className="filterTitleContainer">
                     <IoMdImages className="filterIcon"/>
                     <div className="filterName">
-                        Maximum number of images
+                        Max number of images
                     </div>
                 </div>
                 <ThemeProvider theme={sliderTheme}>
@@ -175,19 +172,19 @@ export default function Filters(props) {
 
             <div className="filterContainer">
                 <div className="filterTitleContainer">
-                    <AiOutlineOrderedList className="filterIcon"/>
+                    <FaBirthdayCake className="filterIcon"/>
                     <div className="filterName">
-                        Follow up
+                        Age
                     </div>
                 </div>
                 <ThemeProvider theme={sliderTheme}>
                 <Slider
-                    value={props.followUpInterval}
+                    value={props.ageInterval}
                     step={1}
-                    min={1}
-                    max={10} /*Should check what actual max follow up is in the dataset*/
+                    min={0}
+                    max={85}
                     valueLabelDisplay="auto"
-                    onChange={handleFollowUpOnChange}
+                    onChange={handleAgeOnChange}
                 />
                 </ThemeProvider>
             </div>

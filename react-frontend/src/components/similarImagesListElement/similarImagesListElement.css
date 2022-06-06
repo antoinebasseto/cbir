@@ -1,0 +1,30 @@
+.similarImagesListElement {
+    flex: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #f5f5f5;
+    /* border: 1px dotted grey; */
+    /* box-shadow: 0 10px 15px rgb(230, 230, 230); */
+}
+
+.label {
+    text-align: center;
+}
+
+.infoContainer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.similarImage {
+    object-fit: contain;
+    max-width: 15vw;
+    flex: 2;
+    border-radius: 25px;
+    box-shadow: 0 10px 15px rgb(230, 230, 230);
+}

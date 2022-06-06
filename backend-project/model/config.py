@@ -1,5 +1,3 @@
-import json 
-
 """
 Training and evaluation settings
 """
@@ -23,9 +21,10 @@ config['dataset'] = 'HAM10000'  # options: sleep-edf-153, ...
 
 """
 Model related settings 
-Available models: DETRtime
 """
 config['model'] = 'BetaVAEConv'
+
+config['model_path'] = '/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220513-033014_BetaVAEConv/epoch=61-step=9734.ckpt'
 
 """
 Training related settings
@@ -36,3 +35,8 @@ Training related settings
 Logging and Analysis 
 """
 config['results_dir'] = 'reports/logs'
+
+"""
+Logging and Analysis 
+"""
+config['model_path'] = f"model/{config['model']}"

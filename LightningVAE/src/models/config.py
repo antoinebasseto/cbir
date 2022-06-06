@@ -10,7 +10,7 @@ Select which model to run
 Available models: DETRtime, ... 
 Available modes: 'train', 'test', 'inference' 
 """
-config['model'] = 'DETRtime'
+config['model'] = 'VAE'
 config['mode'] = 'train'
 
 
@@ -29,4 +29,3 @@ config['gpu_ids'] = [0]  # only use one gpu
 """
 Evaluation related settings 
 """
-#TODO:implement

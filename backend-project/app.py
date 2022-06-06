@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,11 +11,22 @@ from db import models
 from pydantic_models import schemas
 from db.database import SessionLocal, engine
 from DL_model.model import get_model, get_embedding
+import io
 
+from PIL import Image
+from fastapi import FastAPI, Depends, UploadFile, File, HTTPException, Form
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 
-models.Base.metadata.create_all(bind=engine)
+from fastapi.middleware.cors import CORSMiddleware
+import joblib
 
-dlmodel = get_model()
+import pandas as pd
+import numpy as np
+#import umap.umap_ as umap
+
+from model.config import config
+from model.hyperparameters import params
+from model.model import get_model, get_image_preprocessor
 
 app = FastAPI(
     title="Test Python Backend",
@@ -23,17 +35,31 @@ app = FastAPI(
     version="0.1.0",
 )
 
-PICTURE_FOLDER = "/home/jj/Spring2022/Medical1-xai-iml22/backend-project/image_folder"
 
-#Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
-imagepath = "./test.png"
+model = None
+image_preprocessor = None
+
+def get_dl():
+    global model
+    if not model:
+        print(model)
+        model = get_model(params[config['model']], config['model'], config['results_dir'], config['model_path'])
+    return model
+
+def get_image_processor():
+    global image_preprocessor
+    if not image_preprocessor:
+        image_preprocessor = get_image_preprocessor(params[config['model']], config['model'])
+    return image_preprocessor
+
+IMAGES_PATH = "/home/jimmy/Medical1-xai-iml22/LightningVAE/data/HAM10000/images"
+METADATA_PATH = "/home/jimmy/Medical1-xai-iml22/LightningVAE/HAM10000_latent_space_umap_processed.csv"
+
+similarityThreshold = 0
+maxNumberImages = 3
+ageInterval = [0,100]
+diseasesFilter = ["All"]
 
 # Allow CORS
 app.add_middleware(
@@ -43,127 +69,123 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/get_projection_data")
+def get_projection_data():
+    metadata = pd.read_csv(METADATA_PATH)
 
-# @app.post("/upload-dataset")
-# def upload_data(file: UploadFile = File(...)):
-#     ##dataset = pd.read_csv(file.file)
-#     ##if cluster_algo
-#     print(file)
-#     dataset = pd.read_csv(file.file).to_dict()
-#     print(dataset)
-#     return dataset
-
-
-@app.post("/upload-picture", response_model=schemas.Picture)
-def upload_picture(file:str, db: Session = Depends(get_db)):
-    picture = crud.get_picture_by_file_name(db, file)
-    if picture:
-        raise HTTPException(status_code=400, detail="file already exists")
-    picture   = {'title': "test", 
-                'file_path': "dataset/test.png"}
-    return crud.create_picture(db =db, item=picture)
+    projection_data = metadata[["image_id", "dx", "dx_type", "age", "sex", "localization", "umap1", "umap2"]].copy()
+    projection_data = projection_data.fillna("unknown")
     
-#@app.post("/get-dataset", response_class=FileResponse)
-#def get_data(name: str):
-#    return FileResponse(imagepath)
+    return projection_data.to_dict(orient="records")
 
-@app.post("/embedding")
-def get_embedding(file: bytes = File(...)):
-    """
-    model callback function
-    @param file:
-    @return:
-    """
-    image_embedding = get_embedding(file, dlmodel)
-    #add possible annotations?
-    
-    return image_embedding
+@app.post("/get_uploaded_projection_data")
+async def get_uploaded_projection_data(file: UploadFile = File(...), model = Depends(get_dl), preprocess = Depends(get_image_processor)):
+    try:
+        #contents = await file.read()
+        contents = await file.read()
+        img = Image.open(io.BytesIO(contents))
+    except:
+        return {"message": "Error uploading file"}
+    finally:
+        await file.close()
+        #await file.close()
+    img = preprocess(img)
+    img = img.unsqueeze(0)
+    pic_embedding, _ = model.encoder(img)
+    #print(pic_embedding)
+    #pic_embedding = np.random.rand(12)
+    pic_embedding = pic_embedding.squeeze().detach().numpy()
+    reducer = joblib.load("umap.sav")
+    embedding = reducer.transform(pic_embedding.reshape(1, -1))
+    return [{"umap1": embedding[0][0].item(), "umap2": embedding[0][1].item()}]
 
-@app.post("/get-dataset")
-def get_data(name: str, db: Session = Depends(get_db)):
-    image = crud.get_picture_by_file_name(db, file_name="test")
-    imagepath = image.file_path
-
-    with open(imagepath, 'rb') as f:
-    	base64image = base64.b64encode(f.read())
-    	return base64image
-
-# @app.post("/get-dataset")
-# def get_data(name: str):
-#     with open(imagepath, 'rb') as f:
-#     	base64image = base64.b64encode(f.read())
-#     	return base64image
-
-@app.get("/image_ids")
-def image_list(db: Session = Depends(get_db)):
-    return {"image_ids": crud.picture_ids(db)}
+# Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
+@app.get("/get_latent_space_images_url")
+def get_latent_space_images_url():
+    # TODO: return the path to the real rollout images to get rollout images
+    #honestly this should only be parametrized
+    #or cached I guess
+    # 10x10 images
+    dummy_return = [["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
+                    ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],]
+    return dummy_return
 
 @app.get("/image")
-def get_image(name: str, db: Session = Depends(get_db)):
-    # image = crud.get_picture(db, id)
-    # file_name = image.picture_id
-    path = PICTURE_FOLDER+'/'+name
-    #path = "/home/jj/Spring2022/Medical1-xai-iml22/backend-project/test.png"
-    return FileResponse(path = path)
+def get_image(name: str):
+    path = f"{IMAGES_PATH}/{name}.jpg"
+    return FileResponse(path)
 
-@app.post("/query")
-def get_array(id: str, db: Session = Depends(get_db)):
+@app.post("/update_filters")
+def update_filters(filters: dict):
+    global similarityThreshold, maxNumberImages, ageInterval, diseasesFilter
+    similarityThreshold = filters['similarityThreshold']
+    maxNumberImages = filters['maxNumberImages']
+    ageInterval = filters['ageInterval']
+    diseasesFilter = filters['diseasesFilter']
+    return True
 
-    # dummy_return = [[ 0, 1, 0, "Cardiomegaly", 0.94],
-    #                     [ 1, 1, 1, "Cardiomegaly|Emphysema", 0.85],
-    #                     [2, 2, 0, "No Finding", 0.83]]
-    dummy_return = [["test1.png", 1, 0, "Cardiomegaly", 0.94],
-     ["test2.png", 1, 1, "Cardiomegaly|Emphysema", 0.85],
-     ["test3.png", 2, 0, "No Finding", 0.83]]
-    return JSONResponse(content=dummy_return)
+#todo filters and thresholds
 
-@app.post("/files/")
-async def create_file(file: bytes = File(...)):
-    return {"file_size": len(file)}
+@app.post("/get_similar_images")
+async def get_similar_images( file: UploadFile = File(...), model = Depends(get_dl), preprocess = Depends(get_image_processor)):
+#async def get_similar_images(file: UploadFile):
+    print(file)
+    pictures = pd.read_csv(METADATA_PATH)
+#
+#     #TODO actually use image
+#     #get dimensions of image in VAE space
+#     #assuming get_embedding returns tuple/list of dimensions
+#
+#    pic_embedding = get_embedding(file, dlmodel)
+    try:
+        #contents = await file.read()
+        contents = await file.read()
+        img = Image.open(io.BytesIO(contents))
+    except:
+        return {"message": "Error uploading file"}
+    finally:
+        await file.close()
+        #await file.close()
+    img = preprocess(img)
+    img = img.unsqueeze(0)
+    pic_embedding, _ = model.encoder(img)
+    #print(pic_embedding)
+    #pic_embedding = np.random.rand(12)
+    pic_embedding = pic_embedding.squeeze().detach().numpy()
+    # Calculate distance scores for each 
+    pictures["dist"] = (pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]] - pic_embedding).apply(np.linalg.norm, axis=1)
+    sorted_pictures = (pictures.sort_values(by=['dist']))
+    filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[0])]
+    filtered_pictures = filtered_pictures[filtered_pictures['dist'] > similarityThreshold]
+    closest_pictures = filtered_pictures.iloc[:maxNumberImages]
+    
+    return JSONResponse(content=closest_pictures.values.tolist())
+
+# @app.post("/files/")
+# async def create_file(file: bytes = File(...)):
+#     return {"file_size": len(file)}
 
 
-@app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile):
-    return {"filename": file.filename}
-
-
-
-@app.get("/", response_class=HTMLResponse)
-async def root():
-    html_content = """
-        <html>
-            <head>
-                <title>Week 2</title>
-            </head>
-            <body>
-                <h1>Test Python Backend</h1>
-                Visit the <a href="/docs">API doc</a> (<a href="/redoc">alternative</a>) for usage information.
-            </body>
-        </html>
-        """
-    return HTMLResponse(content=html_content, status_code=200)
-
+# @app.post("/uploadfile/")
+# async def create_upload_file(file: UploadFile):
+#     return {"filename": file.filename}
 
 def update_schema_name(app: FastAPI, function: Callable, name: str) -> None:
-    """
-    Updates the Pydantic schema name for a FastAPI function that takes
-    in a fastapi.UploadFile = File(...) or bytes = File(...).
 
-    This is a known issue that was reported on FastAPI#1442 in which
-    the schema for file upload routes were auto-generated with no
-    customization options. This renames the auto-generated schema to
-    something more useful and clear.
-
-    Args:
-        app: The FastAPI application to modify.
-        function: The function object to modify.
-        name: The new name of the schema.
-    """
     for route in app.routes:
+        print(route)
         if route.endpoint is function:
+            print(route.body_field)
             route.body_field.type_.__name__ = name
             break
 
-
-update_schema_name(app, create_file, "CreateFileSchema")
-update_schema_name(app, create_upload_file, "CreateUploadSchema")
+update_schema_name(app, get_similar_images, "get_similar_images")
+update_schema_name(app, get_uploaded_projection_data, "get_uploaded_data")

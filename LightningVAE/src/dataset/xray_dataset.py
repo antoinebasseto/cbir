@@ -3,21 +3,25 @@ from typing import Optional
 
 import pytorch_lightning as pl
 import torch
-from torch.utils.data import Dataset
+from PIL import Image
+import torchvision.transforms as T
+from torch.utils.data import Dataset, DataLoader
 import numpy as np
 import re
-from utils import load_data, read_image
 
 
 class ImageDataModule(pl.LightningDataModule):
 
-    def __init__(self, root_dir, batch_size = 32, transform=None):
+    def __init__(self, root_dir, batch_size = 32, input_dim = 32, transform=None, collate_fn=None):
 
         super().__init__()
         self.data_dir = root_dir
         self.batch_size = batch_size
-        self.transform = None  # define dataset specific transforms here
-
+        # define dataset specific transforms here
+        if transform is None:
+            self.transform = T.Compose([T.Resize((input_dim, input_dim)), T.ToTensor()])
+        else:
+            self.transform = T.Compose([transform, T.Resize((input_dim, input_dim)), T.ToTensor()])
         self.collate_fn = collate_fn
 
     def prepare_data(self):
@@ -38,34 +42,31 @@ class ImageDataModule(pl.LightningDataModule):
 
         # Assign train/val datasets for use in dataloaders
         if stage == "fit" or stage is None:
-            train_data = np.load(self.data_dir / 'val.npz')
-            eeg = torch.from_numpy(train_data['EEG']).float()
-            labels = torch.from_numpy(train_data['labels']).float()
-            self.train_set = XRayDataset(self.data_dir, labels)
 
-            val_data = np.load(self.data_dir / 'val.npz')
-            eeg = torch.from_numpy(val_data['EEG']).float()
-            labels = torch.from_numpy(val_data['labels']).float()
-            self.val_set = TensorListDataset(eeg, labels)
+            train_directory = os.path.join(self.data_dir, "HAM10000_images_part_1")
+            self.train_set = XRayDataset(train_directory, transform=self.transform, train=True)
+
+            val_directory = os.path.join(self.data_dir, "HAM10000_images_part_2")
+            self.val_set = XRayDataset(val_directory, transform=self.transform, train=False)
 
         # Assign test dataset for use in dataloader(s)
         if stage == "test" or stage is None:
-            data = np.load(self.data_dir / 'test.npz')
-            eeg = torch.from_numpy(data['EEG']).float()
-            labels = torch.from_numpy(data['labels']).float()
-            self.test_set = TensorListDataset(eeg, labels)
+            test_directory = os.path.join(self.data_dir, "HAM10000_images_part_2")
+            self.test_set = XRayDataset(test_directory, transform=self.transform, train=False)
 
         if stage == "predict" or stage is None:
             self.predict_set = NotImplemented
 
     def train_dataloader(self):
-        return DataLoader(self.train_set, batch_size=self.batch_size, collate_fn=self.collate_fn, shuffle=True)
+        return DataLoader(self.train_set, batch_size=self.batch_size, collate_fn=self.collate_fn, shuffle=True
+                          , num_workers=4)
 
     def val_dataloader(self):
-        return DataLoader(self.val_set, batch_size=self.batch_size, collate_fn=self.collate_fn, shuffle=True)
+        return DataLoader(self.val_set, batch_size=self.batch_size, collate_fn=self.collate_fn, shuffle=False,
+                          num_workers=4)
 
     def test_dataloader(self):
-        return DataLoader(self.test_set, batch_size=self.batch_size, collate_fn=self.collate_fn, shuffle=True)
+        return DataLoader(self.test_set, batch_size=self.batch_size, collate_fn=self.collate_fn, shuffle=False)
 
     def predict_dataloader(self):
         raise NotImplementedError("We do not have a predict set in this datamodule")
@@ -76,7 +77,7 @@ class XRayDataset(Dataset):
     images name, bounding boxes and data of the images we will use either for training or testing.
     '''
 
-    def __init__(self, img_dir, transform=None, train=True):
+    def __init__(self, img_dir, transform=None, train=True, return_labels=False, meta_file=None):
         '''
         Constructor
 
@@ -92,15 +93,18 @@ class XRayDataset(Dataset):
         self.img_dir = img_dir
         # Read all the names of the PNG files in the directory
         images_name = np.array([name for name in os.listdir(img_dir) if
-                                os.path.isfile(os.path.join(img_dir, name)) and re.search('png$', name) is not None])
-        data, train_names, test_names, bounding_boxes = load_data(filenames_to_keep=images_name)
-
-        # Keep only the training or test ones
-        self.data = data[data["Filename"].isin((train_names if train else test_names))]
-        self.bounding_boxes = bounding_boxes[bounding_boxes["Filename"].isin((train_names if train else test_names))]
-        self.images_name = images_name[np.isin(images_name, (train_names if train else test_names))]
-
+                                os.path.isfile(os.path.join(img_dir, name)) and
+                                (re.search('png$', name) is not None or re.search('jpg$', name) is not None)])
+        # data, train_names, test_names, bounding_boxes = load_data(filenames_to_keep=images_name)
+        #
+        # # Keep only the training or test ones
+        # self.data = data[data["Filename"].isin((train_names if train else test_names))]
+        # self.bounding_boxes = bounding_boxes[bounding_boxes["Filename"].isin((train_names if train else test_names))]
+        # self.images_name = images_name[np.isin(images_name, (train_names if train else test_names))]
+        self.images_name = images_name
         self.transform = transform
+        self.train = train
+        self.return_labels = return_labels# to be implemented
 
     def __len__(self):
         '''
@@ -128,21 +132,11 @@ class XRayDataset(Dataset):
             The corresponding image transformed with the transform method
         '''
         img_path = os.path.join(self.img_dir, self.images_name[idx])
-        image = read_image(img_path)
 
-        if (len(image.shape) > 2):  # Some images have more than one channel for unknown reasons
-            image = image[:, :, 0]
-
-        data = self.data[self.data["Filename"] == self.images_name[idx]]
-
-        bbox = None
-        if not self.bounding_boxes[self.bounding_boxes["Filename"] == self.images_name[idx]].empty:
-            bbox = self.bounding_boxes[self.bounding_boxes["Filename"] == self.images_name[idx]]
-
+        img = Image.open(img_path)
         if self.transform:
-            image = self.transform(image)
-            if image.shape[0] == 1:
-                image = image.squeeze()
+            image = self.transform(img)
 
-        return image  # , data, bbox # Cannot pass data and bbox for the moment because they contain entries of
-        # type "object" which is a problem for dataloader. Should transform the few entries having object type
+        if self.return_labels:
+            raise NotImplementedError("We do not have a return_labels in this datamodule")
+        return image

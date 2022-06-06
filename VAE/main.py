@@ -13,11 +13,8 @@ from models.beta_vae import BetaVAE
 from dataset.dataset import XRayDataset
 from train import run_training, plot_loss
 
-<<<<<<< HEAD
 IMG_DIR = "dataset/images/images_001/"
-=======
-IMG_DIR = "../backend-project/data/images/images_001/"
->>>>>>> 2970260e41de2bc23d1562b4e0a971356bbf579b
+
 BATCH_SIZE = 2
 NUM_EPOCHS = 10
 LEARNING_RATE = 1e-3

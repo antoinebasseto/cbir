@@ -1,7 +1,7 @@
 """
 Here we can store the hyperparameter configurations for each model
 """
-from config import config
+from .config import config
 
 params = {
 

@@ -7,42 +7,31 @@ from sqlalchemy.orm import relationship
 
 from database import Base
 
-class Patient(Base):
-    __tablename__ = "patients"
-    id = Column(Integer, primary_key = True, index=True)
-    patient_id = Column(Integer, index = True)
-    gender = Column(String, index = True)
-    age = Column(Integer, index = True)
-    #pictures = relationship("Picture", back_populates="patient")
+class Image(Base):
+    __tablename__ = "images"
 
-class Picture(Base):
-    __tablename__ = "pictures"
+    image_id = Column(Integer, primary_key=True, index=True)
+    lesion_id = Column(String, index=True)
+    diagnosis = Column(String, index=True)
+    # Type of confirmation for ground truth (histopathology, consensus...)
+    diagnosis_type = Column(String, index=True)
+    age = Column(Integer, index=True)
+    sex = Column(String, index=True)
+    localisation = Column(String, index=True)
 
-    id = Column(Integer, primary_key = True, index = True)
+    file_path = Column(String, index=True)
 
-    picture_id = Column(String, index = True)
-    file_path = Column(String, index = True)
-    patient_id = Column(Integer, ForeignKey("patients.patient_id"))
-    #stub
-    similarity = Column(Integer, index = True)
+    # Latent space coordinates
+    l0_coordinate = Column(Integer, index=True)
+    l1_coordinate = Column(Integer, index=True)
+    l2_coordinate = Column(Integer, index=True)
+    l3_coordinate = Column(Integer, index=True)
+    l4_coordinate = Column(Integer, index=True)
+    l5_coordinate = Column(Integer, index=True)
+    l6_coordinate = Column(Integer, index=True)
+    l7_coordinate = Column(Integer, index=True)
+    l8_coordinate = Column(Integer, index=True)
+    l9_coordinate = Column(Integer, index=True)
 
-    #sickness
-    Abnormal = Column(Boolean, index = True)
-    Atelectasis = Column(Boolean, index = True)
-    Cardiomegaly = Column(Boolean, index = True)
-    Effusion = Column(Boolean, index = True)
-    Infiltration = Column(Boolean, index = True)
-    Mass = Column(Boolean, index = True)
-    Nodule = Column(Boolean, index = True)
-
-    Pneumonia = Column(Boolean, index = True)
-    Pneumothorax = Column(Boolean, index = True)
-    Consolidation = Column(Boolean, index = True)
-    Edema = Column(Boolean, index = True)
-    Emphysema = Column(Boolean, index = True)
-    Fibrosis =  Column(Boolean, index = True)
-    PleuralThickening = Column(Boolean, index = True)
-    Hernia = Column(Boolean, index = True)
-    Other = Column(Boolean, index = True)
 
 

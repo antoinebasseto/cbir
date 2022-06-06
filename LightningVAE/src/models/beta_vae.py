@@ -2,7 +2,7 @@ from typing import List
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+import pytorch_lightning as pl
 # Largely taken from from https://github.com/AntixK/PyTorch-VAE
 
 class VariationalEncoder(nn.Module):
@@ -96,7 +96,8 @@ class Decoder(nn.Module):
         result = self.final_layer(result)
         return result
 
-class BetaVAE(nn.Module):
+class BetaVAE(pl.LightningModule):
+
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
@@ -134,7 +135,12 @@ class BetaVAE(nn.Module):
         mu, log_var = self.variational_encoder(input)
         z = self.reparameterize(mu, log_var)
         return  [self.decoder(z), input, mu, log_var]
-    
+
+    def forward_pass(self, input: torch.Tensor, **kwargs) -> torch.Tensor:
+        mu, log_var = self.variational_encoder(input)
+        z = self.reparameterize(mu, log_var)
+        return  self.decoder(z)
+
     def loss_function(self,
                       *args,
                       **kwargs) -> dict:
@@ -185,3 +191,29 @@ class BetaVAE(nn.Module):
         """
 
         return self.forward(x)[0]
+
+    def training_step(self, batch, batch_idx):
+        X, y = batch
+        outputs = self.forward(X)
+        loss = self.loss_function(*outputs)
+        self.log("Training Loss", loss["loss"])
+        self.log("Reconstruction Loss", loss["Reconstruction_Loss"])
+        self.log("KLD", loss["KLD"])
+
+    def validation_step(self, batch, batch_idx):
+        X, y = batch
+        outputs = self.forward(X)
+        loss = self.loss_function(*outputs)
+        self.log("Validation Loss", loss["loss"])
+        self.log("Reconstruction Loss", loss["Reconstruction_Loss"])
+        self.log("KLD", loss["KLD"])
+        if batch_idx == 0:
+            self.logger.experiment.add_image("Validation_Images", outputs[0], 0)
+
+    def test_step(self, batch, batch_idx):
+        X, y = batch
+        outputs = self.forward(X)
+        loss = self.loss_function(*outputs)
+        self.log("Test Loss", loss["loss"])
+        self.log("Reconstruction Loss", loss["Reconstruction_Loss"])
+        self.log("KLD", loss["KLD"])
