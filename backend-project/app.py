@@ -51,7 +51,6 @@ def get_image_processor():
 IMAGES_PATH = config['image_path']
 METADATA_PATH = config['metadata_path']
 
-similarityThreshold = 0
 distanceWeights = [1,1,1,1,1,1,1,1,1,1,1,1]
 maxNumberImages = 3
 ageInterval = [0, 100]
@@ -145,8 +144,8 @@ def get_image(name: str):
 
 @app.post("/update_filters")
 def update_filters(filters: dict):
-    global similarityThreshold, maxNumberImages, ageInterval, diseasesFilter
-    similarityThreshold = filters['similarityThreshold']
+    global distanceWeights, maxNumberImages, ageInterval, diseasesFilter
+    distanceWeights = filters['distanceWeights']
     maxNumberImages = filters['maxNumberImages']
     ageInterval = filters['ageInterval']
     diseasesFilter = filters['diseasesFilter']
@@ -203,7 +202,6 @@ def get_similar_images(latent, model=Depends(get_dl),
     filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[0])]
     if not "All" in diseasesFilter:
         filtered_pictures = filtered_pictures[filtered_pictures["dx"].isin(diseasesFilter)]
-    #filtered_pictures = filtered_pictures[filtered_pictures['dist'] > similarityThreshold]
     closest_pictures = filtered_pictures.iloc[:maxNumberImages]
 
     return JSONResponse(content=closest_pictures.values.tolist())

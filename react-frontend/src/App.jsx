@@ -21,6 +21,7 @@ function App() {
   const [maxNumberImages, setMaxNumberImages] = useState(3)
   const [ageInterval, setAgeInterval] = useState([0, 85])
   const [diseasesFilter, setDiseasesFilter] = useState(['All'])
+  const [similarityWeights, setSimilarityWeights] = useState([1,1,1,1,1,1,1,1,1,1,1,1])
 
   // Dependent on uploaded image
   const [similarImages, setSimilarImages] = useState([]);
@@ -68,6 +69,12 @@ function App() {
     setFilterActiv(!filterActiv)
   }
 
+  function handleFilterWeightsChange(newValue, dim){
+    let temp = similarityWeights.map((x) => x) // We do that to copy the array
+    temp[dim] = newValue
+    setSimilarityWeights(temp)
+  }
+
   function handleImageUploaded(file0) {
     setFile(file0);
     // queryBackendWithFile('get_latent_space_images_url', file).then((data) => {
@@ -82,7 +89,6 @@ function App() {
     queryBackendWithFile('get_latent_space', file).then((data) => {
       setLatentSpace(data);
       console.log(data)
-      
     });
 
     console.log(latent_space)
@@ -110,7 +116,7 @@ function App() {
   };
 
   function applyOnClickHandle() {
-    updateFiltersBackend('update_filters', 'POST', similarityThreshold, maxNumberImages, ageInterval, diseasesFilter)
+    updateFiltersBackend('update_filters', 'POST', similarityWeights, maxNumberImages, ageInterval, diseasesFilter)
     if (file !== null)
     	handleImageUploaded(file)
   }
@@ -131,10 +137,13 @@ function App() {
           maxNumberImages={maxNumberImages} 
           ageInterval={ageInterval} 
           diseasesFilter={diseasesFilter}
+          similarityWeights={similarityWeights}
+          latentSpaceExplorationNames = {latentSpaceExplorationNames}
           setDiseasesFilter={setDiseasesFilter} 
           setSimilarityThreshold={setSimilarityThreshold} 
           setMaxNumberImages={setMaxNumberImages} 
           setAgeInterval={setAgeInterval} 
+          handleFilterWeightsChange={handleFilterWeightsChange}
           applyOnClickHandle={applyOnClickHandle}
         />
         

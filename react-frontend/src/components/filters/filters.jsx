@@ -16,6 +16,12 @@ import {IoMdImages} from "react-icons/io"
 
 export default function Filters(props) {
 
+  const [weightsSliderEnable, setWeightsSliderEnable] = useState(true);
+
+  function handleWeightsOnClick(){
+    setWeightsSliderEnable(!weightsSliderEnable);
+  }
+
     /* Used to decide how many items will be shown */
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -58,10 +64,6 @@ export default function Filters(props) {
       'Vascular lesions',
     ];
 
-
-    function handleSimilarityOnChange(_, newValue){
-      props.setSimilarityThreshold(newValue)
-    }
     
     function handleMaxNumberImagesOnChange(_, newValue){
       props.setMaxNumberImages(newValue)
@@ -103,23 +105,37 @@ export default function Filters(props) {
 
     return (
         <div className="filtersContainer">
+
             <div className="filterContainer">
-                <div className="filterTitleContainer">
+                <div className={`cliquableFilterTitleContainer ${weightsSliderEnable===true ? "active" : ""}`} onClick={handleWeightsOnClick}>
                     <BsIntersect className="filterIcon"/>
                     <div className="filterName">
-                        Similarity threshold
+                        Dimension weight
                     </div>
                 </div>
-                <ThemeProvider theme={sliderTheme}>
-                <Slider
-                    aria-label="Similarity"
-                    value={props.similarityThreshold}
-                    step={1}
-                    valueLabelDisplay="auto"
-                    onChange={handleSimilarityOnChange}
-                />
-                </ThemeProvider>
-            </div>
+                <div className = "fullWeightsContainer">
+                  {weightsSliderEnable &&
+                    props.similarityWeights.map((w, dim) => {
+                      return <div className="weightContainer">
+                      <div className="filterName">
+                        {props.latentSpaceExplorationNames[dim]}
+                      </div>
+                      <ThemeProvider theme={sliderTheme}>
+                      <Slider
+                          aria-label={"Similarity"}
+                          value={w}
+                          step={0.05}
+                          min={0}
+                          max={1}
+                          valueLabelDisplay="auto"
+                          onChange={(_, newValue) => props.handleFilterWeightsChange(newValue, dim)}
+                      />
+                      </ThemeProvider>
+                      </div>
+                    })
+                  }
+                </div>
+            </div> 
 
 
             <div className="filterContainer">
