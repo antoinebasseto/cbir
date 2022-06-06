@@ -210,5 +210,6 @@ def update_schema_name(app: FastAPI, function: Callable, name: str) -> None:
             break
 
 
-update_schema_name(app, get_similar_images, "get_similar_images")
-update_schema_name(app, get_uploaded_projection_data, "get_uploaded_data")
+#update_schema_name(app, get_similar_images, "get_similar_images")
+#update_schema_name(app, get_uploaded_projection_data, "get_uploaded_data")
+
