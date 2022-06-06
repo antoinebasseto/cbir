@@ -157,6 +157,7 @@ def update_filters(filters: dict):
     maxNumberImages = filters['maxNumberImages']
     ageInterval = filters['ageInterval']
     diseasesFilter = filters['diseasesFilter']
+    print(diseasesFilter)
     return True
 
 
