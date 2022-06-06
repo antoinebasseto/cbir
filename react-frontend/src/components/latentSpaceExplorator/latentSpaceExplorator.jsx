@@ -1,5 +1,5 @@
 import "./latentSpaceExplorator.css"
-import {queryImage} from "../../backend/BackendQueryEngine";
+import {queryCache} from "../../backend/BackendQueryEngine";
 
 export default function LatentSpaceExplorator(props) {
 
@@ -12,7 +12,7 @@ export default function LatentSpaceExplorator(props) {
                             <div className="dim_text">Dimension {dimensionNumber+1}</div>
                             <div className = "rollout_row_images_container">
                                 {arrayOflatentSpaceImagesPath.map((latentSpaceImagePath) => {
-                                    return <img className="rollout_image" src={queryImage(latentSpaceImagePath)}/>
+                                    return <img className="rollout_image" src={queryCache(latentSpaceImagePath)}/>
                                 })}
                              </div>
 
