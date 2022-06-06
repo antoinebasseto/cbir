@@ -51,9 +51,21 @@ IMAGES_PATH = config['image_path']
 METADATA_PATH = config['metadata_path']
 
 similarityThreshold = 0
+distanceWeights = [1,1,1,1,1,1,1,1,1,1,1,1]
 maxNumberImages = 3
 ageInterval = [0, 100]
 diseasesFilter = ["All"]
+
+ABBREVIATION_TO_DISEASE = {
+    "akiec" : "Actinic keratoses and intraepithelial carcinoma",
+    "bcc" : "Basal cell carcinoma",
+    "bkl" : "Benign keratosis-like lesions",
+    "df" : "Dermatofibroma",
+    "mel" : "Melanoma",
+    "nv" : "Melanocytic nevi",
+    "vasc" : "vascular lesions"
+}
+
 
 # Allow CORS
 app.add_middleware(
@@ -190,13 +202,17 @@ async def get_similar_images(file: UploadFile = File(...), model=Depends(get_dl)
     # pic_embedding = np.random.rand(12)
     pic_embedding = pic_embedding.squeeze().detach().numpy()
     # Calculate distance scores for each 
-    pictures["dist"] = (pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]] - pic_embedding).apply(
-        np.linalg.norm, axis=1)
+    pictures = pd.read_csv("HAM10000_metadata_with_dummy_latent.csv")
+    pictures["dx"]= pictures["dx"].apply(lambda x: ABBREVIATION_TO_DISEASE[x])
+    latents = pictures.loc[:, [f"latent_coordinate{i}" for i in range(12)]]
+    weighted_latents =latents.multiply(distanceWeights)
+    pictures["dist"] = (weighted_latents - pic_embedding).apply(np.linalg.norm, ord=1, axis=1)
     sorted_pictures = (pictures.sort_values(by=['dist']))
-    filtered_pictures = sorted_pictures[
-        (sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[0])]
-    filtered_pictures = filtered_pictures[filtered_pictures['dist'] > similarityThreshold]
-    closest_pictures = filtered_pictures.iloc[:maxNumberImages]
+    filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[0])]
+    if not "All" in diseasesFilter:
+        filtered_pictures = filtered_pictures[filtered_pictures["dx"].isin(diseasesFilter)]
+#filtered_pictures = filtered_pictures[filtered_pictures['dist'] > similarityThreshold]
+closest_pictures = filtered_pictures.iloc[:maxNumberImages]
 
     return JSONResponse(content=closest_pictures.values.tolist())
 
