@@ -1,20 +1,14 @@
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-import pandas as pd
-import os
-import csv
-import codecs
-from io import StringIO
 from typing import Callable
-from sklearn.cluster import KMeans
 import base64
 #db dependencies
 from sqlalchemy.orm import Session
-import crud, models
+import crud
+from db import models
 from pydantic_models import schemas
-from database import SessionLocal, engine
+from db.database import SessionLocal, engine
 from DL_model.model import get_model, get_embedding
 
 
