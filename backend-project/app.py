@@ -211,8 +211,8 @@ async def get_similar_images(file: UploadFile = File(...), model=Depends(get_dl)
     filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[0])]
     if not "All" in diseasesFilter:
         filtered_pictures = filtered_pictures[filtered_pictures["dx"].isin(diseasesFilter)]
-#filtered_pictures = filtered_pictures[filtered_pictures['dist'] > similarityThreshold]
-closest_pictures = filtered_pictures.iloc[:maxNumberImages]
+    #filtered_pictures = filtered_pictures[filtered_pictures['dist'] > similarityThreshold]
+    closest_pictures = filtered_pictures.iloc[:maxNumberImages]
 
     return JSONResponse(content=closest_pictures.values.tolist())
 
