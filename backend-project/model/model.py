@@ -10,11 +10,11 @@ def get_model(args, model_name, log_dir, model_path):
     if model_name == 'BetaVAEConv':
         model = build_betavaeconv(args, log_dir)
         #checkpoint loading
-        chkt = torch.load('/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220513-033014_BetaVAEConv/epoch=61-step=9734.ckpt')
-        # #model.load_from_checkpoint(checkpoint_path=model_path)
-        print(chkt['state_dict'])
-        model.load_state_dict(chkt['state_dict'])
-        model.eval()
+        # chkt = torch.load('/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220513-033014_BetaVAEConv/epoch=61-step=9734.ckpt')
+        # # #model.load_from_checkpoint(checkpoint_path=model_path)
+        # print(chkt['state_dict'])
+        # model.load_state_dict(chkt['state_dict'])
+        # model.eval()
         return model
     else:
         raise ValueError('Model {} not found'.format(model_name))

@@ -1,16 +1,9 @@
-
-from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
-from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
 from typing import Callable
-import base64
 #db dependencies
-from sqlalchemy.orm import Session
-import crud
-from db import models
-from pydantic_models import schemas
-from db.database import SessionLocal, engine
-from DL_model.model import get_model, get_embedding
+#from sqlalchemy.orm import Session
+#from db import models
+#from pydantic_models import schemas
+#from db.database import SessionLocal, engine
 import io
 
 from PIL import Image
@@ -53,8 +46,8 @@ def get_image_processor():
         image_preprocessor = get_image_preprocessor(params[config['model']], config['model'])
     return image_preprocessor
 
-IMAGES_PATH = "/home/jimmy/Medical1-xai-iml22/LightningVAE/data/HAM10000/images"
-METADATA_PATH = "/home/jimmy/Medical1-xai-iml22/LightningVAE/HAM10000_latent_space_umap_processed.csv"
+IMAGES_PATH = config['image_path']
+METADATA_PATH = config['metadata_path']
 
 similarityThreshold = 0
 maxNumberImages = 3
@@ -81,19 +74,15 @@ def get_projection_data():
 @app.post("/get_uploaded_projection_data")
 async def get_uploaded_projection_data(file: UploadFile = File(...), model = Depends(get_dl), preprocess = Depends(get_image_processor)):
     try:
-        #contents = await file.read()
         contents = await file.read()
         img = Image.open(io.BytesIO(contents))
     except:
         return {"message": "Error uploading file"}
     finally:
         await file.close()
-        #await file.close()
     img = preprocess(img)
     img = img.unsqueeze(0)
     pic_embedding, _ = model.encoder(img)
-    #print(pic_embedding)
-    #pic_embedding = np.random.rand(12)
     pic_embedding = pic_embedding.squeeze().detach().numpy()
     reducer = joblib.load("umap.sav")
     embedding = reducer.transform(pic_embedding.reshape(1, -1))
@@ -117,6 +106,11 @@ def get_latent_space_images_url():
                     ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],
                     ["ISIC_0024306", "ISIC_0024307", "ISIC_0024308", "ISIC_0024309", "ISIC_0024310", "ISIC_0024311", "ISIC_0024312", "ISIC_0024313", "ISIC_0024314", "ISIC_0024315"],]
     return dummy_return
+
+@app.get("/image")
+def get_rollout_image(name: str):
+    path = f"{IMAGES_PATH}/{name}.jpg"
+    return FileResponse(path)
 
 @app.get("/image")
 def get_image(name: str):
@@ -146,14 +140,12 @@ async def get_similar_images( file: UploadFile = File(...), model = Depends(get_
 #
 #    pic_embedding = get_embedding(file, dlmodel)
     try:
-        #contents = await file.read()
         contents = await file.read()
         img = Image.open(io.BytesIO(contents))
     except:
         return {"message": "Error uploading file"}
     finally:
         await file.close()
-        #await file.close()
     img = preprocess(img)
     img = img.unsqueeze(0)
     pic_embedding, _ = model.encoder(img)
@@ -169,14 +161,6 @@ async def get_similar_images( file: UploadFile = File(...), model = Depends(get_
     
     return JSONResponse(content=closest_pictures.values.tolist())
 
-# @app.post("/files/")
-# async def create_file(file: bytes = File(...)):
-#     return {"file_size": len(file)}
-
-
-# @app.post("/uploadfile/")
-# async def create_upload_file(file: UploadFile):
-#     return {"filename": file.filename}
 
 def update_schema_name(app: FastAPI, function: Callable, name: str) -> None:
 
