@@ -28,13 +28,13 @@ export const queryBackendWithFile = async (route, file) => {
 }
 
 
-export const updateFiltersBackend = async(route, method='POST', similarityThreshold, maxNumberImages, ageInterval, diseasesFilter) => {
+export const updateFiltersBackend = async(route, method='POST', distanceWeights, maxNumberImages, ageInterval, diseasesFilter) => {
     const requestURL = `${BASE_URL}/${route}`;
     const data = await fetch(requestURL,
         {
             method: method,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({similarityThreshold: similarityThreshold,
+            body: JSON.stringify({distanceWeights: distanceWeights,
                                   maxNumberImages: maxNumberImages, 
                                   ageInterval: ageInterval, 
                                   diseasesFilter: diseasesFilter,
