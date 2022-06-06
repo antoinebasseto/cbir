@@ -54,12 +54,12 @@ def rollout_i(model, img_name, mu, dimension, num_rollouts, upper_bound, lower_b
         img = to_image(images[i].squeeze())
         img.save(os.path.join(cache_dir, f'{img_name}.png'))
 
-def rollout(model, img_name, img_dir, cache_dir, lower_bound, upper_bound, num_rollouts):
-    image_path = os.path.join(img_dir, img_name)
-    img = Image.open(image_path)
-    mu, logvar = model.encoder(img)
+def rollout(model, mu, cache_dir, lower_bound, upper_bound, num_rollouts):
+    #image_path = os.path.join(img_dir, img_name)
+    #img = Image.open(image_path)
+    #mu, logvar = model.encoder(img)
     latent_dimension = mu.shape[1]
     for j in range(latent_dimension):
-        if hash(f"{img_name}{j}{0}{upper_bound}{lower_bound}.png") in os.listdir(cache_dir):
+        if hash(f"{mu}{j}{0}{upper_bound}{lower_bound}.png") in os.listdir(cache_dir):
             continue
         rollout_i(model, img_name, mu, j, num_rollouts, lower_bound, upper_bound, cache_dir)
