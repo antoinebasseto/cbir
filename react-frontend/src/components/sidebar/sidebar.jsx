@@ -55,7 +55,7 @@ export default function Sidebar(props) {
                                 setMaxNumberImages={props.setMaxNumberImages} 
                                 setAgeInterval={props.setAgeInterval} 
                                 applyOnClickHandle={props.applyOnClickHandle}
-                                similarityWeights={props.similarityWeights} 
+                                distanceWeights={props.distanceWeights} 
                                 handleFilterWeightsChange={props.handleFilterWeightsChange}
                                 latentSpaceExplorationNames={props.latentSpaceExplorationNames}
                             />

@@ -21,7 +21,7 @@ function App() {
   const [maxNumberImages, setMaxNumberImages] = useState(3)
   const [ageInterval, setAgeInterval] = useState([0, 85])
   const [diseasesFilter, setDiseasesFilter] = useState(['All'])
-  const [similarityWeights, setSimilarityWeights] = useState([1,1,1,1,1,1,1,1,1,1,1,1])
+  const [distanceWeights, setDistanceWeights] = useState([1,1,1,1,1,1,1,1,1,1,1,1])
 
   // Dependent on uploaded image
   const [similarImages, setSimilarImages] = useState([]);
@@ -70,9 +70,9 @@ function App() {
   }
 
   function handleFilterWeightsChange(newValue, dim){
-    let temp = similarityWeights.map((x) => x) // We do that to copy the array
+    let temp = distanceWeights.map((x) => x) // We do that to copy the array
     temp[dim] = newValue
-    setSimilarityWeights(temp)
+    setDistanceWeights(temp)
   }
 
   function handleImageUploaded(file0) {
@@ -108,15 +108,17 @@ function App() {
     queryBackend(`get_latent_space_images_url?latent=[${latent_space}]`, 'GET').then((latent_space_images_url) => {
         setLatentSpaceExplorationImages(latent_space_images_url)
         
-        let initialNames = latent_space_images_url.map((_, index) => {
-          return "Dim " + (index + 1)
-        })
-        setLatentSpaceExplorationNames(initialNames)
+        if(latentSpaceExplorationNames.length === 0){
+          let initialNames = latent_space_images_url.map((_, index) => {
+            return "Dim " + (index + 1)
+          })
+          setLatentSpaceExplorationNames(initialNames)
+        }
     })
   };
 
   function applyOnClickHandle() {
-    updateFiltersBackend('update_filters', 'POST', similarityWeights, maxNumberImages, ageInterval, diseasesFilter)
+    updateFiltersBackend('update_filters', 'POST', distanceWeights, maxNumberImages, ageInterval, diseasesFilter)
     if (file !== null)
     	handleImageUploaded(file)
   }
@@ -137,7 +139,7 @@ function App() {
           maxNumberImages={maxNumberImages} 
           ageInterval={ageInterval} 
           diseasesFilter={diseasesFilter}
-          similarityWeights={similarityWeights}
+          distanceWeights={distanceWeights}
           latentSpaceExplorationNames = {latentSpaceExplorationNames}
           setDiseasesFilter={setDiseasesFilter} 
           setSimilarityThreshold={setSimilarityThreshold} 
