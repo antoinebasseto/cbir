@@ -199,7 +199,7 @@ def get_similar_images(latent, model=Depends(get_dl),
     pictures["dist"] = (weighted_latents - pic_embedding).apply(np.linalg.norm, ord=1, axis=1)
 
     sorted_pictures = (pictures.sort_values(by=['dist']))
-    filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[0])]
+    filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[1])]
     if not "All" in diseasesFilter:
         filtered_pictures = filtered_pictures[filtered_pictures["dx"].isin(diseasesFilter)]
     closest_pictures = filtered_pictures.iloc[:maxNumberImages]
