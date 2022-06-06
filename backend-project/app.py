@@ -1,8 +1,9 @@
 
 import io
+from typing import Callable
 
 from PIL import Image
-from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
+from fastapi import FastAPI, Depends, UploadFile, File, HTTPException, Form
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,9 +13,9 @@ import pandas as pd
 import numpy as np
 #import umap.umap_ as umap
 
-from DL_model.config import config
-from DL_model.hyperparameters import params
-from DL_model.model import get_model, get_image_preprocessor
+from model.config import config
+from model.hyperparameters import params
+from model.model import get_model, get_image_preprocessor
 
 app = FastAPI(
     title="Test Python Backend",
@@ -23,25 +24,26 @@ app = FastAPI(
     version="0.1.0",
 )
 
+
+
 model = None
 image_preprocessor = None
 
-async def get_dl():
+def get_dl():
     global model
     if not model:
         print(model)
-        model = get_model(params[config[model]], config['model'], config['results_dir'], config['model_path'])
-        print(model)
+        model = get_model(params[config['model']], config['model'], config['results_dir'], config['model_path'])
     return model
 
-async def get_image_processor():
+def get_image_processor():
     global image_preprocessor
     if not image_preprocessor:
-        image_preprocessor = get_image_preprocessor()
+        image_preprocessor = get_image_preprocessor(params[config['model']], config['model'])
     return image_preprocessor
 
-IMAGES_PATH = "./data/images"
-METADATA_PATH = "./data/HAM10000_metadata_processed.csv"
+IMAGES_PATH = "/home/jimmy/Medical1-xai-iml22/LightningVAE/data/HAM10000/images"
+METADATA_PATH = "/home/jimmy/Medical1-xai-iml22/LightningVAE/HAM10000_latent_space_umap_processed.csv"
 
 similarityThreshold = 0
 maxNumberImages = 3
@@ -66,9 +68,24 @@ def get_projection_data():
     return projection_data.to_dict(orient="records")
 
 @app.post("/get_uploaded_projection_data")
-def get_uploaded_projection_data(file: UploadFile):
+async def get_uploaded_projection_data(file: UploadFile = File(...), model = Depends(get_dl), preprocess = Depends(get_image_processor)):
+    try:
+        #contents = await file.read()
+        contents = await file.read()
+        img = Image.open(io.BytesIO(contents))
+    except:
+        return {"message": "Error uploading file"}
+    finally:
+        await file.close()
+        #await file.close()
+    img = preprocess(img)
+    img = img.unsqueeze(0)
+    pic_embedding, _ = model.encoder(img)
+    #print(pic_embedding)
+    #pic_embedding = np.random.rand(12)
+    pic_embedding = pic_embedding.squeeze().detach().numpy()
     reducer = joblib.load("umap.sav")
-    embedding = reducer.transform(np.array(['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']).reshape(1, -1))
+    embedding = reducer.transform(pic_embedding.reshape(1, -1))
     return [{"umap1": embedding[0][0].item(), "umap2": embedding[0][1].item()}]
 
 # Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
@@ -107,27 +124,33 @@ def update_filters(filters: dict):
 #todo filters and thresholds
 
 @app.post("/get_similar_images")
-def get_similar_images(file: UploadFile = File(...), model = Depends(get_model), preprocess = Depends(get_image_processor)):
-
+async def get_similar_images( file: UploadFile = File(...), model = Depends(get_dl), preprocess = Depends(get_image_processor)):
+#async def get_similar_images(file: UploadFile):
+    print(file)
     pictures = pd.read_csv(METADATA_PATH)
-    
-    #TODO actually use image
-    #get dimensions of image in VAE space
-    #assuming get_embedding returns tuple/list of dimensions
-
+#
+#     #TODO actually use image
+#     #get dimensions of image in VAE space
+#     #assuming get_embedding returns tuple/list of dimensions
+#
 #    pic_embedding = get_embedding(file, dlmodel)
     try:
+        #contents = await file.read()
         contents = await file.read()
         img = Image.open(io.BytesIO(contents))
     except:
         return {"message": "Error uploading file"}
     finally:
         await file.close()
-    pic_embedding = model.encoder(preprocess(img))
+        #await file.close()
+    img = preprocess(img)
+    img = img.unsqueeze(0)
+    pic_embedding, _ = model.encoder(img)
+    #print(pic_embedding)
     #pic_embedding = np.random.rand(12)
-
+    pic_embedding = pic_embedding.squeeze().detach().numpy()
     # Calculate distance scores for each 
-    pictures["dist"] = (pictures.loc[:, [f"latent_coordinate{i}" for i in range(12)]] - pic_embedding).apply(np.linalg.norm, axis=1)
+    pictures["dist"] = (pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]] - pic_embedding).apply(np.linalg.norm, axis=1)
     sorted_pictures = (pictures.sort_values(by=['dist']))
     filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[0])]
     filtered_pictures = filtered_pictures[filtered_pictures['dist'] > similarityThreshold]
@@ -143,5 +166,15 @@ def get_similar_images(file: UploadFile = File(...), model = Depends(get_model),
 # @app.post("/uploadfile/")
 # async def create_upload_file(file: UploadFile):
 #     return {"filename": file.filename}
-    
 
+def update_schema_name(app: FastAPI, function: Callable, name: str) -> None:
+
+    for route in app.routes:
+        print(route)
+        if route.endpoint is function:
+            print(route.body_field)
+            route.body_field.type_.__name__ = name
+            break
+
+update_schema_name(app, get_similar_images, "get_similar_images")
+update_schema_name(app, get_uploaded_projection_data, "get_uploaded_data")

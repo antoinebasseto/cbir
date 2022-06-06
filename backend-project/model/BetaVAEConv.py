@@ -19,6 +19,7 @@ from torch.optim.lr_scheduler import CosineAnnealingLR
 
 from .utils.init import weights_init
 
+
 class BetaVAEConv(pl.LightningModule):
     """beta-TCVAE model with encoder and decoder, inherit from Lightning module.
     Contains the following methods:
@@ -35,22 +36,22 @@ class BetaVAEConv(pl.LightningModule):
     """
 
     def __init__(
-        self,
-        alpha: float = 1.0,
-        beta: float = 1.0,
-        gamma: float = 1.0,
-        input_channels=1,
-        input_dim=32,
-        latent_dim=20,
-        loss_type='H',
-        trainset_size=5000,
-        anneal_steps=200,
-        is_mss=False,
-        lr=0.001,
-        batch_size=32,
-        num_epochs=100,
-        weight_decay=1e-4,
-        log_dir="logs",
+            self,
+            alpha: float = 1.0,
+            beta: float = 1.0,
+            gamma: float = 1.0,
+            input_channels=1,
+            input_dim=32,
+            latent_dim=20,
+            loss_type='H',
+            trainset_size=5000,
+            anneal_steps=200,
+            is_mss=False,
+            lr=0.001,
+            batch_size=32,
+            num_epochs=100,
+            weight_decay=1e-4,
+            log_dir="logs",
     ):
         """Called upon initialization. Constructs convolutional encoder and decoder architecture,
         initializes weights and loss.
@@ -244,7 +245,7 @@ class BetaVAEConv(pl.LightningModule):
         latent_sample = self.reparameterize(*latent_dist)
         return latent_sample
 
-    def forward_pass(self,x):
+    def forward_pass(self, x):
         mu, log_var = self.encoder(x)
         return self.decoder(mu)
 
@@ -269,7 +270,9 @@ class BetaVAEConv(pl.LightningModule):
         }
         return [optimizer], [scheduler]
 
+
 def build_betavaeconv(args, log_dir):
-    return BetaVAEConv(beta=args['beta'], gamma=args['gamma'], input_channels=args['input_channels'], input_dim=args['input_dim'], latent_dim=args['latent_dim'],
+    return BetaVAEConv(beta=args['beta'], gamma=args['gamma'], input_channels=args['input_channels'],
+                       input_dim=args['input_dim'], latent_dim=args['latent_dim'],
                        loss_type=args['loss_type'], trainset_size=args['trainset_size'],
                        log_dir=log_dir)

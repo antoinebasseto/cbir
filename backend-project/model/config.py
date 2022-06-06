@@ -24,6 +24,8 @@ Model related settings
 """
 config['model'] = 'BetaVAEConv'
 
+config['model_path'] = '/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220513-033014_BetaVAEConv/epoch=61-step=9734.ckpt'
+
 """
 Training related settings
 """

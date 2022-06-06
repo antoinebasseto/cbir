@@ -16,3 +16,5 @@ VAE/log/*
 LightningVAE/log/*
 LightningVAE/data/*
 LightningVAE/reports/*
+*.csv
+*.sav

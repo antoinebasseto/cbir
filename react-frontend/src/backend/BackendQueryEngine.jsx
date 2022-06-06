@@ -15,14 +15,13 @@ export const queryBackend = async (route, method) => {
 export const queryBackendWithFile = async (route, file) => {
     const requestURL = `${BASE_URL}/${route}`;
     
-    let frm = new FormData();
+    let fr = new FormData();
     //data.append('filters', 'filtersPlaceholder');
-    frm.append('file', file);
+    fr.append('file', file, file.name);
     const data = await fetch(requestURL,
         {
             method: "POST",
-            body: frm
-        }
+            body: fr}
     ).then(response => response.json());
 
     return data;
