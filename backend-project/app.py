@@ -1,26 +1,29 @@
 from typing import Callable, List, Any
-# db dependencies
-# from sqlalchemy.orm import Session
-# from db import models
-# from pydantic_models import schemas
-# from db.database import SessionLocal, engine
 import io
-
 import torch
 from PIL import Image
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException, Form
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
-
 from fastapi.middleware.cors import CORSMiddleware
 import joblib
-
 import pandas as pd
 import numpy as np
-# import umap.umap_ as umap
-
 from model.config import config
 from model.hyperparameters import params
 from model.model import get_model, get_image_preprocessor, rollout
+
+IMAGES_PATH = config['image_path']
+METADATA_PATH = config['metadata_path']
+CACHE_DIR = config['cache_dir']
+ABBREVIATION_TO_DISEASE = {
+    "akiec" : "Actinic keratoses and intraepithelial carcinoma",
+    "bcc" : "Basal cell carcinoma",
+    "bkl" : "Benign keratosis-like lesions",
+    "df" : "Dermatofibroma",
+    "mel" : "Melanoma",
+    "nv" : "Melanocytic nevi",
+    "vasc" : "vascular lesions"
+}
 
 app = FastAPI(
     title="Test Python Backend",
@@ -32,7 +35,6 @@ app = FastAPI(
 model = None
 image_preprocessor = None
 
-
 def get_dl():
     global model
     if not model:
@@ -40,32 +42,16 @@ def get_dl():
         model = get_model(params[config['model']], config['model'], config['results_dir'], config['model_path'])
     return model
 
-
 def get_image_processor():
     global image_preprocessor
     if not image_preprocessor:
         image_preprocessor = get_image_preprocessor(params[config['model']], config['model'])
     return image_preprocessor
 
-
-IMAGES_PATH = config['image_path']
-METADATA_PATH = config['metadata_path']
-
 distanceWeights = [1,1,1,1,1,1,1,1,1,1,1,1]
 maxNumberImages = 3
 ageInterval = [0, 100]
 diseasesFilter = ["All"]
-
-ABBREVIATION_TO_DISEASE = {
-    "akiec" : "Actinic keratoses and intraepithelial carcinoma",
-    "bcc" : "Basal cell carcinoma",
-    "bkl" : "Benign keratosis-like lesions",
-    "df" : "Dermatofibroma",
-    "mel" : "Melanoma",
-    "nv" : "Melanocytic nevi",
-    "vasc" : "vascular lesions"
-}
-
 
 # Allow CORS
 app.add_middleware(
@@ -74,6 +60,23 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.post("/get_latent_space")
+async def get_latent_space(file: UploadFile = File(...), model=Depends(get_dl),
+                           preprocess=Depends(get_image_processor)):
+    try:
+        contents = await file.read()
+        img = Image.open(io.BytesIO(contents))
+    except:
+        return {"message": "Error uploading file"}
+    finally:
+        await file.close()
+    img = preprocess(img)
+    img = img.unsqueeze(0)
+    pic_embedding, _ = model.encoder(img)
+    pic_embedding = pic_embedding.squeeze().detach().numpy()
+    return pic_embedding.tolist()
 
 
 @app.get("/get_projection_data")
@@ -87,27 +90,23 @@ def get_projection_data():
 
 
 @app.get("/get_uploaded_projection_data")
-def get_uploaded_projection_data(latent, model=Depends(get_dl),
-                                       preprocess=Depends(get_image_processor)):
-
+def get_uploaded_projection_data(latent):
     latent = str(latent).strip('[]').strip(']').split(',')
-
     pic_embedding = np.array(latent, dtype=np.float32)
-    reducer = joblib.load("umap.sav")
+    reducer = joblib.load("data/umap.sav")
     embedding = reducer.transform(pic_embedding.reshape(1, -1))
     return [{"umap1": embedding[0][0].item(), "umap2": embedding[0][1].item()}]
 
 
 # Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
 @app.get("/get_latent_space_images_url")
-def get_latent_space_images_url(latent ,model=Depends(get_dl), preprocess=Depends(get_image_processor)):
+def get_latent_space_images_url(latent, model=Depends(get_dl)):
     latent = str(latent).strip('[]').strip(']').split(',')
-    latent_space = np.zeros(12, dtype=np.float32)
+    latent_space = np.array(latent, dtype=np.float32)
     latent_space = torch.from_numpy(latent_space).view(1, -1)
-    ret = rollout(model, latent_space, config['cache_dir'], -5, 5, 10)
+    ret = rollout(model, latent_space, CACHE_DIR, -5, 5, 10)
     return ret
 
-CACHE_DIR = config['cache_dir']
 
 @app.get("/cache")
 def get_rollout_image(name: str):
@@ -131,41 +130,22 @@ def update_filters(filters: dict):
     return True
 
 
-# todo filters and thresholds
-
-@app.post("/get_latent_space")
-async def get_latent_space(file: UploadFile = File(...), model=Depends(get_dl),
-                           preprocess=Depends(get_image_processor)):
-    try:
-        contents = await file.read()
-        img = Image.open(io.BytesIO(contents))
-    except:
-        return {"message": "Error uploading file"}
-    finally:
-        await file.close()
-    img = preprocess(img)
-    img = img.unsqueeze(0)
-    pic_embedding, _ = model.encoder(img)
-    pic_embedding = pic_embedding.squeeze().detach().numpy()
-    return pic_embedding.tolist()
-
-
 @app.get("/get_similar_images")
-def get_similar_images(latent, model=Depends(get_dl), 
-                       preprocess=Depends(get_image_processor)):
-    pictures = pd.read_csv(METADATA_PATH)
+def get_similar_images(latent):
     latent = str(latent).strip('[]').strip(']').split(',')
-
     pic_embedding = np.array(latent, dtype=np.float32)
-    pictures["dx"]= pictures["dx"].apply(lambda x: ABBREVIATION_TO_DISEASE[x])
-    latents = pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]]
-    weighted_latents =latents.multiply(distanceWeights)
-    pictures["dist"] = (weighted_latents - pic_embedding).apply(np.linalg.norm, ord=1, axis=1)
 
+    pictures = pd.read_csv(METADATA_PATH)
+    pictures["dx"] = pictures["dx"].apply(lambda x: ABBREVIATION_TO_DISEASE[x])
+    
+    latents = pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]]
+    pictures["dist"] = (latents - pic_embedding).multiply(distanceWeights).apply(np.linalg.norm, ord=1, axis=1)
     sorted_pictures = (pictures.sort_values(by=['dist']))
+
     filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[1])]
     if not "All" in diseasesFilter:
         filtered_pictures = filtered_pictures[filtered_pictures["dx"].isin(diseasesFilter)]
+    
     closest_pictures = filtered_pictures.iloc[:maxNumberImages]
 
     return closest_pictures.to_dict(orient="records")

@@ -5,29 +5,36 @@ import 'react-svg-radar-chart/build/css/index.css'
 export default function SimilarImagesListElement(props) {
   return (
     <li key={props.keyId} className="similarImagesListElement">
-      <div className="infoContainer">
-        <h2 className="label">{props.label}</h2>
-
-        <div className = "additionalInfoContainer">
-          <h5>dx_type: {props.dx_type}</h5>
-          <h5>age: {props.age}</h5>
-          <h5>sex: {props.sex}</h5>
-          <h5>localization: {props.localization}</h5>
+      <h2 className="label">{props.label}</h2>
+      <div className="infoAndGraphicsContainer">
+        <div className="infoContainer">
+          <p className = "additionalInfoContainer">
+            <b>Confirmation method</b><br/>
+            &emsp;{props.dx_type}<br/>
+            <b>Localization</b><br/>
+            &emsp;{props.localization}<br/>
+            <b>Age</b><br/>
+            &emsp;{props.age}<br/>
+            <b>Sex</b><br/>
+            &emsp;{props.sex}<br/>
+            <b className="similarityText">Distance</b><br/>
+            &emsp;{Math.round(props.distance * 1000) / 1000}
+          </p>
         </div>
-
-        <h5 className="similarityText">Similarity: {props.similarity}</h5>
-
-      </div>
-      <div className = "radarChart">
+        <div className = "radarChartContainer">
+          <p>Distance to uploaded image<br/>along each dimension</p>
           <RadarChart 
+            className = "radarChart"
+            style="padding: 10px !important;"
             captions={props.captions}
             data={props.data} 
             options ={props.options} 
             size={200}
           />
+          </div>
+        <div className="imageContainer">
+          <img className="similarImage" src={props.imgId}/>
         </div>
-      <div className="imageContainer">
-        <img className="similarImage" src={props.imgId}/>
       </div>
     </li>
   )

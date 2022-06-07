@@ -1,4 +1,4 @@
-import { useState, useEffect }  from 'react';
+import { useState }  from 'react';
 import './App.css';
 import { queryBackend , queryBackendWithFile, updateFiltersBackend } from './backend/BackendQueryEngine';
 import Sidebar from "./components/sidebar/sidebar"
@@ -29,7 +29,7 @@ function App() {
   const [uploadedProjectionData, setUploadedProjectionData] = useState([]);
   const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
   const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] = useState([]);
-  const [latent_space, setLatentSpace] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);  
+  const [latentSpace, setLatentSpace] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);  
 
   function handleRenameLatent(event, dim){
     let temp = latentSpaceExplorationNames.map((x) => x) // We do that to copy the array
@@ -71,38 +71,26 @@ function App() {
     setDistanceWeights(temp)
   }
 
-  function handleImageUploaded(file0) {
-    setFile(file0);
-    // queryBackendWithFile('get_latent_space_images_url', file).then((data) => {
-    //     setLatentSpaceExplorationImages(data)
-    //   }
-    // // )
-    // queryBackendWithFile('get_similar_images', file).then((data) => {
-    //     setSimilarImages(data)
-    //   }
-    // )
+  function handleImageUploaded(file) {
+    setFile(file);
+
     // Get latent space
     queryBackendWithFile('get_latent_space', file).then((data) => {
       setLatentSpace(data);
       console.log(data)
-    });
 
-    // Get uploaded image projection data
-    queryBackend(`get_uploaded_projection_data?latent=[${latent_space}]`, 'GET').then((data) => {
+      // Get uploaded image projection data
+      queryBackend(`get_uploaded_projection_data?latent=[${data}]`, 'GET').then((data) => {
         setUploadedProjectionData(data)
-      }
-    );
+      })
 
-    console.log('gonna get sim images')
-    queryBackend(`get_similar_images?latent=[${latent_space}]`, 'GET').then((data) => {
+      // Get similar images 
+      queryBackend(`get_similar_images?latent=[${data}]`, 'GET').then((data) => {
         setSimilarImages(data)
-        similarImages.map((i) => {console.log(i); return 0})
-      }
-    )
+      })
 
-    
-    // Get the rollout images for latent space exploration
-    queryBackend(`get_latent_space_images_url?latent=[${latent_space}]`, 'GET').then((latent_space_images_url) => {
+      // Get the rollout images for latent space exploration
+      queryBackend(`get_latent_space_images_url?latent=[${latentSpace}]`, 'GET').then((latent_space_images_url) => {
         setLatentSpaceExplorationImages(latent_space_images_url)
         
         if(latentSpaceExplorationNames.length === 0){
@@ -111,7 +99,8 @@ function App() {
           })
           setLatentSpaceExplorationNames(initialNames)
         }
-    })
+      })
+    });    
   };
 
   function applyOnClickHandle() {
@@ -154,7 +143,7 @@ function App() {
           {
             indexActiv===1 && 
             file && 
-            <SimilarImages uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
+            <SimilarImages uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages} dimensionNames={latentSpaceExplorationNames} latentSpace={latentSpace}/> 
           }
           {
             indexActiv===2 && 

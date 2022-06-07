@@ -14,37 +14,25 @@ export default function SimilarImages(props) {
 					const data = [
 						{
 							data: {
-								dim0: img["latent_coordinate_0"],
-								dim1: img["latent_coordinate_1"],
-								dim2: img["latent_coordinate_2"],
-								dim3: img["latent_coordinate_3"],
-								dim4: img["latent_coordinate_4"],
-								dim5: img["latent_coordinate_5"],
-								dim6: img["latent_coordinate_6"],
-								dim7: img["latent_coordinate_7"],
-								dim8: img["latent_coordinate_8"],
-								dim9: img["latent_coordinate_9"],
-								dim10: img["latent_coordinate_10"],
-								dim11: img["latent_coordinate_11"]								
+								dim0: Math.abs(img["latent_coordinate_0"] - props.latentSpace[0]),
+								dim1: Math.abs(img["latent_coordinate_1"] - props.latentSpace[1]),
+								dim2: Math.abs(img["latent_coordinate_2"] - props.latentSpace[2]),
+								dim3: Math.abs(img["latent_coordinate_3"] - props.latentSpace[3]),
+								dim4: Math.abs(img["latent_coordinate_4"] - props.latentSpace[4]),
+								dim5: Math.abs(img["latent_coordinate_5"] - props.latentSpace[5]),
+								dim6: Math.abs(img["latent_coordinate_6"] - props.latentSpace[6]),
+								dim7: Math.abs(img["latent_coordinate_7"] - props.latentSpace[7]),
+								dim8: Math.abs(img["latent_coordinate_8"] - props.latentSpace[8]),
+								dim9: Math.abs(img["latent_coordinate_9"] - props.latentSpace[9]),
+								dim10: Math.abs(img["latent_coordinate_10"] - props.latentSpace[10]),
+								dim11: Math.abs(img["latent_coordinate_11"] - props.latentSpace[11])
 							},
-							meta: { color: 'blue' }
+							meta: { color: "#104242" }
 						}
 					];
 
-					const captions = {
-						    dim0: "Latent Coordinate 1",
-							dim1: "Latent Coordinate 2",
-							dim2: "Latent Coordinate 3",
-							dim3: "Latent Coordinate 4",
-							dim4: "Latent Coordinate 5",
-							dim5: "Latent Coordinate 6",
-							dim6: "Latent Coordinate 7",
-							dim7: "Latent Coordinate 8",
-							dim8: "Latent Coordinate 9",
-							dim9: "Latent Coordinate 10",
-							dim10: "Latent Coordinate 11",
-							dim11: "Latent Coordinate 12"	
-					};
+					var captions = {}
+					props.dimensionNames.forEach((el, index) => captions["dim" + index] = el)
 
 					const options = {
 						captionProps: () => ({
@@ -63,7 +51,7 @@ export default function SimilarImages(props) {
 								age={img["age"]}
 								sex={img["sex"]}
 								localization={img["localization"]}
-								similarity={img["dist"]} 
+								distance={img["dist"]} 
 								data={data} 
 								captions={captions} 
 								options={options}
