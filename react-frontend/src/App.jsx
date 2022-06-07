@@ -75,8 +75,8 @@ function App() {
     setDistanceWeights(temp)
   }
 
-  function handleImageUploaded(file0) {
-    setFile(file0);
+  function handleImageUploaded(file) {
+    setFile(file);
     // queryBackendWithFile('get_latent_space_images_url', file).then((data) => {
     //     setLatentSpaceExplorationImages(data)
     //   }
@@ -88,33 +88,32 @@ function App() {
     //Get latent space
     queryBackendWithFile('get_latent_space', file).then((data) => {
       setLatentSpace(data);
-      console.log(data)
-    });
+      console.log(data);
+      queryBackend(`get_uploaded_projection_data?latent=[${data}]`, 'GET').then((data) => {
 
-    console.log(latent_space)
-    // Get uploaded image projection data
-    queryBackend(`get_uploaded_projection_data?latent=[${latent_space}]`, 'GET').then((data) => {
+          setUploadedProjectionData(data)
 
-        setUploadedProjectionData(data)
-        
-      }
-    );
-    queryBackend(`get_similar_images?latent=[${latent_space}]`, 'GET').then((data) => {
-        setSimilarImages(data)
-      }
-    )
-    // Get the rollout images for latent space exploration
-
-    queryBackend(`get_latent_space_images_url?latent=[${latent_space}]`, 'GET').then((latent_space_images_url) => {
-        setLatentSpaceExplorationImages(latent_space_images_url)
-        
-        if(latentSpaceExplorationNames.length === 0){
-          let initialNames = latent_space_images_url.map((_, index) => {
-            return "Dim " + (index + 1)
-          })
-          setLatentSpaceExplorationNames(initialNames)
         }
-    })
+      );
+      queryBackend(`get_similar_images?latent=[${data}]`, 'GET').then((data) => {
+          setSimilarImages(data)
+        }
+      );
+      // Get the rollout images for latent space exploration
+
+      queryBackend(`get_latent_space_images_url?latent=[${data}]`, 'GET').then((latent_space_images_url) => {
+          setLatentSpaceExplorationImages(latent_space_images_url)
+
+          if(latentSpaceExplorationNames.length === 0){
+            let initialNames = latent_space_images_url.map((_, index) => {
+              return "Dim " + (index + 1)
+            })
+            setLatentSpaceExplorationNames(initialNames)
+          }
+        })
+      });
+
+    // Get uploaded image projection data
   };
 
   function applyOnClickHandle() {

@@ -10,11 +10,11 @@ def get_model(args, model_name, log_dir, model_path):
     if model_name == 'BetaVAEConv':
         model = build_betavaeconv(args, log_dir)
         #checkpoint loading
-        # chkt = torch.load('/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220513-033014_BetaVAEConv/epoch=61-step=9734.ckpt')
+        chkt = torch.load('/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220513-033014_BetaVAEConv/epoch=61-step=9734.ckpt')
         # # #model.load_from_checkpoint(checkpoint_path=model_path)
         # print(chkt['state_dict'])
-        # model.load_state_dict(chkt['state_dict'])
-        # model.eval()
+        model.load_state_dict(chkt['state_dict'])
+        model.eval()
         return model
     else:
         raise ValueError('Model {} not found'.format(model_name))
@@ -50,7 +50,7 @@ def rollout_i(model,  mu, dimension, num_rollouts, upper_bound, lower_bound, cac
     for i in range(num_rollouts):
         #print(images[i])
         #to_image(images[i]).save(os.path.join(log_dir, '{}.png'.format(i)))
-        img_name = f"{latent}_{dimension}_{i}{upper_bound}{lower_bound}{num_rollouts}.png"
+        img_name = f"{torch.max(latent)}_{torch.min(latent)}_{dimension}_{i}{upper_bound}{lower_bound}{num_rollouts}.png"
         img = to_image(images[i].squeeze())
         img.save(os.path.join(cache_dir, f'{img_name}'))
 
@@ -61,8 +61,8 @@ def rollout(model, mu, cache_dir, lower_bound, upper_bound, num_rollouts):
     latent_dimension = mu.shape[1]
     ret = []
     for j in range(latent_dimension):
-        ret.append([f'{mu}_{j}_{i}{upper_bound}{lower_bound}{num_rollouts}.png' for i in range(num_rollouts)])
-        if f"{mu}_{j}_{0}{upper_bound}{lower_bound}{num_rollouts}.png" in os.listdir(cache_dir):
+        ret.append([f'{torch.max(mu)}_{torch.min(mu)}_{j}_{i}{upper_bound}{lower_bound}{num_rollouts}.png' for i in range(num_rollouts)])
+        if f"{torch.max(mu)}_{torch.min(mu)}_{j}_{0}{upper_bound}{lower_bound}{num_rollouts}.png" in os.listdir(cache_dir):
             continue
         rollout_i(model,  mu, j, num_rollouts, upper_bound, lower_bound, cache_dir)
 

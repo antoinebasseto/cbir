@@ -6,7 +6,7 @@ from config import config
 params = {
 
     'BetaVAEConv': {
-        'lr': 1e-6,
+        'lr': 1e-4,
         'batch_size': 32,
         'epochs': 200,
         #backbone

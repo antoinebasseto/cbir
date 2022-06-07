@@ -95,7 +95,7 @@ def get_uploaded_projection_data(latent, model=Depends(get_dl),
     print('latent', latent)
 
     pic_embedding = np.array(latent, dtype=np.float32)
-    reducer = joblib.load("umap.sav")
+    reducer = joblib.load("data/umap.sav")
     embedding = reducer.transform(pic_embedding.reshape(1, -1))
     return [{"umap1": embedding[0][0].item(), "umap2": embedding[0][1].item()}]
 
@@ -122,7 +122,8 @@ def get_latent_space_images_url(latent ,model=Depends(get_dl), preprocess=Depend
     latent = str(latent).strip('[]').strip(']').split(',')
     # latent = str(latent).split(",")
     print('latent', latent)
-    latent_space = np.zeros(12, dtype=np.float32)
+    #latent_space = np.zeros(12, dtype=np.float32)
+    latent_space = np.array(latent, dtype=np.float32)
     latent_space = torch.from_numpy(latent_space).view(1, -1)
     print(latent_space)
     ret = rollout(model, latent_space, config['cache_dir'], -5, 5, 10)
@@ -167,6 +168,7 @@ async def get_latent_space(file: UploadFile = File(...), model=Depends(get_dl),
         await file.close()
     img = preprocess(img)
     img = img.unsqueeze(0)
+    print("Decoding image")
     pic_embedding, _ = model.encoder(img)
     pic_embedding = pic_embedding.squeeze().detach().numpy()
     print(pic_embedding.tolist())
@@ -216,5 +218,5 @@ def update_schema_name(app: FastAPI, function: Callable, name: str) -> None:
             break
 
 
-#update_schema_name(app, get_latent_space, "get_similar_images")
+update_schema_name(app, get_latent_space, "get_similar_images")
 #update_schema_name(app, get_uploaded_projection_data, "get_uploaded_data")
