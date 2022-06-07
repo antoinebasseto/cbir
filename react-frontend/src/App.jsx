@@ -90,10 +90,7 @@ function App() {
       setLatentSpace(data);
       console.log(data);
       queryBackend(`get_uploaded_projection_data?latent=[${data}]`, 'GET').then((data) => {
-
-          setUploadedProjectionData(data)
-
-        }
+          setUploadedProjectionData(data)}
       );
       queryBackend(`get_similar_images?latent=[${data}]`, 'GET').then((data) => {
           setSimilarImages(data)
@@ -114,7 +111,7 @@ function App() {
       });
 
     // Get uploaded image projection data
-  };
+  }
 
   function applyOnClickHandle() {
     updateFiltersBackend('update_filters', 'POST', distanceWeights, maxNumberImages, ageInterval, diseasesFilter)
