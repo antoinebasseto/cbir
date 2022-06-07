@@ -11,6 +11,24 @@
     margin-bottom: 20px;
 }
 
+.cliquableFilterTitleContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 10px;
+}
+.cliquableFilterTitleContainer:hover{
+    background-color: #f1f1f1;
+    box-shadow: 0 10px 15px rgb(230, 230, 230);
+}
+
+.cliquableFilterTitleContainer.active{
+    background-color: #effbfb;
+    color: #104242;
+    box-shadow: 0 10px 15px rgb(230, 230, 230);
+}
+
 .filterTitleContainer{
     display: flex;
     flex-direction: row;
@@ -59,4 +77,14 @@
 .applyButton:active {
     box-shadow: 0 0 0 rgb(255, 255, 255);
     transform: translateY(2px);
+}
+
+.weightContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+.fullWeightsContainer{
+    padding-top: 10px;
+    padding-left: 20px;
 }

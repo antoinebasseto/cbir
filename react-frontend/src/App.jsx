@@ -7,6 +7,8 @@ import SimilarImages from './components/similarImages/similarImages'
 import ProjectionPlot from './components/projectionPlot/projectionPlot';
 import LatentSpaceExplorator from './components/latentSpaceExplorator/latentSpaceExplorator';
 
+
+
 function App() {
 
   // Navigation
@@ -19,13 +21,22 @@ function App() {
   const [maxNumberImages, setMaxNumberImages] = useState(3)
   const [ageInterval, setAgeInterval] = useState([0, 85])
   const [diseasesFilter, setDiseasesFilter] = useState(['All'])
+  const [distanceWeights, setDistanceWeights] = useState([1,1,1,1,1,1,1,1,1,1,1,1])
 
   // Dependent on uploaded image
   const [similarImages, setSimilarImages] = useState([]);
   const [projectionData, setProjectionData] = useState([]);
   const [uploadedProjectionData, setUploadedProjectionData] = useState([]);
   const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
-  
+  const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] = useState([]);
+  const [latent_space, setLatentSpace] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);  
+
+  function handleRenameLatent(event, dim){
+    let temp = latentSpaceExplorationNames.map((x) => x) // We do that to copy the array
+    temp[dim] = event.target.value
+    setLatentSpaceExplorationNames(temp)
+  }
+
   function handleUpload(){
     setIndexActiv(0)
   }
@@ -54,28 +65,56 @@ function App() {
     setFilterActiv(!filterActiv)
   }
 
-  function handleImageUploaded(file) {
-    setFile(file);
-    
-    queryBackendWithFile('get_similar_images', file).then((data) => {
+  function handleFilterWeightsChange(newValue, dim){
+    let temp = distanceWeights.map((x) => x) // We do that to copy the array
+    temp[dim] = newValue
+    setDistanceWeights(temp)
+  }
+
+  function handleImageUploaded(file0) {
+    setFile(file0);
+    // queryBackendWithFile('get_latent_space_images_url', file).then((data) => {
+    //     setLatentSpaceExplorationImages(data)
+    //   }
+    // // )
+    // queryBackendWithFile('get_similar_images', file).then((data) => {
+    //     setSimilarImages(data)
+    //   }
+    // )
+    //Get latent space
+    queryBackendWithFile('get_latent_space', file).then((data) => {
+      setLatentSpace(data);
+      console.log(data)
+    });
+
+    console.log(latent_space)
+    // Get uploaded image projection data
+    queryBackend(`get_uploaded_projection_data?latent=[${latent_space}]`, 'GET').then((data) => {
+
+        setUploadedProjectionData(data)
+        
+      }
+    );
+    queryBackend(`get_similar_images?latent=[${latent_space}]`, 'GET').then((data) => {
         setSimilarImages(data)
       }
     )
-    
-    // Get uploaded image projection data
-    queryBackendWithFile('get_uploaded_projection_data', file).then((data) => {
-        setUploadedProjectionData(data)
-      }
-    )
-
     // Get the rollout images for latent space exploration
-    queryBackend('get_latent_space_images_url', 'GET').then((latent_space_images_url) => {
+
+    queryBackend(`get_latent_space_images_url?latent=[${latent_space}]`, 'GET').then((latent_space_images_url) => {
         setLatentSpaceExplorationImages(latent_space_images_url)
+        
+        if(latentSpaceExplorationNames.length === 0){
+          let initialNames = latent_space_images_url.map((_, index) => {
+            return "Dim " + (index + 1)
+          })
+          setLatentSpaceExplorationNames(initialNames)
+        }
     })
   };
 
   function applyOnClickHandle() {
-    updateFiltersBackend('update_filters', 'POST', similarityThreshold, maxNumberImages, ageInterval, diseasesFilter)
+    updateFiltersBackend('update_filters', 'POST', distanceWeights, maxNumberImages, ageInterval, diseasesFilter)
     if (file !== null)
     	handleImageUploaded(file)
   }
@@ -96,10 +135,13 @@ function App() {
           maxNumberImages={maxNumberImages} 
           ageInterval={ageInterval} 
           diseasesFilter={diseasesFilter}
+          distanceWeights={distanceWeights}
+          latentSpaceExplorationNames = {latentSpaceExplorationNames}
           setDiseasesFilter={setDiseasesFilter} 
           setSimilarityThreshold={setSimilarityThreshold} 
           setMaxNumberImages={setMaxNumberImages} 
           setAgeInterval={setAgeInterval} 
+          handleFilterWeightsChange={handleFilterWeightsChange}
           applyOnClickHandle={applyOnClickHandle}
         />
         
@@ -119,7 +161,7 @@ function App() {
           }
           {
             indexActiv===3 && 
-            <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages}/>
+            <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages} dimensionNames={latentSpaceExplorationNames} handleRenameLatent={handleRenameLatent}/>
           }
         </div>
       </div>
