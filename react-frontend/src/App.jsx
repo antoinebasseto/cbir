@@ -100,6 +100,8 @@ function App() {
       }
     );
     queryBackend(`get_similar_images?latent=[${latent_space}]`, 'GET').then((data) => {
+    	//must be nonnegative to not mess up radar chart
+        data = data.map(-Math.min(data))
         setSimilarImages(data)
       }
     )

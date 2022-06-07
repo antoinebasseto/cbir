@@ -9,10 +9,10 @@ export default function SimilarImagesListElement(props) {
         <h2 className="label">{props.label}</h2>
 
         <div className = "additionalInfoContainer">
-          <h5>dx_type: {props.dx_type}</h5>
-          <h5>age: {props.age}</h5>
-          <h5>sex: {props.sex}</h5>
-          <h5>localization: {props.localization}</h5>
+          <h5>Confirmation Method: {props.dx_type}</h5>
+          <h5>Age: {props.age}</h5>
+          <h5>Sex: {props.sex}</h5>
+          <h5>Localization: {props.localization}</h5>
         </div>
 
         <h5 className="similarityText">Similarity: {props.similarity}</h5>
