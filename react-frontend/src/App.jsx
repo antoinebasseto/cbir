@@ -25,12 +25,6 @@ function App() {
   const [projectionData, setProjectionData] = useState([]);
   const [uploadedProjectionData, setUploadedProjectionData] = useState([]);
   const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
-
-  useEffect(() => {
-      queryBackend('get_projection_data', 'GET').then((data) => {
-        setProjectionData(data)
-      })
-    }, []);
   
   function handleUpload(){
     setIndexActiv(0)
@@ -42,6 +36,11 @@ function App() {
   }
 
   function handleShowProjection() {
+    if (projectionData.length == 0) {
+      queryBackend('get_projection_data', 'GET').then((data) => {
+        setProjectionData(data)
+      })
+    }
     setIndexActiv(2)
   }
 
@@ -116,7 +115,7 @@ function App() {
           }
           {
             indexActiv===2 && 
-            <ProjectionPlot data={projectionData} uploadedData={uploadedProjectionData} similarImages={similarImages.map(a => a[1]).flat()}/>
+            <ProjectionPlot data={projectionData} uploadedData={uploadedProjectionData} similarImages={similarImages}/>
           }
           {
             indexActiv===3 && 

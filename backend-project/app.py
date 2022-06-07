@@ -186,9 +186,8 @@ async def get_similar_images(file: UploadFile = File(...), model=Depends(get_dl)
     img = preprocess(img)
     img = img.unsqueeze(0)
     pic_embedding, _ = model.encoder(img)
-    # print(pic_embedding)
-    # pic_embedding = np.random.rand(12)
     pic_embedding = pic_embedding.squeeze().detach().numpy()
+
     # Calculate distance scores for each 
     pictures["dist"] = (pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]] - pic_embedding).apply(
         np.linalg.norm, axis=1)
@@ -198,7 +197,8 @@ async def get_similar_images(file: UploadFile = File(...), model=Depends(get_dl)
     filtered_pictures = filtered_pictures[filtered_pictures['dist'] > similarityThreshold]
     closest_pictures = filtered_pictures.iloc[:maxNumberImages]
 
-    return JSONResponse(content=closest_pictures.values.tolist())
+    print(closest_pictures)
+    return closest_pictures.to_dict(orient="records")
 
 
 def update_schema_name(app: FastAPI, function: Callable, name: str) -> None:
@@ -210,5 +210,5 @@ def update_schema_name(app: FastAPI, function: Callable, name: str) -> None:
             break
 
 
-update_schema_name(app, get_similar_images, "get_similar_images")
-update_schema_name(app, get_uploaded_projection_data, "get_uploaded_data")
+# update_schema_name(app, get_similar_images, "get_similar_images")
+# update_schema_name(app, get_uploaded_projection_data, "get_uploaded_data")
