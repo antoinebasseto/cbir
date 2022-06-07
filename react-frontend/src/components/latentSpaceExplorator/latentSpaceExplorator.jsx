@@ -17,7 +17,7 @@ export default function LatentSpaceExplorator(props) {
       };
     
       function handleEditOnClick(dim){
-        let temp = isEditing.map((x) => x); //We do that to copy the array
+        let temp = isEditing.map((x) => false); //We set everything to false
         temp[dim] = true;
         setIsEditing(temp);
       }
