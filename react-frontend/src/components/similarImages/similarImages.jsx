@@ -3,37 +3,36 @@ import {queryImage} from "../../backend/BackendQueryEngine";
 import SimilarImagesListElement from "../similarImagesListElement/similarImagesListElement"
 
 export default function SimilarImages(props) {
-
+	
     return (
         <div className="similarImagesContainer">
 			<div className="imageContainer">
                 <img className="uploadedImage" src={props.uploadedImageSource}/>
             </div>
 			<ol className="similarImagesListScroller">
-				{props.imgList.map((imageInfos) => {
-					const [lesion_id, image_id, dx, dx_type, age, sex, localization, latent_coordinate0, latent_coordinate1, latent_coordinate2, latent_coordinate3, latent_coordinate4, latent_coordinate5, latent_coordinate6, latent_coordinate7, latent_coordinate8, latent_coordinate9, latent_coordinate10, latent_coordinate11, dist] = imageInfos
+				{props.imgList.map((img) => {
 					const data = [
 						{
 							data: {
-							        dim0: latent_coordinate0,
-								dim1: latent_coordinate1,
-								dim2: latent_coordinate2,
-								dim3: latent_coordinate3,
-								dim4: latent_coordinate4,
-								dim5: latent_coordinate5,
-								dim6: latent_coordinate6,
-								dim7: latent_coordinate7,
-								dim8: latent_coordinate8,
-								dim9: latent_coordinate9,
-								dim10: latent_coordinate10,
-								dim11: latent_coordinate11								
+								dim0: img["latent_coordinate_0"],
+								dim1: img["latent_coordinate_1"],
+								dim2: img["latent_coordinate_2"],
+								dim3: img["latent_coordinate_3"],
+								dim4: img["latent_coordinate_4"],
+								dim5: img["latent_coordinate_5"],
+								dim6: img["latent_coordinate_6"],
+								dim7: img["latent_coordinate_7"],
+								dim8: img["latent_coordinate_8"],
+								dim9: img["latent_coordinate_9"],
+								dim10: img["latent_coordinate_10"],
+								dim11: img["latent_coordinate_11"]								
 							},
-							// meta: { color: 'blue' }
+							meta: { color: 'blue' }
 						}
 					];
 
 					const captions = {
-						        dim0: "Latent Coordinate 1",
+						    dim0: "Latent Coordinate 1",
 							dim1: "Latent Coordinate 2",
 							dim2: "Latent Coordinate 3",
 							dim3: "Latent Coordinate 4",
@@ -57,14 +56,14 @@ export default function SimilarImages(props) {
 					};
 
 					return  <SimilarImagesListElement 
-								keyId={image_id} 
-								imgId={queryImage(image_id)}
-								label={dx} 
-								dx_type={dx_type}
-								age={age}
-								sex={sex}
-								localization={localization}
-								similarity={dist} 
+								keyId={img["image_id"]}
+								imgId={queryImage(img["image_id"])}
+								label={img["dx"]} 
+								dx_type={img["dx_type"]}
+								age={img["age"]}
+								sex={img["sex"]}
+								localization={img["localization"]}
+								similarity={img["dist"]} 
 								data={data} 
 								captions={captions} 
 								options={options}

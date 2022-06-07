@@ -81,26 +81,27 @@ function App() {
     //     setSimilarImages(data)
     //   }
     // )
-    //Get latent space
+    // Get latent space
     queryBackendWithFile('get_latent_space', file).then((data) => {
       setLatentSpace(data);
       console.log(data)
     });
 
-    console.log(latent_space)
     // Get uploaded image projection data
     queryBackend(`get_uploaded_projection_data?latent=[${latent_space}]`, 'GET').then((data) => {
-
         setUploadedProjectionData(data)
-        
       }
     );
+
+    console.log('gonna get sim images')
     queryBackend(`get_similar_images?latent=[${latent_space}]`, 'GET').then((data) => {
         setSimilarImages(data)
+        similarImages.map((i) => {console.log(i); return 0})
       }
     )
-    // Get the rollout images for latent space exploration
 
+    
+    // Get the rollout images for latent space exploration
     queryBackend(`get_latent_space_images_url?latent=[${latent_space}]`, 'GET').then((latent_space_images_url) => {
         setLatentSpaceExplorationImages(latent_space_images_url)
         

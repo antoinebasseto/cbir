@@ -91,8 +91,6 @@ def get_uploaded_projection_data(latent, model=Depends(get_dl),
                                        preprocess=Depends(get_image_processor)):
 
     latent = str(latent).strip('[]').strip(']').split(',')
-    #latent = str(latent).split(",")
-    print('latent', latent)
 
     pic_embedding = np.array(latent, dtype=np.float32)
     reducer = joblib.load("umap.sav")
@@ -103,28 +101,9 @@ def get_uploaded_projection_data(latent, model=Depends(get_dl),
 # Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
 @app.get("/get_latent_space_images_url")
 def get_latent_space_images_url(latent ,model=Depends(get_dl), preprocess=Depends(get_image_processor)):
-    # TODO: return the path to the real rollout images to get rollout images
-    # honestly this should only be parametrized
-    # or cached I guess
-    # 10x10 images
-    # try:
-    #     contents = await file.read()
-    #     img = Image.open(io.BytesIO(contents))
-    # except:
-    #     return {"message": "Error uploading file"}
-    # finally:
-    #     await file.close()
-    # img = preprocess(img)
-    # img = img.unsqueeze(0)
-    # pic_embedding, _ = model.encoder(img)
-    # latent_space = pic_embedding.detach()
-    print(latent)
     latent = str(latent).strip('[]').strip(']').split(',')
-    # latent = str(latent).split(",")
-    print('latent', latent)
     latent_space = np.zeros(12, dtype=np.float32)
     latent_space = torch.from_numpy(latent_space).view(1, -1)
-    print(latent_space)
     ret = rollout(model, latent_space, config['cache_dir'], -5, 5, 10)
     return ret
 
@@ -149,7 +128,6 @@ def update_filters(filters: dict):
     maxNumberImages = filters['maxNumberImages']
     ageInterval = filters['ageInterval']
     diseasesFilter = filters['diseasesFilter']
-    print(diseasesFilter)
     return True
 
 
@@ -169,30 +147,16 @@ async def get_latent_space(file: UploadFile = File(...), model=Depends(get_dl),
     img = img.unsqueeze(0)
     pic_embedding, _ = model.encoder(img)
     pic_embedding = pic_embedding.squeeze().detach().numpy()
-    print(pic_embedding.tolist())
     return pic_embedding.tolist()
 
 
 @app.get("/get_similar_images")
-def get_similar_images(latent, model=Depends(get_dl),
-                             preprocess=Depends(get_image_processor)):
-    # async def get_similar_images(file: UploadFile):
+def get_similar_images(latent, model=Depends(get_dl), 
+                       preprocess=Depends(get_image_processor)):
     pictures = pd.read_csv(METADATA_PATH)
-    #
-    #     #TODO actually use image
-    #     #get dimensions of image in VAE space
-    # #
     latent = str(latent).strip('[]').strip(']').split(',')
-    # latent = str(latent).split(",")
-    print('latent', latent)
-    pic_embedding = np.array(latent, dtype=np.float32)
-    # pictures["dist"] = (pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]] - pic_embedding).apply(
-    #     np.linalg.norm, axis=1)
 
-    # print(pic_embedding)
-    # pic_embedding = np.random.rand(12)
-    # Calculate distance scores for each
-    #pictures = pd.read_csv("HAM10000_metadata_with_dummy_latent.csv")
+    pic_embedding = np.array(latent, dtype=np.float32)
     pictures["dx"]= pictures["dx"].apply(lambda x: ABBREVIATION_TO_DISEASE[x])
     latents = pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]]
     weighted_latents =latents.multiply(distanceWeights)
@@ -204,7 +168,6 @@ def get_similar_images(latent, model=Depends(get_dl),
         filtered_pictures = filtered_pictures[filtered_pictures["dx"].isin(diseasesFilter)]
     closest_pictures = filtered_pictures.iloc[:maxNumberImages]
 
-    print(closest_pictures)
     return closest_pictures.to_dict(orient="records")
 
 
