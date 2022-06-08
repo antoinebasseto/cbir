@@ -27,24 +27,24 @@ export default function LatentSpaceExplorator(props) {
             {props.uploadedImage && 
                 props.latentSpaceImagesPath.map((arrayOflatentSpaceImagesPath, dimensionNumber) => {
                     return (
-                        <div className = "rollout_full_row_container">
-                            {isEditing[dimensionNumber] ?
-                            <input className = "input_dimension" type = 'text' onChange={(event) => props.handleRenameLatent(event, dimensionNumber)} onKeyPress={(event) => handleKeyPress(event, dimensionNumber)}  defaultValue = {props.dimensionNames[dimensionNumber]}/> 
-                            :
-                            <div className = "container_dim_text_and_editor">
-                                <div className="dim_text">{props.dimensionNames[dimensionNumber]}</div>
-                                <div className="edit_button" onClick ={()=> handleEditOnClick(dimensionNumber)}>
-                                    <BiEditAlt className="edit_icon"/>
+                            <div className = "rollout_full_row_container" id={"dim"+dimensionNumber} key={"dim"+dimensionNumber}>
+                                {isEditing[dimensionNumber] ?
+                                <input className = "input_dimension" type = 'text' onChange={(event) => props.handleRenameLatent(event, dimensionNumber)} onKeyPress={(event) => handleKeyPress(event, dimensionNumber)}  defaultValue = {props.dimensionNames[dimensionNumber]}/> 
+                                :
+                                <div className = "container_dim_text_and_editor">
+                                    <div className="dim_text">{props.dimensionNames[dimensionNumber]}</div>
+                                    <div className="edit_button" onClick ={()=> handleEditOnClick(dimensionNumber)}>
+                                        <BiEditAlt className="edit_icon"/>
+                                    </div>
                                 </div>
-                            </div>
-                            }
-                            <div className = "rollout_row_images_container">
-                                {arrayOflatentSpaceImagesPath.map((latentSpaceImagePath) => {
-                                    return <img className="rollout_image" src={queryCache(latentSpaceImagePath)}/>
-                                })}
-                             </div>
+                                }
+                                <div className = "rollout_row_images_container">
+                                    {arrayOflatentSpaceImagesPath.map((latentSpaceImagePath, index) => {
+                                        return <img className="rollout_image" id={"image"+dimensionNumber+index} key={"image"+dimensionNumber+index} src={queryCache(latentSpaceImagePath)}/>
+                                    })}
+                                </div>
 
-                        </div>
+                            </div>
                     )
                 })
             }

@@ -4,7 +4,7 @@ import 'react-svg-radar-chart/build/css/index.css'
 
 export default function SimilarImagesListElement(props) {
   return (
-    <li key={props.keyId} className="similarImagesListElement">
+    <li className="similarImagesListElement">
       <h2 className="label">{props.label}</h2>
       <div className="bodyContainer">
         <div className="leftColumn">

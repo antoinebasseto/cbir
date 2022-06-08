@@ -45,8 +45,8 @@ export default function SimilarImages(props) {
 						})
 					};
 
-					return  <SimilarImagesListElement 
-								keyId={img["image_id"]}
+					return  <SimilarImagesListElement
+								key={img["image_id"]}
 								imgId={queryImage(img["image_id"])}
 								label={img["dx"]} 
 								dx_type={img["dx_type"]}

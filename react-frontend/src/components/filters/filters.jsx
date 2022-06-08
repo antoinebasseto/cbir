@@ -116,7 +116,7 @@ export default function Filters(props) {
                 <div className = "fullWeightsContainer">
                   {weightsSliderEnable &&
                     props.distanceWeights.map((w, dim) => {
-                      return <div className="weightContainer">
+                      return <div className="weightContainer" key={"sliderDim"+dim}>
                       <div className="filterName">
                         {props.latentSpaceExplorationNames[dim]}
                       </div>
