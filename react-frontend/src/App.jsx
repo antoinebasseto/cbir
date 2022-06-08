@@ -30,7 +30,9 @@ function App() {
   const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
   const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] = useState(
     ['Dim 1', 'Dim 2', 'Dim 3', 'Dim 4', 'Dim 5', 'Dim 6', 'Dim 7', 'Dim 8', 'Dim 9', 'Dim 10', 'Dim 11', 'Dim 12']);
-  const [latentSpace, setLatentSpace] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);  
+  const [latentSpace, setLatentSpace] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
+  
+  const [isGeneratingRollout, setIsGeneratingRollout] = useState(false); //Used in the rollout to avoid having cache error or old images which are not the ones of the current uploaded one
 
   function handleRenameLatent(event, dim){
     let temp = latentSpaceExplorationNames.map((x) => x) // We do that to copy the array
@@ -81,8 +83,10 @@ function App() {
       console.log(data)
 
       // Get the rollout images for latent space exploration
+      setIsGeneratingRollout(true)
       queryBackend(`get_latent_space_images_url?latent=[${data}]`, 'GET').then((latent_space_images_url) => {
         setLatentSpaceExplorationImages(latent_space_images_url)
+        setIsGeneratingRollout(false)
       })
 
       // Get similar images 
@@ -145,7 +149,7 @@ function App() {
           }
           {
             indexActiv===3 && 
-            <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages} dimensionNames={latentSpaceExplorationNames} handleRenameLatent={handleRenameLatent}/>
+            <LatentSpaceExplorator uploadedImage={file} latentSpaceImagesPath={latentSpaceExplorationImages} dimensionNames={latentSpaceExplorationNames} handleRenameLatent={handleRenameLatent} isGeneratingRollout={isGeneratingRollout}/>
           }
         </div>
       </div>

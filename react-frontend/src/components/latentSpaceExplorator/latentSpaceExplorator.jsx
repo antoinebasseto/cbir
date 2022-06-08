@@ -24,7 +24,7 @@ export default function LatentSpaceExplorator(props) {
 
     return (
         <div className="latentSpaceExploratorContainer">
-            {props.uploadedImage && 
+            {props.uploadedImage && !props.isGeneratingRollout &&
                 props.latentSpaceImagesPath.map((arrayOflatentSpaceImagesPath, dimensionNumber) => {
                     return (
                             <div className = "rollout_full_row_container" id={"dim"+dimensionNumber} key={"dim"+dimensionNumber}>
