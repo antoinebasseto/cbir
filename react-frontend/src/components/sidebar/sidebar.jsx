@@ -14,7 +14,7 @@ export default function Sidebar(props) {
     <div className="sidebar">
         <div className="sidebarWrapper">
             <div className="sidebarMenu">
-                <h3 className="sidebarTitle">Other Weird Moles</h3>
+                <h3 className="sidebarTitle">Skinterpret</h3>
                 <ul className="sidebarList">
                     <li className={`sidebarListItem ${props.indexActiv===0 ? "active" : ""}`} 
                         onClick={props.handleUpload}>

@@ -17,7 +17,7 @@ export default function DragDropUploader(props) {
     <div className="uploaderScreenContainer">
       <FileUploader handleChange={props.onImageUploadedChange} name="file" types={fileTypes} children={children}/>
       <div className="textContainer">
-        <h2>Welcome to Other Weird Moles! 👋</h2>
+        <h2>Welcome to Skinterpret! 👋</h2>
         This tool allows you to upload a picture of a skin lesions in order to retrieve similar ones and their correspondig diagnoses!
 
         <h3>How to get started</h3>
@@ -41,14 +41,7 @@ export default function DragDropUploader(props) {
         nevertheless at the price of having worse reconstruction, hence we cannot fully disentangle them and some dimensions might be more relevant for a domain expert than
         others. That is why this dashboard provides the option to rename some dimensions which might be representative and weight the different dimensions accordingly before
         computing the actual distance.
-        <h3>Who we are</h3>
-        We are 4 master students in computer science at ETHZ. We are all passionate about machine learning and want to make it understandable and usable by people outside 
-        this area.
       </div>
-          {/* <div className="secondColumn">
-            <h3>Who we are</h3>
-            We are 4 master students in computer science at ETHZ.
-          </div> */}
     </div>
 
   );
