@@ -67,7 +67,7 @@ export default function SimilarImagesListElement(props) {
           <div className="horizontalLine"></div>
 
           <div className="totalDistanceContainer">
-              <h3 className="patientInfoTitle">Total distance:</h3>
+              <h3 className="patientInfoTitle">Total weighted distance:</h3>
               &emsp;<h3 className="boldText">{Math.round(props.distance * 1000) / 1000}</h3>
           </div>
 
