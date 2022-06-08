@@ -27,7 +27,7 @@ ABBREVIATION_TO_DISEASE = {
 }
 
 app = FastAPI(
-    title="Test Python Backend",
+    title="Skinterpret's Backend",
     description="""This is a template for a Python backend.
                    It provides acess via REST API.""",
     version="0.1.0",
