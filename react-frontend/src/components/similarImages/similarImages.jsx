@@ -36,11 +36,12 @@ export default function SimilarImages(props) {
 					props.dimensionNames.forEach((el, index) => captions["dim" + index] = el)
 
 					const options = {
+						captionMargin: 50,
 						captionProps: () => ({
 							className: 'caption',
 							textAnchor: 'middle',
 							fontSize: 13,
-							fontFamily: 'sans-serif'
+							fontFamily: 'sans-serif',
 						})
 					};
 
