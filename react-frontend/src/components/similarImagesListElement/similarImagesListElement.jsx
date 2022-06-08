@@ -57,7 +57,6 @@ export default function SimilarImagesListElement(props) {
             <h3 className="radarTitle">Distance along each axis</h3>
             <RadarChart 
               className = "radarChart"
-              style="padding: 10px !important;"
               captions={props.captions}
               data={props.data} 
               options ={props.options} 
