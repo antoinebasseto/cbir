@@ -28,7 +28,8 @@ function App() {
   const [projectionData, setProjectionData] = useState([]);
   const [uploadedProjectionData, setUploadedProjectionData] = useState([]);
   const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
-  const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] = useState([]);
+  const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] = useState(
+    ['Dim 1', 'Dim 2', 'Dim 3', 'Dim 4', 'Dim 5', 'Dim 6', 'Dim 7', 'Dim 8', 'Dim 9', 'Dim 10', 'Dim 11', 'Dim 12']);
   const [latentSpace, setLatentSpace] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);  
 
   function handleRenameLatent(event, dim){
@@ -37,7 +38,7 @@ function App() {
     setLatentSpaceExplorationNames(temp)
   }
 
-  function handleUpload(){
+  function handleUpload() {
     setIndexActiv(0)
   }
 
@@ -47,7 +48,7 @@ function App() {
   }
 
   function handleShowProjection() {
-    if (projectionData.length == 0) {
+    if (projectionData.length === 0) {
       queryBackend('get_projection_data', 'GET').then((data) => {
         setProjectionData(data)
       })
@@ -65,7 +66,7 @@ function App() {
     setFilterActiv(!filterActiv)
   }
 
-  function handleFilterWeightsChange(newValue, dim){
+  function handleFilterWeightsChange(newValue, dim) {
     let temp = distanceWeights.map((x) => x) // We do that to copy the array
     temp[dim] = newValue
     setDistanceWeights(temp)
@@ -79,9 +80,9 @@ function App() {
       setLatentSpace(data);
       console.log(data)
 
-      // Get uploaded image projection data
-      queryBackend(`get_uploaded_projection_data?latent=[${data}]`, 'GET').then((data) => {
-        setUploadedProjectionData(data)
+      // Get the rollout images for latent space exploration
+      queryBackend(`get_latent_space_images_url?latent=[${data}]`, 'GET').then((latent_space_images_url) => {
+        setLatentSpaceExplorationImages(latent_space_images_url)
       })
 
       // Get similar images 
@@ -89,16 +90,9 @@ function App() {
         setSimilarImages(data)
       })
 
-      // Get the rollout images for latent space exploration
-      queryBackend(`get_latent_space_images_url?latent=[${latentSpace}]`, 'GET').then((latent_space_images_url) => {
-        setLatentSpaceExplorationImages(latent_space_images_url)
-        
-        if(latentSpaceExplorationNames.length === 0){
-          let initialNames = latent_space_images_url.map((_, index) => {
-            return "Dim " + (index + 1)
-          })
-          setLatentSpaceExplorationNames(initialNames)
-        }
+      // Get uploaded image projection data
+      queryBackend(`get_uploaded_projection_data?latent=[${data}]`, 'GET').then((data) => {
+        setUploadedProjectionData(data)
       })
     });    
   };

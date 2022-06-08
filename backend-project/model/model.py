@@ -24,7 +24,7 @@ def get_image_preprocessor(args, model_name):
     else:
         raise ValueError('Model {} not found'.format(model_name))
 
-def rollout_i(model,  mu, dimension, num_rollouts, upper_bound, lower_bound, cache_dir):
+def rollout_i(model, mu, dimension, num_rollouts, upper_bound, lower_bound, cache_dir):
     """
     batched rollout
     :param model:

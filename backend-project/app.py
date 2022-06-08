@@ -1,5 +1,6 @@
 from typing import Callable, List, Any
 import io
+import os
 import torch
 from PIL import Image
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException, Form
@@ -101,10 +102,15 @@ def get_uploaded_projection_data(latent):
 # Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
 @app.get("/get_latent_space_images_url")
 def get_latent_space_images_url(latent, model=Depends(get_dl)):
+
+    # Empty the cache
+    for file in os.scandir(CACHE_DIR):
+        os.remove(file.path)
+    
     latent = str(latent).strip('[]').strip(']').split(',')
     latent_space = np.array(latent, dtype=np.float32)
     latent_space = torch.from_numpy(latent_space).view(1, -1)
-    ret = rollout(model, latent_space, CACHE_DIR, -5, 5, 10)
+    ret = rollout(model, latent_space, CACHE_DIR, -5, 5, 11)
     return ret
 
 
@@ -140,7 +146,7 @@ def get_similar_images(latent):
     
     latents = pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]]
     pictures["dist"] = (latents - pic_embedding).multiply(distanceWeights).apply(np.linalg.norm, ord=1, axis=1)
-    sorted_pictures = (pictures.sort_values(by=['dist']))
+    sorted_pictures = pictures.sort_values(by=['dist'])
 
     filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[1])]
     if not "All" in diseasesFilter:

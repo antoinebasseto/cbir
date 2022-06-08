@@ -55,7 +55,7 @@ export default function ProjectionPlot(props) {
             .call(yAxis)
 
         // Setting up label mappings
-        var keys = (props.uploadedData.length > 0) 
+        var keys = (props.uploadedData.length > 0 || props.similarImages.length > 0) 
             ? ["akiec", "bcc", "nv", "bkl", "df", "mel", "vasc", "uploaded image", "similar image"] 
             : ["akiec", "bcc", "nv", "bkl", "df", "mel", "vasc"]
         
@@ -75,7 +75,6 @@ export default function ProjectionPlot(props) {
         var color = d3.scaleOrdinal()
             .domain(keys)
             .range(d3.schemeSet2.slice(0,7).concat(["black", "black"]))
-            // .range(["#841e41", "#69ef7b", "#f23387", "#a7d297", "#2c4a5e", "#4bc8e6", "#cf6449", "black", "black"]);
 
         var symbol = d3.scaleOrdinal()
             .domain(keys)
@@ -168,7 +167,7 @@ export default function ProjectionPlot(props) {
             )
             .attr("transform", function(d) { return "translate(" + xScale(d.umap1) + "," + yScale(d.umap2) + ")"; })
             .style("opacity", function(d) {
-                if (props.uploadedData.length == 0) {return 0.7}
+                if (props.uploadedData.length === 0 && props.similarImages.length === 0) {return 0.7}
                 else {return 0.4}
             })
             .style("fill", function(d) {return color(d.dx)})

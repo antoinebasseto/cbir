@@ -21,6 +21,11 @@ export default function Sidebar(props) {
                         <FiUpload className="sidebarIcon"/>
                         Upload
                     </li>
+                    <li className={`sidebarListItem ${props.indexActiv===3 ? "active" : ""} ${props.file ? "" : "greyed_out"}`} 
+                        onClick={props.handleShowExplore}>
+                        <MdTravelExplore className="sidebarIcon"/>
+                        Explore dimensions
+                    </li>
                     <li className={`sidebarListItem ${props.indexActiv===1 ? "active" : ""} ${props.file ? "" : "greyed_out"}`} 
                         onClick={props.handleShow}>
                         <BsImages className="sidebarIcon"/>
@@ -30,11 +35,6 @@ export default function Sidebar(props) {
                         onClick={props.handleShowProjection}>
                         <VscActivateBreakpoints className="sidebarIcon"/>
                         Projection
-                    </li>
-                    <li className={`sidebarListItem ${props.indexActiv===3 ? "active" : ""} ${props.file ? "" : "greyed_out"}`} 
-                        onClick={props.handleShowExplore}>
-                        <MdTravelExplore className="sidebarIcon"/>
-                        Explore dimensions
                     </li>
                     <li className={`sidebarListItem ${props.filterActiv ? "active" : ""} ${props.file ? "" : "greyed_out"}`} 
                         onClick={props.handleFilter}>
