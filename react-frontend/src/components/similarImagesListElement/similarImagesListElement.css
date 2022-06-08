@@ -12,7 +12,7 @@
 .label {
     text-align: center;
     margin: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 13px;
 }
 
 .bodyContainer{
@@ -96,13 +96,10 @@
 }
 
 .radarTitle{
+    margin-top: 10px;
     display: flex;
     font-size: 15px;
-}
-
-.radarChart {
-    padding: 10px;
-    overflow: visible;
+    transform: translateY(25px);
 }
 
 .totalDistanceContainer{
