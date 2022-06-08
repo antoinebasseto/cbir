@@ -110,7 +110,7 @@ def get_latent_space_images_url(latent, model=Depends(get_dl)):
     latent = str(latent).strip('[]').strip(']').split(',')
     latent_space = np.array(latent, dtype=np.float32)
     latent_space = torch.from_numpy(latent_space).view(1, -1)
-    ret = rollout(model, latent_space, CACHE_DIR, -5, 5, 11)
+    ret = rollout(model, latent_space, CACHE_DIR, -5, 6, 11) #We use 6 (not 5) since the upper bound is not included and we want a symmetric interval
     return ret
 
 
