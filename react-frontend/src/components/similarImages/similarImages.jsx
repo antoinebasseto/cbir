@@ -3,49 +3,36 @@ import {queryImage} from "../../backend/BackendQueryEngine";
 import SimilarImagesListElement from "../similarImagesListElement/similarImagesListElement"
 
 export default function SimilarImages(props) {
-
+	
     return (
         <div className="similarImagesContainer">
 			<div className="imageContainer">
                 <img className="uploadedImage" src={props.uploadedImageSource}/>
             </div>
 			<ol className="similarImagesListScroller">
-				{props.imgList.map((imageInfos) => {
-					const [lesion_id, image_id, dx, dx_type, age, sex, localization, latent_coordinate0, latent_coordinate1, latent_coordinate2, latent_coordinate3, latent_coordinate4, latent_coordinate5, latent_coordinate6, latent_coordinate7, latent_coordinate8, latent_coordinate9, latent_coordinate10, latent_coordinate11, dist] = imageInfos
+				{props.imgList.map((img) => {
 					const data = [
 						{
 							data: {
-							        dim0: latent_coordinate0,
-								dim1: latent_coordinate1,
-								dim2: latent_coordinate2,
-								dim3: latent_coordinate3,
-								dim4: latent_coordinate4,
-								dim5: latent_coordinate5,
-								dim6: latent_coordinate6,
-								dim7: latent_coordinate7,
-								dim8: latent_coordinate8,
-								dim9: latent_coordinate9,
-								dim10: latent_coordinate10,
-								dim11: latent_coordinate11								
+								dim0: Math.abs(img["latent_coordinate_0"] - props.latentSpace[0]),
+								dim1: Math.abs(img["latent_coordinate_1"] - props.latentSpace[1]),
+								dim2: Math.abs(img["latent_coordinate_2"] - props.latentSpace[2]),
+								dim3: Math.abs(img["latent_coordinate_3"] - props.latentSpace[3]),
+								dim4: Math.abs(img["latent_coordinate_4"] - props.latentSpace[4]),
+								dim5: Math.abs(img["latent_coordinate_5"] - props.latentSpace[5]),
+								dim6: Math.abs(img["latent_coordinate_6"] - props.latentSpace[6]),
+								dim7: Math.abs(img["latent_coordinate_7"] - props.latentSpace[7]),
+								dim8: Math.abs(img["latent_coordinate_8"] - props.latentSpace[8]),
+								dim9: Math.abs(img["latent_coordinate_9"] - props.latentSpace[9]),
+								dim10: Math.abs(img["latent_coordinate_10"] - props.latentSpace[10]),
+								dim11: Math.abs(img["latent_coordinate_11"] - props.latentSpace[11])
 							},
-							// meta: { color: 'blue' }
+							meta: { color: "#104242" }
 						}
 					];
 
-					const captions = {
-						        dim0: "Latent Coordinate 1",
-							dim1: "Latent Coordinate 2",
-							dim2: "Latent Coordinate 3",
-							dim3: "Latent Coordinate 4",
-							dim4: "Latent Coordinate 5",
-							dim5: "Latent Coordinate 6",
-							dim6: "Latent Coordinate 7",
-							dim7: "Latent Coordinate 8",
-							dim8: "Latent Coordinate 9",
-							dim9: "Latent Coordinate 10",
-							dim10: "Latent Coordinate 11",
-							dim11: "Latent Coordinate 12"	
-					};
+					var captions = {}
+					props.dimensionNames.forEach((el, index) => captions["dim" + index] = el)
 
 					const options = {
 						captionProps: () => ({
@@ -57,14 +44,14 @@ export default function SimilarImages(props) {
 					};
 
 					return  <SimilarImagesListElement 
-								keyId={image_id} 
-								imgId={queryImage(image_id)}
-								label={dx} 
-								dx_type={dx_type}
-								age={age}
-								sex={sex}
-								localization={localization}
-								similarity={dist} 
+								keyId={img["image_id"]}
+								imgId={queryImage(img["image_id"])}
+								label={img["dx"]} 
+								dx_type={img["dx_type"]}
+								age={img["age"]}
+								sex={img["sex"]}
+								localization={img["localization"]}
+								distance={img["dist"]} 
 								data={data} 
 								captions={captions} 
 								options={options}

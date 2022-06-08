@@ -24,7 +24,7 @@ Model related settings
 """
 config['model'] = 'BetaVAEConv'
 
-config['model_path'] = '/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220513-033014_BetaVAEConv/epoch=61-step=9734.ckpt'
+config['model_path'] = 'model/epoch=61-step=9734.ckpt'
 config['image_path'] = 'data/images'
 config['metadata_path'] = 'data/HAM10000_latent_space_umap_processed.csv'
 config['cache_dir'] = 'data/cache'

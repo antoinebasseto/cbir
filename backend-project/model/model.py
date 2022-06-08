@@ -9,10 +9,8 @@ from .BetaVAEConv import build_betavaeconv
 def get_model(args, model_name, log_dir, model_path):
     if model_name == 'BetaVAEConv':
         model = build_betavaeconv(args, log_dir)
-        #checkpoint loading
-        chkt = torch.load('/home/jimmy/Medical1-xai-iml22/LightningVAE/reports/logs/20220513-033014_BetaVAEConv/epoch=61-step=9734.ckpt')
-        # # #model.load_from_checkpoint(checkpoint_path=model_path)
-        # print(chkt['state_dict'])
+        chkt = torch.load(model_path, map_location=torch.device('cpu'))
+        model.load_from_checkpoint(checkpoint_path=model_path)
         model.load_state_dict(chkt['state_dict'])
         model.eval()
         return model
@@ -26,7 +24,7 @@ def get_image_preprocessor(args, model_name):
     else:
         raise ValueError('Model {} not found'.format(model_name))
 
-def rollout_i(model,  mu, dimension, num_rollouts, upper_bound, lower_bound, cache_dir):
+def rollout_i(model, mu, dimension, num_rollouts, upper_bound, lower_bound, cache_dir):
     """
     batched rollout
     :param model:

@@ -5,7 +5,8 @@ export const queryBackend = async (route, method) => {
     const requestURL = `${BASE_URL}/${route}`;
     const data = await fetch(requestURL,
         {
-            method: method
+            method: method,
+            mode: "cors",
         }
     ).then(response => response.json());
 
@@ -21,7 +22,9 @@ export const queryBackendWithFile = async (route, file) => {
     const data = await fetch(requestURL,
         {
             method: "POST",
-            body: fr}
+            mode: "cors",
+            body: fr,
+        }
     ).then(response => response.json());
 
     return data;
@@ -34,25 +37,29 @@ export const updateFiltersBackend = async(route, method='POST', distanceWeights,
         {
             method: method,
             headers: { "Content-Type": "application/json" },
+            mode: "cors",
             body: JSON.stringify({distanceWeights: distanceWeights,
                                   maxNumberImages: maxNumberImages, 
                                   ageInterval: ageInterval, 
                                   diseasesFilter: diseasesFilter,
-                                })
+                                }),
         }
     ).then(response => response.json());
 
     return data;
 }
 
+
 export const queryImage = (imageName) =>{
     const requestURL = `${BASE_URL}${PATH_GET_IMAGES}${imageName}`;
     return requestURL;
 }
 
+
 export const queryCache = (imageName) =>{
-    const requestURL = `${BASE_URL}/cache/?name=${imageName}`;
+    const requestURL = `${BASE_URL}/cache?name=${imageName}`;
     return requestURL;
 }
+
 
 export default queryBackend;

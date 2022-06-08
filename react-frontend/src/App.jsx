@@ -1,4 +1,4 @@
-import { useState, useEffect }  from 'react';
+import { useState }  from 'react';
 import './App.css';
 import { queryBackend , queryBackendWithFile, updateFiltersBackend } from './backend/BackendQueryEngine';
 import Sidebar from "./components/sidebar/sidebar"
@@ -28,17 +28,9 @@ function App() {
   const [projectionData, setProjectionData] = useState([]);
   const [uploadedProjectionData, setUploadedProjectionData] = useState([]);
   const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
-
-  //Latent space explorator names
-  const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] = useState([]);
-
-  const [latent_space, setLatentSpace] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
-  useEffect(() => {
-      queryBackend('get_projection_data', 'GET').then((data) => {
-        setProjectionData(data)
-      })
-    }, []);
-  
+  const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] = useState(
+    ['Dim 1', 'Dim 2', 'Dim 3', 'Dim 4', 'Dim 5', 'Dim 6', 'Dim 7', 'Dim 8', 'Dim 9', 'Dim 10', 'Dim 11', 'Dim 12']);
+  const [latentSpace, setLatentSpace] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);  
 
   function handleRenameLatent(event, dim){
     let temp = latentSpaceExplorationNames.map((x) => x) // We do that to copy the array
@@ -46,7 +38,7 @@ function App() {
     setLatentSpaceExplorationNames(temp)
   }
 
-  function handleUpload(){
+  function handleUpload() {
     setIndexActiv(0)
   }
 
@@ -56,6 +48,11 @@ function App() {
   }
 
   function handleShowProjection() {
+    if (projectionData.length === 0) {
+      queryBackend('get_projection_data', 'GET').then((data) => {
+        setProjectionData(data)
+      })
+    }
     setIndexActiv(2)
   }
 
@@ -69,7 +66,7 @@ function App() {
     setFilterActiv(!filterActiv)
   }
 
-  function handleFilterWeightsChange(newValue, dim){
+  function handleFilterWeightsChange(newValue, dim) {
     let temp = distanceWeights.map((x) => x) // We do that to copy the array
     temp[dim] = newValue
     setDistanceWeights(temp)
@@ -77,41 +74,28 @@ function App() {
 
   function handleImageUploaded(file) {
     setFile(file);
-    // queryBackendWithFile('get_latent_space_images_url', file).then((data) => {
-    //     setLatentSpaceExplorationImages(data)
-    //   }
-    // // )
-    // queryBackendWithFile('get_similar_images', file).then((data) => {
-    //     setSimilarImages(data)
-    //   }
-    // )
-    //Get latent space
+
+    // Get latent space
     queryBackendWithFile('get_latent_space', file).then((data) => {
       setLatentSpace(data);
-      console.log(data);
-      queryBackend(`get_uploaded_projection_data?latent=[${data}]`, 'GET').then((data) => {
-          setUploadedProjectionData(data)}
-      );
-      queryBackend(`get_similar_images?latent=[${data}]`, 'GET').then((data) => {
-          setSimilarImages(data)
-        }
-      );
+      console.log(data)
+
       // Get the rollout images for latent space exploration
-
       queryBackend(`get_latent_space_images_url?latent=[${data}]`, 'GET').then((latent_space_images_url) => {
-          setLatentSpaceExplorationImages(latent_space_images_url)
+        setLatentSpaceExplorationImages(latent_space_images_url)
+      })
 
-          if(latentSpaceExplorationNames.length === 0){
-            let initialNames = latent_space_images_url.map((_, index) => {
-              return "Dim " + (index + 1)
-            })
-            setLatentSpaceExplorationNames(initialNames)
-          }
-        })
-      });
+      // Get similar images 
+      queryBackend(`get_similar_images?latent=[${data}]`, 'GET').then((data) => {
+        setSimilarImages(data)
+      })
 
-    // Get uploaded image projection data
-  }
+      // Get uploaded image projection data
+      queryBackend(`get_uploaded_projection_data?latent=[${data}]`, 'GET').then((data) => {
+        setUploadedProjectionData(data)
+      })
+    });    
+  };
 
   function applyOnClickHandle() {
     updateFiltersBackend('update_filters', 'POST', distanceWeights, maxNumberImages, ageInterval, diseasesFilter)
@@ -153,11 +137,11 @@ function App() {
           {
             indexActiv===1 && 
             file && 
-            <SimilarImages uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages}/> 
+            <SimilarImages uploadedImageSource={URL.createObjectURL(file)} imgList={similarImages} dimensionNames={latentSpaceExplorationNames} latentSpace={latentSpace}/> 
           }
           {
             indexActiv===2 && 
-            <ProjectionPlot data={projectionData} uploadedData={uploadedProjectionData} similarImages={similarImages.map(a => a[1]).flat()}/>
+            <ProjectionPlot data={projectionData} uploadedData={uploadedProjectionData} similarImages={similarImages}/>
           }
           {
             indexActiv===3 && 
