@@ -73,7 +73,15 @@ export default function ProjectionPlot(props) {
                 ])
         
         var color = d3.scaleOrdinal()
-            .domain(keys)
+            .domain(["Actinic keratoses and intraepithelial carcinoma", 
+                     "Basal cell carcinoma",
+                     "Melanocytic nevi",
+                     "Benign keratosis-like lesions",
+                     "Dermatofibroma",
+                     "Melanoma",
+                     "Vascular lesions",
+                     "Uploaded image",
+                     "Similar image"])
             .range(d3.schemeSet2.slice(0,7).concat(["black", "black"]))
 
         var symbol = d3.scaleOrdinal()
@@ -136,7 +144,7 @@ export default function ProjectionPlot(props) {
             tooltip
                 .style("border-color", color(d.dx))
                 .style('visibility','visible')
-                .html(`<b>diagnosis:</b> ${label(d.dx)} <br/>
+                .html(`<b>diagnosis:</b> ${(keys.includes(d.dx)) ? label(d.dx): d.dx} <br/>
                 <b>confirmation:</b> ${d.dx_type} <br/>
                 <b>localization:</b> ${d.localization} <br/>
                 <b>age:</b> ${d.age} <br/> 
@@ -170,11 +178,12 @@ export default function ProjectionPlot(props) {
                 if (props.uploadedData.length === 0 && props.similarImages.length === 0) {return 0.7}
                 else {return 0.4}
             })
-            .style("fill", function(d) {return color(d.dx)})
+            .style("fill", function(d) {return color(label(d.dx))})
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave)
 
+        console.log(props.similarImages)
         // Setting up similar images data
         svg.append('g')
             .selectAll('similarPoints')
