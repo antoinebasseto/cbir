@@ -86,7 +86,7 @@ export default function ProjectionPlot(props) {
             .append("path")
                 .attr("d", d3.symbol()
                     .size(function(d) {
-                        if (symbol(d) == d3.symbolCross) {return 110}
+                        if (symbol(d) === d3.symbolCross) {return 110}
                         else {return 150}
                     })
                     .type(function(d) {return symbol(d)})
