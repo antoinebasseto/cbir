@@ -53,20 +53,15 @@
 
 .applyButton{
     margin-top: 40px;
-
     color: #555;
-    background-color: #f1f1f1;
-
+    background-color: white;
     padding: 5px 0px 5px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-
-    /* border: 1px dashed #555; */
-
-    box-shadow: 0 10px 15px rgb(230, 230, 230);
+    border-radius: 8px;
+    box-shadow: 0 10px 15px rgb(222, 222, 222);
 }
 
 .applyButton:hover{
@@ -75,7 +70,7 @@
 }
 
 .applyButton:active {
-    box-shadow: 0 0 0 rgb(255, 255, 255);
+    box-shadow: none;
     transform: translateY(2px);
 }
 
