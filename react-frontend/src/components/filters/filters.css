@@ -16,7 +16,7 @@
     flex-direction: row;
     align-items: center;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 .cliquableFilterTitleContainer:hover{
     background-color: white;
