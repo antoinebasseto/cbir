@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import {queryImage} from "../../backend/BackendQueryEngine";
 import * as d3 from 'd3';
 

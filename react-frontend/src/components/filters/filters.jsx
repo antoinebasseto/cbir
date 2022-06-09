@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import "./filters.css"
 import {BsIntersect} from "react-icons/bs"
 import { Slider } from '@material-ui/core';
@@ -9,8 +9,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import {FaVirus, FaBirthdayCake} from "react-icons/fa"
-import {AiOutlineOrderedList} from "react-icons/ai"
-
 import {IoMdImages} from "react-icons/io"
 
 
@@ -89,7 +87,7 @@ export default function Filters(props) {
         let newValue = typeof value === 'string' ? value.split(',') : value
 
         if ((props.diseasesFilter).indexOf("All") > -1 && newValue.length > 0){
-          newValue = diseases.filter((disease) => newValue.indexOf(disease) == -1)
+          newValue = diseases.filter((disease) => newValue.indexOf(disease) === -1)
         }
         // If "All" is contained in the list, we just return "All" and not all the other elements
         newValue = newValue.indexOf("All") > -1 ? ["All"] : newValue
