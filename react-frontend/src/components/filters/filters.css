@@ -19,14 +19,14 @@
     border-radius: 10px;
 }
 .cliquableFilterTitleContainer:hover{
-    background-color: #f1f1f1;
-    box-shadow: 0 10px 15px rgb(230, 230, 230);
+    background-color: white;
+    box-shadow: 0 10px 15px rgb(222, 222, 222);
 }
 
 .cliquableFilterTitleContainer.active{
     background-color: #effbfb;
     color: #104242;
-    box-shadow: 0 10px 15px rgb(230, 230, 230);
+    box-shadow: 0 10px 15px rgb(222, 222, 222);
 }
 
 .filterTitleContainer{

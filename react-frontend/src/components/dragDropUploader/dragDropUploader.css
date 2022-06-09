@@ -27,7 +27,7 @@
 
 .uploaderContainer:hover {
     background-color: #f3fafa;
-    box-shadow: 0 10px 15px rgb(230, 230, 230);
+    box-shadow: 0 10px 10px rgb(230, 230, 230);
 }
 
 .textContainer {

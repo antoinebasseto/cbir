@@ -1,7 +1,7 @@
 .sidebar{
     width:300px;
     height: 100vh;
-    background-color: #fcfcfc;
+    background-color: #f4f4f4;
     position: sticky;
     top: 0px;
     overflow: auto;
@@ -37,20 +37,24 @@
 }
 
 .sidebarListItem:hover{
-    background-color: #f1f1f1;
-    box-shadow: 0 10px 15px rgb(230, 230, 230);
+    background-color: white;
+    box-shadow: 0 10px 15px rgb(222, 222, 222);
 }
 
 .sidebarListItem.active{
     background-color: #effbfb;
     color: #104242;
-    box-shadow: 0 10px 15px rgb(230, 230, 230);
+    box-shadow: 0 10px 15px rgb(222, 222, 222);
 }
 
 .sidebarListItem.greyed_out{
-    /* background-color: rgb(245, 245, 245); */
     color: rgb(149, 149, 149);
     cursor: auto;
+}
+
+.sidebarListItem.greyed_out:hover{
+    background-color: transparent;
+    box-shadow: none;
 }
 
 .sidebarIcon{
