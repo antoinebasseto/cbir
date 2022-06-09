@@ -12,6 +12,7 @@
 }
 
 .cliquableFilterTitleContainer{
+    padding: 3px;
     display: flex;
     flex-direction: row;
     align-items: center;
