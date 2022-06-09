@@ -103,8 +103,23 @@ function App() {
 
   function applyOnClickHandle() {
     updateFiltersBackend('update_filters', 'POST', distanceWeights, maxNumberImages, ageInterval, diseasesFilter)
-    if (file !== null)
-    	handleImageUploaded(file)
+    if (file !== null){
+      // Get latent space
+      queryBackendWithFile('get_latent_space', file).then((data) => {
+        setLatentSpace(data);
+        console.log(data)
+
+        // Get similar images 
+        queryBackend(`get_similar_images?latent=[${data}]`, 'GET').then((data) => {
+          setSimilarImages(data)
+        })
+
+        // Get uploaded image projection data
+        queryBackend(`get_uploaded_projection_data?latent=[${data}]`, 'GET').then((data) => {
+          setUploadedProjectionData(data)
+        })
+      });    
+    }
   }
 
   return (
