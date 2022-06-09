@@ -66,3 +66,36 @@
 .edit_icon{
     font-size: 20px;
 }
+
+.reloadImageContainer{
+    width:100%;
+    height:100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Use to tell the animation where it should be at each step. Can add more steps to make it look smoother*/
+@keyframes rotation {
+    0%   {transform: rotate(0deg)}
+    10%  {transform: rotate(50deg)}
+    20%  {transform: rotate(100deg)}
+    30%  {transform: rotate(150deg)}
+    40%  {transform: rotate(200deg)}
+    50%  {transform: rotate(240deg)}
+    55%  {transform: rotate(256deg)}
+    60%  {transform: rotate(270deg)}
+    65%  {transform: rotate(276deg)}
+    70%  {transform: rotate(280deg)}
+    75%  {transform: rotate(288deg)}
+    80%  {transform: rotate(300deg)}
+    85%  {transform: rotate(313deg)}
+    90%  {transform: rotate(325deg)}
+    95%  {transform: rotate(341deg)}
+    100% {transform: rotate(360deg)}
+}  
+
+.reloadIcon{
+    font-size: 200px;
+    animation: rotation 0.85s infinite linear;
+}

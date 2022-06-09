@@ -1,8 +1,8 @@
 import { useState}  from 'react';
 import "./latentSpaceExplorator.css"
-import {queryImage} from "../../backend/BackendQueryEngine";
 import {BiEditAlt} from "react-icons/bi"
 import {queryCache} from "../../backend/BackendQueryEngine";
+import {AiOutlineReload} from "react-icons/ai"
 
 export default function LatentSpaceExplorator(props) {
 
@@ -48,6 +48,10 @@ export default function LatentSpaceExplorator(props) {
                     )
                 })
             }
+            {props.isGeneratingRollout &&
+            <div className="reloadImageContainer">
+                <AiOutlineReload className="reloadIcon"/>
+            </div>}
         </div>
     )
 }
