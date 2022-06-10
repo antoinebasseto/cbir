@@ -151,8 +151,23 @@ def get_similar_images(latent):
     filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[1])]
     if not "All" in diseasesFilter:
         filtered_pictures = filtered_pictures[filtered_pictures["dx"].isin(diseasesFilter)]
-    
+
     closest_pictures = filtered_pictures.iloc[:maxNumberImages]
+    
+    closest_latents = closest_pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]]
+    latent_distances = np.abs(closest_latents-pic_embedding)
+    maxval = latent_distances.to_numpy().max()
+    latent_distances /= maxval
+    
+    print(latent_distances)
+
+    for i in range (12):
+        print(i)
+        print(latent_distances.T.iloc[i])
+        closest_pictures["latent_distance_" + str(i)] = latent_distances.T.iloc[i]
+        print(closest_pictures["latent_distance_" + str(i)])
+    
+    print(closest_pictures)
 
     return closest_pictures.to_dict(orient="records")
 

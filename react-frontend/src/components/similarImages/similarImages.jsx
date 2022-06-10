@@ -14,18 +14,18 @@ export default function SimilarImages(props) {
 					const data = [
 						{
 							data: {
-								dim0: Math.min(1, Math.abs(img["latent_coordinate_0"] - props.latentSpace[0])),
-								dim1: Math.min(1, Math.abs(img["latent_coordinate_1"] - props.latentSpace[1])),
-								dim2: Math.min(1, Math.abs(img["latent_coordinate_2"] - props.latentSpace[2])),
-								dim3: Math.min(1, Math.abs(img["latent_coordinate_3"] - props.latentSpace[3])),
-								dim4: Math.min(1, Math.abs(img["latent_coordinate_4"] - props.latentSpace[4])),
-								dim5: Math.min(1, Math.abs(img["latent_coordinate_5"] - props.latentSpace[5])),
-								dim6: Math.min(1, Math.abs(img["latent_coordinate_6"] - props.latentSpace[6])),
-								dim7: Math.min(1, Math.abs(img["latent_coordinate_7"] - props.latentSpace[7])),
-								dim8: Math.min(1, Math.abs(img["latent_coordinate_8"] - props.latentSpace[8])),
-								dim9: Math.min(1, Math.abs(img["latent_coordinate_9"] - props.latentSpace[9])),
-								dim10: Math.min(1, Math.abs(img["latent_coordinate_10"] - props.latentSpace[10])),
-								dim11: Math.min(1, Math.abs(img["latent_coordinate_11"] - props.latentSpace[11]))
+								dim0: img["latent_distance_0"],
+								dim1: img["latent_distance_1"],
+								dim2: img["latent_distance_2"],
+								dim3: img["latent_distance_3"],
+								dim4: img["latent_distance_4"],
+								dim5: img["latent_distance_5"],
+								dim6: img["latent_distance_6"],
+								dim7: img["latent_distance_7"],
+								dim8: img["latent_distance_8"],
+								dim9: img["latent_distance_9"],
+								dim10: img["latent_distance_10"],
+								dim11: img["latent_distance_11"]
 							},
 							meta: { color: "#104242" }
 						}
