@@ -17,7 +17,7 @@ Our target users are therefore domain experts, i.e. doctors, dermatologists in p
 ### Datasets
 The dataset used is the  HAM10000 dataset, a large collection of multi-source dermatoscopic images of common pigmented skin lesions. Because the dataset is quite big, it is not placed in this repository and you should download it on [their website](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FDBW86T).
 
-See [Requirements](Requirements) for instructions on what download and where to put it.
+See [Requirements](Requirements) for instructions on what to download and where to put it.
 
 
 ### Workflow
@@ -37,7 +37,7 @@ See [Requirements](Requirements) for instructions on what download and where to 
 │   ├── data # This folder (and therefore all those it contains) has to be created
 │   │	├── images
 │   │	│    └── # The two zip files containing the images should be unzipped here
-│   │	├── cahche # Empty folder where latent space exploration images will be cached, you need to create it
+│   │	├── cache # Empty folder where latent space exploration images will be cached, you need to create it
 │   │	├── umap.sav # You need to download this
 │   │	└── HAM10000_latent_space_umap_processed.csv # You need to download this
 |   ├── model
@@ -84,7 +84,7 @@ See [Requirements](Requirements) for instructions on what download and where to 
 ## Requirements
 Before running the project for the first time, you will need to do a couple of things:
 1. Clone the current repository somewhere on your laptop.
-2. Download the HAM10000 dataset from [their website](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FDBW86T). Unzip the images in `backend-project/data/images`.
+2. Download the HAM10000 dataset from [their website](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FDBW86T). Create a folder called `backend-project/data` and inside it a folder called `backend-project/data/images` and unzip the images (HAM10000\_images\_part\_1.zip  and HAM10000\_images\_part\_2.zip) inside it.
 3. Download `HAM10000_latent_space_umap_processed.csv`, `umap.sav` and `epoch=61-step=9734.ckpt` from [polybox](https://polybox.ethz.ch/index.php/s/5qdTV1qiaAo35K3). Put the csv and sav files in `backend-project/data`, and the ckpt file in `backend-project/model`.
 4. Create the following empty folder `backend-project/data/cache`.
 5. Create an empty conda environment.
@@ -122,7 +122,7 @@ To run the project, follow the instructions below:
     cd react-frontend
     npm start
     ```
-4. The app should then automatically open in your browser. Please note that on rare occasions uploading an image will fail and nothing will happen, this can be easily seen by not having the loading animation present in the Explore dimensions menu. If such a thing happens, simply reuploading the picture should work.
+4. The app should then automatically open in your browser. Please note that on rare occasions uploading an image will fail and nothing will happen, this can be easily seen by not having the loading animation present in the Explore dimensions menu. If such a thing happens, simply reuploading the picture should work. Also note that we happened to have some linking errors between our frontend and backend when using Firefox as a browser, which didn't occured when trying with other browsers.
 
 
 ## Weekly summary
