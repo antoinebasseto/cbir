@@ -89,29 +89,39 @@ Before running the project for the first time, you will need to do a couple of t
 4. Create the following empty folder `backend-project/data/cache`.
 5. Create an empty conda environment.
 
+    ```
     conda create --name skin-cbir python==3.10
+    ```
 6. Activate the environment, and install required packages using pip and the `requirements.txt` file.
 
+    ```
     conda activate skin-cbir
     pip install -r requirements.txt
+    ```
 7. Move to the front-end folder and install its requirements.
 
+    ```
     cd react-frontend
     npm install
     npm install react-svg-radar-chart
+    ```
 
 ## How to run
 To run the project, follow the instructions below:
 1. Make sure you've completed the [Requirements](Requirements) listed in the corresponding section.
 2. Activate the conda environment and run the backend.
 
+    ```
     conda activate skin-cbir
     cd backend-project
     uvicorn app:app --reload
+    ```
 3. In another terminal window, run the frontend.
 
+    ```
     cd react-frontend
     npm start
+    ```
 4. The app should then automatically open in your browser. Please note that on rare occasions uploading an image will fail and nothing will happen, this can be easily seen by not having the loading animation present in the Explore dimensions menu. If such a thing happens, simply reuploading the picture should work.
 
 
