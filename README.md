@@ -9,26 +9,24 @@
 4. Antoine Basseto
 
 ## Project Description 
-Our goal is to develop a tool allowing doctors to leverage advancements in deep learning as new tools for them to work with. More precisely, using a variational auto-encoder's latent space to compute similarities between images, we hope to make possible the retrieval of medically similar XRays to the one the doctor is studying, in order to take into consideration previous similar cases and their outcomes. This is commonly called content-based image retrieval (CBIR).
+Our goal is to develop a tool allowing doctors to leverage advancements in deep learning as new tools for them to work with. More precisely, using a variational auto-encoder's latent space to compute similarities between images, we hope to make possible the retrieval of medically similar skin lesions to the one the doctor is studying, in order to take into consideration previous similar cases and their outcomes. This is commonly called content-based image retrieval (CBIR).
 
 ### Users
-Our target users are therefore domain experts, i.e. doctors.
+Our target users are therefore domain experts, i.e. doctors, dermatologists in particular.
 
 ### Datasets
-The dataset used is the  HAM10000 dataset, a large collection of multi-source dermatoscopic images of common pigmented skin lesions. Because the dataset is quite big, it is not placed in this repository and you should download it on [their website](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FDBW86T). You only need to download the 3 following files:
-- HAM10000_images_part_1.zip
-- HAM10000_images_part_2.zip
-- HAM10000_metadata.tab
+The dataset used is the  HAM10000 dataset, a large collection of multi-source dermatoscopic images of common pigmented skin lesions. Because the dataset is quite big, it is not placed in this repository and you should download it on [their website](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FDBW86T).
 
-Then, you should create a folder called data inside the backend-project and inside it another folder called images. The two zip files should be unziped in the images folder and the HAM10000\_metadata.tab should be first renamed as HAM10000\_metadata.csv (if not already in csv format) and placed in the data folder. You can see the [Folder Structure](Folder Structure) below for help.
+See [Requirements](Requirements) for instructions on what download and where to put it.
 
 
-### Tasks
-Our dashboard aims to allow users to:
+### Workflow
 - Upload an image of a skin lesion they want to study.
-- Get back a list of medically relevant similar images, the diagnoses made for them and the computed similarity, as well as to explore and filter that list.
-- See a projection of this data point and the rest of the dataset into 2D using UMAP.
-- Analyze the latent space by seeing a rollout of images made by varying one dimension of at the time.
+- Use the Explore dimensions menu to see what each dimension represents. Each row represents the impact on the image of varying one dimension while keeping the others untouched. You can rename a dimension if it represents a particular feature or you think it is important to remember it.
+- Use the weights in the Filter menu to give more or less importance to a dimension while computing the distance between two images. By default all dimensions are weighted equally. You can also filter the results based on some criterion such as a given disease or age range.
+- Look at what images are considered similar and their corresponding diagnoses under the menu Similar images.
+- Look at the Projection menu to have an overview of the full dataset in 2D. The similar images and your uploaded image will be highlighted so that you can easily find them. You can have more information about one image by putting your mouse over it in the visualization.
+
 
 - - -
 ## Folder Structure
@@ -36,10 +34,15 @@ Our dashboard aims to allow users to:
 ``` bash
 ├── README.md  
 ├── backend-project
-│   ├──data
+│   ├── data # This folder (and therefore all those it contains) has to be created
 │   │	├── images
 │   │	│    └── # The two zip files containing the images should be unzipped here
-│   │	└── HAM10000_metadata.csv
+│   │	├── cahche # Empty folder where latent space exploration images will be cached, you need to create it
+│   │	├── umap.sav # You need to download this
+│   │	└── HAM10000_latent_space_umap_processed.csv # You need to download this
+|   ├── model
+│   │	├── epoch=61-step=9734.ckpt # You need to download this
+|   │ └── ...
 │   ├── app.py
 │   └── ...
 │
@@ -52,8 +55,8 @@ Our dashboard aims to allow users to:
 │   ├── public
 │   │   └── ...
 │   ├── tsconfig.json
-│   └── node_modules # needs to be generated the first time the project is ran, see below
-│	└── ...
+│   ├── node_modules # You need to generate this
+│	  └── ...
 │
 ├── VAE
 │   ├── main.py
@@ -78,36 +81,39 @@ Our dashboard aims to allow users to:
 └── requirements.txt
 ```
 
-## Requirements & How to Run
-To build the environment and run the code, we use conda. Make sure to have it installed on your computer by checking their [documentation](https://docs.conda.io/en/latest/) and then you can follow the next steps:
+## Requirements
+Before running the project for the first time, you will need to do a couple of things:
+1. Clone the current repository somewhere on your laptop.
+2. Download the HAM10000 dataset from [their website](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FDBW86T). Unzip the images in `backend-project/data/images`.
+3. Download `HAM10000_latent_space_umap_processed.csv`, `umap.sav` and `epoch=61-step=9734.ckpt` from [polybox](https://polybox.ethz.ch/index.php/s/5qdTV1qiaAo35K3). Put the csv and sav files in `backend-project/data`, and the ckpt file in `backend-project/model`.
+4. Create the following empty folder `backend-project/data/cache`.
+5. Create an empty conda environment.
 
-1. Create an empty conda environment.
-```
-conda create --name myenv
-```
-2. Activate The environment and install the packages using pip and the `requirements.txt` file.
-```
-conda activate myenv
-conda install pip
-pip install -r requirements.txt
-```
-3. Move to the backend directory and run the backend.
-```
-cd backend-project
-uvicorn app:app --reload
-```
-4. With another terminal, move to the front-end directory. Make sure your conda environment is activated. If it's the first time you run the project, you must create the node_modules directory using the second command (otherwise you can skip this command) and then run the front-end.
-```
-cd react-frontend
-npm install
-npm install react-svg-radar-chart
-npm start
-```
-5. It should open a window in your browser with the app.
+    conda create --name skin-cbir python==3.10
+6. Activate the environment, and install required packages using pip and the `requirements.txt` file.
 
-**NOTES:** 
-* You only need to create the environment, install all the packages using pip and generate the node_modules folder the first time you run the project. Otherwise you can just skip these parts.
-* Our latest change in the VAE have been made in the LightningVAE folder, hence the VAE folder might not be fully up-to-date.
+    conda activate skin-cbir
+    pip install -r requirements.txt
+7. Move to the front-end folder and install its requirements.
+
+    cd react-frontend
+    npm install
+    npm install react-svg-radar-chart
+
+## How to run
+To run the project, follow the instructions below:
+1. Make sure you've completed the [Requirements](Requirements) listed in the corresponding section.
+2. Activate the conda environment and run the backend.
+
+    conda activate skin-cbir
+    cd backend-project
+    uvicorn app:app --reload
+3. In another terminal window, run the frontend.
+
+    cd react-frontend
+    npm start
+4. The app should then automatically open in your browser. Please note that on rare occasions uploading an image will fail and nothing will happen, this can be easily seen by not having the loading animation present in the Explore dimensions menu. If such a thing happens, simply reuploading the picture should work.
+
 
 ## Weekly summary
 
@@ -149,9 +155,11 @@ In the previous weeks, a lot of work went into model training, trying different 
   - [x] Added pytorch lightning [#25](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/25)
   - [x] Computed rollouts [#25](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/25)
   - [x] Layerwise relevance computation [#25](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/issues/25)
+
 ## Versioning
 
 - Week 6: [Week 6 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week6)
 - Week 7: [Week 7 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week7)
 - Week 8: [Week 8 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week8)
 - Week 10: [Week 10 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week10)
+- Final submission: [Final Submission Tag]()
