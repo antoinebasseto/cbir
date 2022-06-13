@@ -172,4 +172,4 @@ In the previous weeks, a lot of work went into model training, trying different 
 - Week 7: [Week 7 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week7)
 - Week 8: [Week 8 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week8)
 - Week 10: [Week 10 Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/week10)
-- Final submission: [Final Submission Tag]()
+- Final submission: [Final Submission Tag](https://gitlab.inf.ethz.ch/COURSE-XAI-IML22/Medical1-xai-iml22/-/tags/final-submission)
