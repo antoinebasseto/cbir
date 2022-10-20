@@ -13,6 +13,7 @@ export const queryBackend = async (route, method) => {
     return data;
 }
 
+
 export const queryBackendWithFile = async (route, file) => {
     const requestURL = `${BASE_URL}/${route}`;
     
