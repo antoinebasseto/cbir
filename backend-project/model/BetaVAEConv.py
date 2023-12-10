@@ -1,11 +1,3 @@
-import os
-
-from .losses import betatc_loss
-
-"""
-TO DO: Add additional MLP classifier with gradient ascent possibilities
-"""
-
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingLR
 import pytorch_lightning as pl

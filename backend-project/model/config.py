@@ -11,34 +11,32 @@ config['mode'] = 'train'  # 'train' or 'eval'
 """
 Data related settings 
 """
-config['dataset'] = 'HAM10000'  # options: sleep-edf-153, ...
-# load input size from json file of the dataset 
-
-# with open(f"data/{config['dataset']}/info.json") as f:
-#     data = json.load(f)
-#     config['input_width']  = data['input_width']
-#     config['input_height'] = data['input_height']
+config['dataset'] = 'HAM10000'
 
 """
 Model related settings 
 """
-config['model'] = 'BetaVAEConv'
+config['model'] = {'skin': 'BetaVAEConv',
+                   'mnist': '',}
 
-config['model_path'] = 'model/epoch=61-step=9734.ckpt'
-config['image_path'] = 'data/images'
-config['metadata_path'] = 'data/HAM10000_latent_space_umap_processed.csv'
+config['model_path'] = {'skin': 'model/epoch=61-step=9734.ckpt',
+                        'mnist': 'disentangling_vae/results/btcvae_mnist',}
+
+config['image_path'] = {'skin': 'data/images',
+                        'mnist': 'data/mnist/images',}
+
+config['metadata_path'] = {'skin': 'data/HAM10000_latent_space_umap_processed.csv',
+                           'mnist': 'data/mnist/mnist_latent_space_umap_processed.csv',}
+
 config['cache_dir'] = 'data/cache'
-"""
-Training related settings
-"""
-# Most of them are moved to hyperparameters.py for model specific settings
+
+config['projector_path'] = {'skin': 'data/umap.sav',
+                            'mnist': 'data/mnist/umap_mnist.sav',}
+
+config['num_dim'] = {'skin': 12,
+                     'mnist': 10,}
 
 """
 Logging and Analysis 
 """
 config['results_dir'] = 'reports/logs'
-
-"""
-Logging and Analysis 
-"""
-#config['model_path'] = f"model/{config['model']}"

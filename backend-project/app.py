@@ -1,59 +1,63 @@
-from typing import Callable, List, Any
+import warnings
 import io
 import os
 import torch
 from PIL import Image
-from fastapi import FastAPI, Depends, UploadFile, File, HTTPException, Form
-from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
+from fastapi import FastAPI, Depends, UploadFile, File
+from fastapi.responses import FileResponse
+import torchvision.transforms as T
 from fastapi.middleware.cors import CORSMiddleware
-from random import choice
 import joblib
 import pandas as pd
 import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
 from model.config import config
 from model.hyperparameters import params
 from model.model import get_model, get_image_preprocessor, rollout, rollout_i
 
+from disentangling_vae.disvae.utils.modelIO import load_model
+
 IMAGES_PATH = config['image_path']
 METADATA_PATH = config['metadata_path']
 CACHE_DIR = config['cache_dir']
+PROJECTOR_DIR = config['projector_path']
+
+NUM_DIM = config['num_dim']
+
 ABBREVIATION_TO_DISEASE = {
-    "akiec" : "Actinic keratoses and intraepithelial carcinoma",
-    "bcc" : "Basal cell carcinoma",
-    "bkl" : "Benign keratosis-like lesions",
-    "df" : "Dermatofibroma",
-    "mel" : "Melanoma",
-    "nv" : "Melanocytic nevi",
-    "vasc" : "vascular lesions"
+    "akiec": "Actinic keratoses and intraepithelial carcinoma",
+    "bcc": "Basal cell carcinoma",
+    "bkl": "Benign keratosis-like lesions",
+    "df": "Dermatofibroma",
+    "mel": "Melanoma",
+    "nv": "Melanocytic nevi",
+    "vasc": "vascular lesions"
 }
 
 app = FastAPI(
-    title="Skinterpret's Backend",
-    description="""This is a template for a Python backend.
-                   It provides acess via REST API.""",
-    version="0.1.0",
+    # title="Skinterpret's Backend",
+    # description="""This is a template for a Python backend.
+    #                It provides acess via REST API.""",
+    # version="0.1.0",
 )
 
-model = None
-image_preprocessor = None
+# model = None
+# image_preprocessor = None
 
-def get_dl():
-    global model
-    if not model:
-        print(model)
-        model = get_model(params[config['model']], config['model'], config['results_dir'], config['model_path'])
-    return model
 
-def get_image_processor():
-    global image_preprocessor
-    if not image_preprocessor:
-        image_preprocessor = get_image_preprocessor(params[config['model']], config['model'])
-    return image_preprocessor
+def get_dl(demo: str):
+    if demo == "skin":
+        return get_model(params[config['model'][demo]], config['model'][demo], config['results_dir'], config['model_path'][demo])
+    elif demo == "mnist":
+        return load_model(config['model_path'][demo])
 
-distanceWeights = [1,1,1,1,1,1,1,1,1,1,1,1]
-maxNumberImages = 3
-ageInterval = [0, 100]
-diseasesFilter = ["All"]
+
+def get_preprocessor(demo: str):
+    if demo == "skin":
+        return get_image_preprocessor(params[config['model'][demo]], config['model'][demo])
+    elif demo == "mnist":
+        return T.Compose([T.Resize((32, 32)), T.ToTensor()])
+
 
 # Allow CORS
 app.add_middleware(
@@ -63,119 +67,81 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/get_uploaded_latent_and_projection")
-async def get_latent_space(file: UploadFile = File(...), model=Depends(get_dl),
-                           preprocess=Depends(get_image_processor)):
-    try:
-        contents = await file.read()
-        img = Image.open(io.BytesIO(contents))
-    except:
-        return {"message": "Error uploading file"}
-    finally:
-        await file.close()
-    img = preprocess(img)
-    img = img.unsqueeze(0)
-    pic_embedding, _ = model.encoder(img)
-    pic_embedding = pic_embedding.squeeze().detach().numpy()
 
-    reducer = joblib.load("data/umap.sav")
-    embedding = reducer.transform(pic_embedding.reshape(1, -1))
-
-    latent = pic_embedding.tolist()
-    ret = {}
-    for i, l in enumerate(latent):
-        ret[f"latent_coordinate_{i}"] = l
-    ret["umap1"] = embedding[0][0].item()
-    ret["umap2"] = embedding[0][1].item()
-    return ret
-
-
-@app.post("/get_latent_space")
-async def get_latent_space(file: UploadFile = File(...), model=Depends(get_dl),
-                           preprocess=Depends(get_image_processor)):
-    try:
-        contents = await file.read()
-        img = Image.open(io.BytesIO(contents))
-    except:
-        return {"message": "Error uploading file"}
-    finally:
-        await file.close()
-    img = preprocess(img)
-    img = img.unsqueeze(0)
-    pic_embedding, _ = model.encoder(img)
-    pic_embedding = pic_embedding.squeeze().detach().numpy()
-    return pic_embedding.tolist()
+############################
+# PROJECTION
+############################
 
 
 @app.get("/get_projection_data")
-def get_projection_data():
-    metadata = pd.read_csv(METADATA_PATH)
-
-    projection_data = metadata[1:].copy()
-    projection_data = projection_data.fillna("unknown")
-
-    return projection_data.to_dict(orient="records")
+def get_projection_data(demo: str):
+    metadata = pd.read_csv(METADATA_PATH[demo])
+    metadata = metadata.fillna("unknown")
+    metadata['label'] = metadata['label'].astype(str)
+    return {"data": metadata.to_dict(orient="records"), 'labels': list(np.sort(metadata['label'].unique()).astype(str))}
 
 
-@app.get("/get_uploaded_projection_data")
-def get_uploaded_projection_data(latent):
+@app.get("/image")
+def get_image(demo: str, name: str):
+    path = f"{IMAGES_PATH[demo]}/{name}.jpg"
+    return FileResponse(path)
+
+
+# ROLLOUT
+
+
+@app.get("/get_latent_space_images_url")
+def get_latent_space_images_url(latent: str, model=Depends(get_dl)):
+
+    # Empty the cache
+    for file in os.scandir(CACHE_DIR):
+        os.remove(file.path)
+
     latent = str(latent).strip('[]').strip(']').split(',')
-    pic_embedding = np.array(latent, dtype=np.float32)
-    reducer = joblib.load("data/umap.sav")
-    embedding = reducer.transform(pic_embedding.reshape(1, -1))
-    return [{"umap1": embedding[0][0].item(), "umap2": embedding[0][1].item()}]
+    latent = np.array(latent, dtype=np.float32)
+    latent = torch.from_numpy(latent).view(1, -1)
+    return rollout(model, latent, CACHE_DIR, -5, 6, 11)
 
 
-@app.get("/get_projection")
-def get_projection(latent):
+@app.get("/get_rollout_clustering")
+def get_rollout_clustering(demo: str, weights: str, latent: str):
     latent = str(latent).strip('[]').strip(']').split(',')
-    pic_embedding = np.array(latent, dtype=np.float32)
-    reducer = joblib.load("data/umap.sav")
-    embedding = reducer.transform(pic_embedding.reshape(1, -1))
-    return [{"umap1": embedding[0][0].item(), "umap2": embedding[0][1].item()}]
+    latent = np.array(latent, dtype=np.float32)
+    latent = torch.from_numpy(latent).view(1, -1)
+
+    weights = np.array(str(weights).split(','), dtype=np.float32)
+    def metric(a, b):
+        return np.sum((a - b)**2 * weights)
+
+    metadata = pd.read_csv(METADATA_PATH[demo])
+    neigh = KNeighborsClassifier(n_neighbors=3, metric=metric, weights="distance")
+    neigh.fit(metadata[[f'latent_coordinate_{i}' for i in range(NUM_DIM[demo])]].values, metadata['label'])
+
+    with warnings.catch_warnings():
+        warnings.simplefilter(action='ignore', category=FutureWarning)
+        rollout_points = np.empty((NUM_DIM[demo], 11, NUM_DIM[demo]))
+        for i in range(NUM_DIM[demo]):
+            rollout_points[i] = rollout_i(latent, i, 11, 6, -5)
+        ret = neigh.predict(rollout_points.reshape(NUM_DIM[demo]*11, NUM_DIM[demo])).reshape(NUM_DIM[demo], 11).astype(str).tolist()
+
+    return ret
 
 
 @app.get("/get_projection_rollout")
-def get_rollout_projection(latent):
-    latent = str(latent).strip('[]').strip(']').split(',')
-    latent = np.array(latent, dtype=np.float32)
-    latent = torch.from_numpy(latent).view(1, -1)
-    reducer = joblib.load("data/umap.sav")
-    embeddings = []
-    for i in range(12):
-        print(f"Projecting rollout of dimension {i}...")
-        rollout_points = rollout_i(latent, i, 11, -5, 6)
-        embeddings.append([reducer.transform(np.array(rollout_point, dtype=np.float32).reshape(1, -1)) for rollout_point in rollout_points])
-    
-    return [{"dim": i, "data": [{"umap1": embedding[0][0].item(), "umap2": embedding[0][1].item()} for embedding in embeddings_i]} for i, embeddings_i in enumerate(embeddings)]
-
-@app.get("/get_rollout_clustering")
-def get_rollout_clustering(latent):
+def get_rollout_projection(demo: str, latent: str):
     latent = str(latent).strip('[]').strip(']').split(',')
     latent = np.array(latent, dtype=np.float32)
     latent = torch.from_numpy(latent).view(1, -1)
 
-    ret = []
-    for i in range(12):
-        rollout_points = rollout_i(latent, i, 11, -5, 6)
-        [ret.append(choice(["akiec", "bcc", "nv", "bkl", "df", "mel", "vasc"])) for i in range (11)]
+    reducer = joblib.load(PROJECTOR_DIR[demo])
 
-    return ret
+    rollout_points = np.empty((NUM_DIM[demo], 11, NUM_DIM[demo]))
+    for i in range(NUM_DIM[demo]):
+        rollout_points[i] = np.array(rollout_i(latent, i, 11, 6, -5), dtype=np.float32)
 
+    embeddings = reducer.transform(rollout_points.reshape(NUM_DIM[demo]*11, NUM_DIM[demo])).reshape((NUM_DIM[demo], 11, 2)).tolist()
 
-# Method used to compute the rollout images for latent space exploration and then send back the path of the generated images
-@app.get("/get_latent_space_images_url")
-def get_latent_space_images_url(latent, model=Depends(get_dl)):
-
-    # Empty the cache
-    for file in os.scandir(CACHE_DIR):
-        os.remove(file.path)
-    
-    latent = str(latent).strip('[]').strip(']').split(',')
-    latent = np.array(latent, dtype=np.float32)
-    latent = torch.from_numpy(latent).view(1, -1)
-    ret = rollout(model, latent, CACHE_DIR, -5, 6, 11) # We use 6 (not 5) since the upper bound is not included and we want a symmetric interval
-    return ret
+    return [[{"umap1": emb[0], "umap2": emb[1]} for emb in embedding_dim] for embedding_dim in embeddings]
 
 
 @app.get("/cache")
@@ -184,59 +150,82 @@ def get_rollout_image(name: str):
     return FileResponse(path)
 
 
-@app.get("/image")
-def get_image(name: str):
-    path = f"{IMAGES_PATH}/{name}.jpg"
-    return FileResponse(path)
+# SIMILAR IMAGES
 
 
-@app.post("/update_filters")
-def update_filters(filters: dict):
-    global distanceWeights, maxNumberImages, ageInterval, diseasesFilter
-    distanceWeights = filters['distanceWeights']
-    maxNumberImages = filters['maxNumberImages']
-    ageInterval = filters['ageInterval']
-    diseasesFilter = filters['diseasesFilter']
-    return True
+@app.post("/get_uploaded_latent_and_projection/{demo}")
+async def get_uploaded_latent_and_projection(
+    demo: str,
+    file: UploadFile = File(...),
+    model=Depends(get_dl),
+    preprocess=Depends(get_preprocessor)
+):
+    try:
+        contents = await file.read()
+        img = Image.open(io.BytesIO(contents))
+    except:
+        return {"message": "Error uploading file"}
+    finally:
+        await file.close()
+
+    # Get latent
+    img = preprocess(img)
+    img = img.unsqueeze(0)
+    pic_embedding, _ = model.encoder(img)
+    pic_embedding = pic_embedding.squeeze().detach().numpy()
+
+    # Project
+    reducer = joblib.load(PROJECTOR_DIR[demo])
+    embedding = reducer.transform(pic_embedding.reshape(1, -1))
+
+    # Return
+    ret = {}
+    latent = pic_embedding.tolist()
+    for i, l in enumerate(latent):
+        ret[f"latent_coordinate_{i}"] = l
+    ret["umap1"] = embedding[0][0].item()
+    ret["umap2"] = embedding[0][1].item()
+    return ret
 
 
-@app.get("/get_similar_images")
-def get_similar_images(latent):
+@app.get("/get_similar_images/{demo}")
+def get_similar_images(demo: str, weights: str, latent: str):
     latent = str(latent).strip('[]').strip(']').split(',')
+    weights = np.array(str(weights).split(','), dtype=np.float32)
+
     pic_embedding = np.array(latent, dtype=np.float32)
 
-    pictures = pd.read_csv(METADATA_PATH)
-    pictures["dx"] = pictures["dx"].apply(lambda x: ABBREVIATION_TO_DISEASE[x])
-    
-    latents = pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]]
-    pictures["dist"] = (latents - pic_embedding).multiply(distanceWeights).apply(np.linalg.norm, ord=1, axis=1)
+    pictures = pd.read_csv(METADATA_PATH[demo])
+
+    if demo == 'skin':
+        pictures["label"] = pictures["label"].apply(lambda x: ABBREVIATION_TO_DISEASE[x])
+
+    latents = pictures.loc[:, [f"latent_coordinate_{i}" for i in range(NUM_DIM[demo])]]
+
+    pictures["dist"] = np.sum((latents - pic_embedding)**2 * weights, axis=1)
     sorted_pictures = pictures.sort_values(by=['dist'])
 
-    filtered_pictures = sorted_pictures[(sorted_pictures['age'] >= ageInterval[0]) & (sorted_pictures['age'] <= ageInterval[1])]
-    if not "All" in diseasesFilter:
-        filtered_pictures = filtered_pictures[filtered_pictures["dx"].isin(diseasesFilter)]
+    closest_pictures = sorted_pictures.iloc[:3].copy()
 
-    closest_pictures = filtered_pictures.iloc[:maxNumberImages].copy()
-    
-    closest_latents = closest_pictures.loc[:, [f"latent_coordinate_{i}" for i in range(12)]]
+    closest_latents = closest_pictures.loc[:, [f"latent_coordinate_{i}" for i in range(NUM_DIM[demo])]]
     latent_distances = np.abs(closest_latents - pic_embedding)
     maxval = latent_distances.to_numpy().max()
     latent_distances /= maxval
 
-    for i in range (12):
+    for i in range(NUM_DIM[demo]):
         closest_pictures[f"latent_distance_{i}"] = latent_distances.T.iloc[i]
-    
+
     return closest_pictures.to_dict(orient="records")
 
 
-def update_schema_name(app: FastAPI, function: Callable, name: str) -> None:
-    for route in app.routes:
-        print(route)
-        if route.endpoint is function:
-            print(route.body_field)
-            route.body_field.type_.__name__ = name
-            break
+# def update_schema_name(app: FastAPI, function: Callable, name: str) -> None:
+#     for route in app.routes:
+#         print(route)
+#         if route.endpoint is function:
+#             print(route.body_field)
+#             route.body_field.type_.__name__ = name
+#             break
 
 
-update_schema_name(app, get_latent_space, "get_similar_images")
-#update_schema_name(app, get_uploaded_projection_data, "get_uploaded_data")
+# update_schema_name(app, get_uploaded_latent_and_projection, "get_similar_images")
+# update_schema_name(app, get_uploaded_projection_data, "get_uploaded_data")

@@ -3,9 +3,34 @@ import RadarChart from 'react-svg-radar-chart';
 import 'react-svg-radar-chart/build/css/index.css'
 
 export default function SimilarImagesListElement(props) {
-  return (
-    <li className="similarImagesListElement">
-      <h2 className="label">{props.label}</h2>
+    return (
+        <li className="flex flex-row gap-4 p-4 min-w-fit rounded-2xl bg-gray-100">
+            <div>
+                <img className="w-52 mb-4" src={props.imgId}/>
+                <div>
+                    <h2 className="text-base font-semibold">label: {props.label}</h2>
+                    {
+                        props.demo === 'skin' &&
+                        <div>
+                            <h2 className="text-base font-semibold">Confirmation method: {props.dx_type}</h2>
+                            <h2 className="text-base font-semibold">Localization: {props.localization}</h2>
+                            <h2 className="text-base font-semibold">Age: {props.age}</h2>
+                            <h2 className="text-base font-semibold">Sex: {props.sex}</h2>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div className = "w-72">
+                <h2 className="text-l text-center font-semibold">Unweighted distance along each axis</h2>
+                <RadarChart
+                    captions={props.captions}
+                    data={props.data} 
+                    options ={props.options} 
+                    size={288}
+                />
+            </div>
+
+      {/* <h2 className="label">{props.label}</h2>
       <div className="bodyContainer">
         <div className="leftColumn">
 
@@ -73,7 +98,7 @@ export default function SimilarImagesListElement(props) {
 
         </div>
 
-      </div>
-    </li>
-  )
+      </div> */}
+        </li>
+    )
 }

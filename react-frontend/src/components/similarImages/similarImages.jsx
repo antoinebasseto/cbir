@@ -5,11 +5,8 @@ import SimilarImagesListElement from "../similarImagesListElement/similarImagesL
 export default function SimilarImages(props) {
 	
     return (
-        <div className="similarImagesContainer">
-			<div className="imageContainer">
-                <img className="uploadedImage" src={props.uploadedImageSource}/>
-            </div>
-			<ol className="similarImagesListScroller">
+        <div className="flex flex-column items-center p-4">
+			<ol className="flex flex-row overflow-scroll gap-4">
 				{props.imgList.map((img) => {
 					const data = [
 						{
@@ -47,8 +44,8 @@ export default function SimilarImages(props) {
 
 					return  <SimilarImagesListElement
 								key={img["image_id"]}
-								imgId={queryImage(img["image_id"])}
-								label={img["dx"]} 
+								imgId={queryImage(props.demo, img["image_id"])}
+								label={img["label"]} 
 								dx_type={img["dx_type"]}
 								age={img["age"]}
 								sex={img["sex"]}
@@ -57,6 +54,7 @@ export default function SimilarImages(props) {
 								data={data} 
 								captions={captions} 
 								options={options}
+								demo={props.demo}
 							/>
 				})}
 			</ol>

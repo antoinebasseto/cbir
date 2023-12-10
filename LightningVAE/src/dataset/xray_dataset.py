@@ -12,8 +12,7 @@ import re
 
 class ImageDataModule(pl.LightningDataModule):
 
-    def __init__(self, root_dir, batch_size = 32, input_dim = 32, transform=None, collate_fn=None):
-
+    def __init__(self, root_dir, batch_size=32, input_dim=32, transform=None, collate_fn=None):
         super().__init__()
         self.data_dir = root_dir
         self.batch_size = batch_size

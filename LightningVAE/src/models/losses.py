@@ -1,11 +1,7 @@
 import abc
 import math
-
 import torch
-
 from torch.nn import functional as F
-
-
 
 
 class BaseLoss(abc.ABC):

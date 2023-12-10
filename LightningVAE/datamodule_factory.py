@@ -14,7 +14,7 @@ def get_datamodule():
             Path('data', config['dataset']),
             batch_size=params[config['model']]['batch_size'],
             input_dim=params[config['model']]['input_dim']
-            )
+        )
     else:
         raise NotImplementedError("Choose valid dataset in config.py")
 

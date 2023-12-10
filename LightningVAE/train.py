@@ -9,7 +9,7 @@ from pytorch_lightning.loggers import WandbLogger
 from src.utils.model_factory import get_model
 from src.models.hyperparameters import params
 import time
-from utils.logger import Logger, log_params
+# from utils.logger import Logger, log_params
 import os
 from datamodule_factory import get_datamodule
 import logging
@@ -23,7 +23,7 @@ def main():
         os.makedirs(log_dir)
     if not os.path.exists(f"{log_dir}/pictures"):
         os.makedirs(f"{log_dir}/pictures")
-    sys.stdout = Logger(print_fp=os.path.join(log_dir, 'out.txt'))
+    # sys.stdout = Logger(print_fp=os.path.join(log_dir, 'out.txt'))
     # Create logging file
     logging.basicConfig(filename=f"{log_dir}/info.log", encoding='utf-8', level=logging.INFO)
     logging.info("Started logging.")
@@ -40,7 +40,7 @@ def main():
     # summary(model, (config['input_height'], config['input_width']))
 
     # Log hyperparameters and config file
-    log_params(log_dir)
+    # log_params(log_dir)
 
     # Run the model
     tb_logger = TensorBoardLogger("./reports/logs/",

@@ -1,5 +1,4 @@
 export const BASE_URL = 'http://127.0.0.1:8000';
-const PATH_GET_IMAGES = "/image?name=";
 
 export const queryBackend = async (route, method) => {
     const requestURL = `${BASE_URL}/${route}`;
@@ -51,8 +50,8 @@ export const updateFiltersBackend = async(route, method='POST', distanceWeights,
 }
 
 
-export const queryImage = (imageName) =>{
-    const requestURL = `${BASE_URL}${PATH_GET_IMAGES}${imageName}`;
+export const queryImage = (demo, imageName) =>{
+    const requestURL = `${BASE_URL}/image?demo=${demo}&name=${imageName}`;
     return requestURL;
 }
 

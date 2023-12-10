@@ -2,15 +2,15 @@ import os
 
 import torch
 import torchvision.transforms as T
-from PIL.Image import Image
 
-from .BetaVAEConv import build_betavaeconv
+from .BetaVAEConv import BetaVAEConv, build_betavaeconv
+
 
 def get_model(args, model_name, log_dir, model_path):
     if model_name == 'BetaVAEConv':
         model = build_betavaeconv(args, log_dir)
         chkt = torch.load(model_path, map_location=torch.device('cpu'))
-        model.load_from_checkpoint(checkpoint_path=model_path)
+        model = BetaVAEConv.load_from_checkpoint(checkpoint_path=model_path)
         model.load_state_dict(chkt['state_dict'])
         model.eval()
         return model
@@ -46,21 +46,21 @@ def rollout_i(mu, dimension, num_rollouts, upper_bound, lower_bound):
 
 def generate_images_for_rollout_i(model, latent_origin, latents_rollout, dimension, num_rollouts, upper_bound, lower_bound, cache_dir):
     images = model.decoder(latents_rollout)
-    #img_width = images.shape[2]
-    #img_height = images.shape[3]
+    # img_width = images.shape[2]
+    # img_height = images.shape[3]
     to_image = T.ToPILImage()
     for i in range(num_rollouts):
-        #print(images[i])
-        #to_image(images[i]).save(os.path.join(log_dir, '{}.png'.format(i)))
+        # print(images[i])
+        # to_image(images[i]).save(os.path.join(log_dir, '{}.png'.format(i)))
         img_name = f"{torch.max(latent_origin)}_{torch.min(latent_origin)}_{dimension}_{i}{upper_bound}{lower_bound}{num_rollouts}.png"
         img = to_image(images[i].squeeze())
-        img.save(os.path.join(cache_dir, f'{img_name}'))
+        img.save(os.path.join(cache_dir, img_name))
 
 
 def rollout(model, mu, cache_dir, lower_bound, upper_bound, num_rollouts):
-    #image_path = os.path.join(img_dir, img_name)
-    #img = Image.open(image_path)
-    #mu, logvar = model.encoder(img)
+    # image_path = os.path.join(img_dir, img_name)
+    # img = Image.open(image_path)
+    # mu, logvar = model.encoder(img)
     latent_dimension = mu.shape[1]
     ret = []
     for j in range(latent_dimension):

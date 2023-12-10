@@ -1,188 +1,288 @@
-import { useState, useEffect, useRef, useLayoutEffect }  from 'react';
-import './App.css';
-import { queryBackend, queryBackendWithFile, updateFiltersBackend } from './backend/BackendQueryEngine';
-import DragDropUploader from './components/dragDropUploader/dragDropUploader';
-import SimilarImages from './components/similarImages/similarImages'
-import ProjectionPlot from './components/projectionPlot/projectionPlot';
-import LatentSpaceExplorator from './components/latentSpaceExplorator';
-
-
+import { useState, useEffect } from "react";
+import "./App.css";
+import {
+  queryBackend,
+  queryBackendWithFile,
+} from "./backend/BackendQueryEngine";
+import SimilarImages from "./components/similarImages/similarImages";
+import ProjectionPlot from "./components/projectionPlot";
+import LatentSpaceExplorator from "./components/latentSpaceExplorator";
 
 function App() {
+  // Navigation
+  const [demo, setDemo] = useState("choice");
+  const [numDim, setNumDim] = useState(0);
 
-    // Navigation
-    const [file, setFile] = useState(null);
-    const [filterActiv, setFilterActiv] = useState(false)
+  // Projection
+  const [projectionData, setProjectionData] = useState([]);
+  const [labels, setLabels] = useState([]);
+  const [dataPointFocused, setDataPointFocused] = useState(null);
 
-    // Filters
-    const [similarityThreshold, setSimilarityThreshold] = useState(90)
-    const [maxNumberImages, setMaxNumberImages] = useState(3)
-    const [ageInterval, setAgeInterval] = useState([0, 85])
-    const [diseasesFilter, setDiseasesFilter] = useState(['All'])
-    const [distanceWeights, setDistanceWeights] = useState([1,1,1,1,1,1,1,1,1,1,1,1])
+  // Rollout
+  const [isGeneratingRollout, setIsGeneratingRollout] = useState(false);
+  const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] =
+    useState([]);
+  const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] =
+    useState([]);
+  const [isGeneratingRolloutProjection, setIsGeneratingRolloutProjection] =
+    useState(false);
+  const [explorationProjectionData, setExplorationProjectionData] = useState([
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ]);
+  const [
+    dimensionExplorationProjectionFocused,
+    setDimensionExplorationProjectionFocused,
+  ] = useState(0);
+  const [rolloutClustering, setRolloutClustering] = useState([]);
+  const [focusedLatent, setFocusedLatent] = useState([]);
 
-    // Dependent on uploaded image
-    const [similarImages, setSimilarImages] = useState([]);
-    const [uploadedLatent, setUploadedLatent] = useState([]);
-    const [uploadedProjectionData, setUploadedProjectionData] = useState([]);
+  // Dependent on uploaded image
+  const [file, setFile] = useState(null);
+  const [similarImages, setSimilarImages] = useState([]);
+  const [uploadedLatent, setUploadedLatent] = useState([]);
+  const [uploadedProjectionData, setUploadedProjectionData] = useState([]);
 
-    // Projection
-    const [projectionData, setProjectionData] = useState([]);
-    const [dataPointFocused, setDataPointFocused] = useState(null);
+  // Filters
+  const [distanceWeights, setDistanceWeights] = useState([]);
 
-    // Rollout
-    const [isGeneratingRollout, setIsGeneratingRollout] = useState(false);
-    const [latentSpaceExplorationImages, setLatentSpaceExplorationImages] = useState([]);
-    const [latentSpaceExplorationNames, setLatentSpaceExplorationNames] = useState(
-        ['Dim 1', 'Dim 2', 'Dim 3', 'Dim 4', 'Dim 5', 'Dim 6', 'Dim 7', 'Dim 8', 'Dim 9', 'Dim 10', 'Dim 11', 'Dim 12']);
-    const [isGeneratingRolloutProjection, setIsGeneratingRolloutProjection] = useState(false)
-    const [explorationProjectionData, setExplorationProjectionData] = useState([
-        {"dim": 0, "data": []}, {"dim": 1, "data": []}, {"dim": 2, "data": []}, {"dim": 3, "data": []},
-        {"dim": 4, "data": []}, {"dim": 5, "data": []}, {"dim": 6, "data": []}, {"dim": 7, "data": []},
-        {"dim": 8, "data": []}, {"dim": 9, "data": []}, {"dim": 10, "data": []}, {"dim": 11, "data": []}]);
-    const [dimensionExplorationProjectionFocused, setDimensionExplorationProjectionFocused] = useState(0)
-    const [rolloutClustering, setRolloutClustering] = useState([])
-    
+  useEffect(() => {
+    if (demo != "choice") {
+      var nd;
+      if (demo === "skin") {
+        nd = 12;
+      } else if (demo === "mnist") {
+        nd = 10;
+      }
+      setNumDim(nd);
+      setDistanceWeights(Array(nd).fill(0.5));
+      setLatentSpaceExplorationNames(
+        Array.from([...Array(nd).keys()], (i) => `Dim ${i}`)
+      );
+      setExplorationProjectionData(Array(nd).fill([]));
 
-    useEffect(() => {
-        // This code will run once
-        queryBackend('get_projection_data', 'GET').then((data) => {
-            setProjectionData(data)
-        })
-    }, [])
-
-
-    function handleClickOnDataPoint(datapoint) {
-        setDataPointFocused(datapoint)
-        const latent = [datapoint.latent_coordinate_0, datapoint.latent_coordinate_1, datapoint.latent_coordinate_2, datapoint.latent_coordinate_3, datapoint.latent_coordinate_4, datapoint.latent_coordinate_5, datapoint.latent_coordinate_6, datapoint.latent_coordinate_7, datapoint.latent_coordinate_8, datapoint.latent_coordinate_9, datapoint.latent_coordinate_10, datapoint.latent_coordinate_11]
-
-        // Get the rollout images for latent space exploration
-        setIsGeneratingRollout(true)
-        queryBackend(`get_latent_space_images_url?latent=[${latent}]`, 'GET').then((latent_space_images_url) => {
-            setLatentSpaceExplorationImages(latent_space_images_url)
-            setIsGeneratingRollout(false)
-        })
-
-        // Cluster rollouts
-        queryBackend(`get_rollout_clustering?latent=[${latent}]`, 'GET').then((data) => {
-            setRolloutClustering(data)
-        })
-
-        // Generate projection of rollout images
-        setIsGeneratingRolloutProjection(true)
-        queryBackend(`get_projection_rollout?latent=[${latent}]`, 'GET').then((data) => {
-            setExplorationProjectionData(data)
-            setIsGeneratingRolloutProjection(false)
-        })
+      queryBackend(`get_projection_data?demo=${demo}`, "GET").then((data) => {
+        setLabels(data["labels"]);
+        setProjectionData(data["data"]);
+      });
     }
+  }, [demo]);
 
-    function handleImageUploaded(file) {
-        setFile(file);
+  function handleClickOnDataPoint(datapoint) {
+    setDataPointFocused(datapoint);
+    setRolloutClustering([]);
+    setIsGeneratingRollout(true);
+    setIsGeneratingRolloutProjection(true);
+    setExplorationProjectionData(Array(numDim).fill([]));
 
-        // Get latent space amd projection of uploaded file
-        queryBackendWithFile('get_uploaded_latent_and_projection', file).then((data) => {
-
-            // Add to projection
-            setUploadedProjectionData([{"umap1": data.umap1, "umap2": data.umap2}])
-
-            // Act as if it was clicked on (e.g. generate rollout)
-            handleClickOnDataPoint(data)
-
-            // Get similar images 
-            setUploadedLatent([data.latent_coordinate_0, data.latent_coordinate_1, data.latent_coordinate_2, data.latent_coordinate_3, data.latent_coordinate_4, data.latent_coordinate_5, data.latent_coordinate_6, data.latent_coordinate_7, data.latent_coordinate_8, data.latent_coordinate_9, data.latent_coordinate_10, data.latent_coordinate_11])
-            queryBackend(`get_similar_images?latent=[${[data.latent_coordinate_0, data.latent_coordinate_1, data.latent_coordinate_2, data.latent_coordinate_3, data.latent_coordinate_4, data.latent_coordinate_5, data.latent_coordinate_6, data.latent_coordinate_7, data.latent_coordinate_8, data.latent_coordinate_9, data.latent_coordinate_10, data.latent_coordinate_11]}]`, 'GET').then((data) => {
-                setSimilarImages(data)
-            })
-        });
-    };
-
-    function handleRenameLatent(event, dim) {
-        let temp = [...latentSpaceExplorationNames]
-        temp[dim] = event.target.value
-        setLatentSpaceExplorationNames(temp)
+    var latent = [];
+    for (const [key, value] of Object.entries(datapoint)) {
+      if (key.startsWith("latent_coordinate")) {
+        latent.push(value);
+      }
     }
+    setFocusedLatent(latent);
 
-    function handleMouseEnterRow(dimensionNumber) {
-        // if (!isGeneratingRolloutProjection) {
-        //     setDimensionExplorationProjectionFocused(dimensionNumber)
-        //     console.log(`dim number: ${dimensionNumber}`)
-        //     console.log(`should display dim: ${explorationProjectionData[0].data}`)
-        // }
+    // Cluster rollouts
+    queryBackend(
+      `get_rollout_clustering?demo=${demo}&weights=${distanceWeights}&latent=[${latent}]`,
+      "GET"
+    ).then((data) => {
+      setRolloutClustering(data);
+    });
+
+    // Get the rollout images for latent space exploration
+    queryBackend(
+      `get_latent_space_images_url?demo=${demo}&latent=[${latent}]`,
+      "GET"
+    ).then((latent_space_images_url) => {
+      setLatentSpaceExplorationImages(latent_space_images_url);
+      setIsGeneratingRollout(false);
+    });
+
+    // Generate projection of rollout images
+    queryBackend(
+      `get_projection_rollout?demo=${demo}&latent=[${latent}]`,
+      "GET"
+    ).then((data) => {
+      setExplorationProjectionData(data);
+      setIsGeneratingRolloutProjection(false);
+    });
+  }
+
+  function handleImageUploaded(file) {
+    setUploadedLatent([]);
+    setSimilarImages([]);
+    setRolloutClustering([]);
+    setIsGeneratingRollout(true);
+    setIsGeneratingRolloutProjection(true);
+    setExplorationProjectionData(Array(numDim).fill([]));
+
+    setFile(file);
+
+    // Get latent space amd projection of uploaded file
+    queryBackendWithFile(
+      `get_uploaded_latent_and_projection/${demo}`,
+      file
+    ).then((data) => {
+      // Add to projection
+      setUploadedProjectionData([{ umap1: data.umap1, umap2: data.umap2 }]);
+
+      // Act as if it was clicked on (e.g. generate rollout)
+      handleClickOnDataPoint(data);
+
+      // Get similar images
+      var latent = [];
+      for (const [key, value] of Object.entries(data)) {
+        if (key.startsWith("latent_coordinate")) {
+          latent.push(value);
+        }
+      }
+      setUploadedLatent(latent);
+      queryBackend(
+        `get_similar_images/${demo}?weights=${distanceWeights}&latent=[${latent}]`,
+        "GET"
+      ).then((data) => {
+        setSimilarImages(data);
+      });
+    });
+  }
+
+  function handleRenameLatent(event, dim) {
+    let temp = [...latentSpaceExplorationNames];
+    temp[dim] = event.target.value;
+    setLatentSpaceExplorationNames(temp);
+  }
+
+  function handleClickShowBackProjection(dimensionNumber) {
+    if (dimensionExplorationProjectionFocused != dimensionNumber) {
+      setDimensionExplorationProjectionFocused(dimensionNumber);
     }
+  }
 
-    function handleMouseLeaveRow(dimensionNumber) {
-        // setDimensionExplorationProjectionFocused(12)
+  function handleFilterWeightsChange(newValue, dim) {
+    setRolloutClustering([]);
+    let temp = [...distanceWeights];
+    temp[dim] = newValue;
+    setDistanceWeights(temp);
+
+    // Update cluster rollouts
+    queryBackend(
+      `get_rollout_clustering?demo=${demo}&weights=${temp}&latent=[${focusedLatent}]`,
+      "GET"
+    ).then((data) => {
+      setRolloutClustering(data);
+    });
+
+    // Update similar images
+    if (file !== null) {
+      queryBackend(
+        `get_similar_images/${demo}?weights=${temp}&latent=[${uploadedLatent}]`,
+        "GET"
+      ).then((data) => {
+        setSimilarImages(data);
+      });
     }
+  }
 
-    function handleFilterWeightsChange(newValue, dim) {
-        let temp = [...distanceWeights]
-        temp[dim] = newValue
-        setDistanceWeights(temp)
-    }
-
-    // function applyOnClickHandle() {
-    //     updateFiltersBackend('update_filters', 'POST', distanceWeights, maxNumberImages, ageInterval, diseasesFilter)
-    //     if (file !== null){
-    //     // Get latent space
-    //     queryBackendWithFile('get_latent_space', file).then((data) => {
-    //         setLatentSpace(data);
-    //         console.log(data)
-
-    //         // Get similar images 
-    //         queryBackend(`get_similar_images?latent=[${data}]`, 'GET').then((data) => {
-    //             setSimilarImages(data)
-    //         })
-
-    //         // Get uploaded image projection data
-    //         queryBackend(`get_uploaded_projection_data?latent=[${data}]`, 'GET').then((data) => {
-    //             setUploadedProjectionData(data)
-    //         })
-    //     });    
-    //     }
-    // }
-
-    return (
-        <div className="grid grid-rows-2">
-            <div className="p-8 grid grid-cols-2 items-center w-screen h-screen">
-                <ProjectionPlot
-                    data={projectionData}
-                    handleClickOnDataPoint={handleClickOnDataPoint}
-                    uploadedData={uploadedProjectionData} 
-                    similarImages={similarImages}
-                    explorationData={explorationProjectionData}
-                    dimensionExplorationProjectionFocused={dimensionExplorationProjectionFocused}
-                />
-
-                {
-                    dataPointFocused != null &&
-                    <LatentSpaceExplorator
-                        dataPointFocused={dataPointFocused} 
-                        latentSpaceImagesPath={latentSpaceExplorationImages} 
-                        dimensionNames={latentSpaceExplorationNames} 
-                        handleRenameLatent={handleRenameLatent} 
-                        isGeneratingRollout={isGeneratingRollout}
-                        handleMouseEnterRow={handleMouseEnterRow}
-                        handleMouseLeaveRow={handleMouseLeaveRow}
-                        rolloutClustering={rolloutClustering}
-                    />
-                }
-            </div>
-
-            <div className="grid grid-rows-2 w-screen h-screen">
-                <DragDropUploader onImageUploadedChange={handleImageUploaded}/>
-
-                {
-                    similarImages.length > 0 &&
-                    <SimilarImages
-                        uploadedImageSource={URL.createObjectURL(file)} 
-                        imgList={similarImages}
-                        dimensionNames={latentSpaceExplorationNames} 
-                        latentSpace={uploadedLatent}
-                    />
-                }
-            </div>
+  return (
+    <div>
+      {demo === "choice" && (
+        <div className="grid grid-rows-2 w-screen h-screen place-items-center">
+          <div
+            className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded cursor-pointer"
+            onClick={function () {
+              setDemo("mnist");
+            }}
+          >
+            MNIST
+          </div>
+          <div
+            className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded cursor-pointer"
+            onClick={function () {
+              setDemo("skin");
+            }}
+          >
+            Skin Lesions
+          </div>
         </div>
-    )
+      )}
+      {demo != "choice" && (
+        <div className="grid grid-rows-2">
+          <div className="p-4 grid grid-cols-2 items-center w-screen h-screen">
+            <ProjectionPlot
+              data={projectionData}
+              labels={labels}
+              handleClickOnDataPoint={handleClickOnDataPoint}
+              uploadedData={uploadedProjectionData}
+              similarImages={similarImages}
+              explorationData={explorationProjectionData}
+              demo={demo}
+              dimensionExplorationProjectionFocused={
+                dimensionExplorationProjectionFocused
+              }
+              rolloutClustering={rolloutClustering}
+            />
+
+            {dataPointFocused != null && (
+              <LatentSpaceExplorator
+                className="col-span-3"
+                demo={demo}
+                dataPointFocused={dataPointFocused}
+                latentSpaceImagesPath={latentSpaceExplorationImages}
+                dimensionNames={latentSpaceExplorationNames}
+                handleRenameLatent={handleRenameLatent}
+                isGeneratingRollout={isGeneratingRollout}
+                isGeneratingRolloutProjection={isGeneratingRolloutProjection}
+                handleClickShowBackProjection={handleClickShowBackProjection}
+                rolloutClustering={rolloutClustering}
+                distanceWeights={distanceWeights}
+                handleFilterWeightsChange={handleFilterWeightsChange}
+                dimensionExplorationProjectionFocused={
+                  dimensionExplorationProjectionFocused
+                }
+              />
+            )}
+          </div>
+
+          <div className="grid grid-rows-2 grid-cols-2 place-items-center w-screen h-screen">
+            {/* <DragDropUploader handleImageUploaded={handleImageUploaded}/> */}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                console.log(e);
+                handleImageUploaded(e.target.files[0]);
+              }}
+            />
+
+            {file && <img className="w-52" src={URL.createObjectURL(file)} />}
+
+            {similarImages.length > 0 && (
+              <div className="col-span-2">
+                <SimilarImages
+                  uploadedImageSource={URL.createObjectURL(file)}
+                  imgList={similarImages}
+                  dimensionNames={latentSpaceExplorationNames}
+                  latentSpace={uploadedLatent}
+                  demo={demo}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default App;
