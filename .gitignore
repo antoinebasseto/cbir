@@ -22,3 +22,7 @@ LightningVAE/reports/*
 *.csv
 *.sav
 react-frontend/node_modules/*
+
+# Disentangling VAE
+backend-project/disentangling_vae/results/*
+backend-project/disentangling_vae/data/*
