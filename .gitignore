@@ -21,3 +21,4 @@ LightningVAE/data/*
 LightningVAE/reports/*
 *.csv
 *.sav
+react-frontend/node_modules/*
